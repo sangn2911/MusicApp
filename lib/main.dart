@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'musicPlayer.dart';
-import 'musicList.dart';
-//import 'login.dart';
+// import 'musicPlayer.dart';
+// import 'musicList.dart';
+import 'login.dart';
 
 class Music {
   static String song;
@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
-      initialRoute: '/musiclist',
+      initialRoute: '/login',
       routes: {
-        '/musiclist': (context) => MusicList(),
-        '/musicplayer': (context) => MusicPlayer(),
-        // '/login': (context) => Login(),
+        // '/musiclist': (context) => MusicList(),
+        // '/musicplayer': (context) => MusicPlayer(),
+        '/login': (context) => Login(),
       },
     );
   }

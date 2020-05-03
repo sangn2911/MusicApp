@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sizeConfig.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
-import 'package:keyboard_avoider/keyboard_avoider.dart';
+//import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 class Login extends StatelessWidget {
 
@@ -14,20 +14,17 @@ class Login extends StatelessWidget {
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.black,
         body: Center(
-          child: KeyboardAvoider(
-            autoScroll: true,
-            child: Column(
-              crossAxisAlignment:CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: SizeConfig.screenHeight*5/64,),
-                logoWidget(),
-                SizedBox(height: SizeConfig.screenHeight*5/64,),
-                textInput(),
-                SizedBox(height: SizeConfig.screenHeight/12.8,),
-                signInButton(),
-                signUp(),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment:CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: SizeConfig.screenHeight*5/64,),
+              logoWidget(),
+              SizedBox(height: SizeConfig.screenHeight*5/64,),
+              textInput(),
+              SizedBox(height: SizeConfig.screenHeight/12.8,),
+              signInButton(),
+              signUp(),
+            ],
           ),
         ),
       ),
@@ -55,22 +52,24 @@ class Login extends StatelessWidget {
   Widget textInput(){
    return Padding(
       padding: EdgeInsets.only(left: SizeConfig.screenWidth*5/36,top: 0.0,right: SizeConfig.screenWidth*5/36,bottom: 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          text("Username or Email:"),
-          textField(hint: "example@example.com"),
-          SizedBox(height: SizeConfig.screenHeight/12.8,),
-          text("Password:"),
-          textField(),
-        ],
+      child: SingleChildScrollView(
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            text("Username or Email:"),
+            textField(hint: "example@example.com"),
+            SizedBox(height: SizeConfig.screenHeight/12.8,),
+            text("Password:"),
+            textField(),
+          ],
+        ),
       ),
     );
  }
 
-  Widget text(String t){
+  Widget text(String str){
     return Text(
-      t,
+      str,
       style: TextStyle(
         color: Colors.white,
         fontSize: 22,
@@ -117,7 +116,6 @@ class Login extends StatelessWidget {
         side: BorderSide(color: Colors.black)
       ),
       padding: EdgeInsets.fromLTRB(52, 4, 52, 4),
-      //padding: EdgeInsets.only(left: 52,right: 52),
       child: Text(
         "Sign In",
         style: TextStyle(
