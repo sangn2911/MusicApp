@@ -23,4 +23,5 @@ class IconCustom {
 
   static const IconData mymusic = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData settings_1 = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData music_note_24px_2 = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
