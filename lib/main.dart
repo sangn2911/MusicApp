@@ -3,8 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 // import 'musicPlayer.dart';
-// import 'musicList.dart';
-import 'login.dart';
+import 'downloadlist.dart';
+//import 'login.dart';
 
 class Music {
   static String song;
@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
-      initialRoute: '/login',
+      initialRoute: '/downloadlist',
       routes: {
-        // '/musiclist': (context) => MusicList(),
-        // '/musicplayer': (context) => MusicPlayer(),
-        '/login': (context) => Login(),
+        '/downloadlist': (context) => Downloadlist(),
+        //'/musicplayer': (context) => MusicPlayer(),
+        //'/login': (context) => Login(),
       },
     );
   }

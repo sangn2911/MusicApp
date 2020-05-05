@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sizeConfig.dart';
+import 'color.dart';
+import 'customIcons.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 //import 'package:keyboard_avoider/keyboard_avoider.dart';
 
@@ -8,24 +10,23 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    //SizeConfig().printAllDetail();
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: Colors.black,
-        body: Center(
-          child: Column(
-            crossAxisAlignment:CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: SizeConfig.screenHeight*5/64,),
-              logoWidget(),
-              SizedBox(height: SizeConfig.screenHeight*5/64,),
-              textInput(),
-              SizedBox(height: SizeConfig.screenHeight/12.8,),
-              signInButton(),
-              signUp(),
-            ],
-          ),
+    SizeConfig().printAllDetail();
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          crossAxisAlignment:CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: SizeConfig.screenHeight*52/640,),
+            logoWidget(),
+            SizedBox(height: SizeConfig.screenHeight*31/640,),
+            textInput(),
+            SizedBox(height: SizeConfig.screenHeight*57/640,),
+            signInButton(),
+            SizedBox(height: SizeConfig.screenHeight*8/640,),
+            signUp(),
+          ],
         ),
       ),
     );
@@ -40,11 +41,16 @@ class Login extends StatelessWidget {
       //   color: Color(0xFFf6a115),
       //   fit: BoxFit.none,
       //   ),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("images/b.png"),
-          fit: BoxFit.none,
-          )
+      // decoration: BoxDecoration(
+      //   image: DecorationImage(
+      //     image: AssetImage("images/b.png"),
+      //     fit: BoxFit.none,
+      //     )
+      //   ),
+      child: Icon(
+        IconCustom.mymusic,
+        color: ColorCustom.orange,
+        size: 100,
         ),
     );
   }
@@ -58,7 +64,7 @@ class Login extends StatelessWidget {
           children: <Widget>[
             text("Username or Email:"),
             textField(hint: "example@example.com"),
-            SizedBox(height: SizeConfig.screenHeight/12.8,),
+            SizedBox(height: SizeConfig.screenHeight*38/640,),
             text("Password:"),
             textField(),
           ],
@@ -81,6 +87,8 @@ class Login extends StatelessWidget {
     return TextField(
       style: TextStyle(
         fontSize: 20.0,
+        fontFamily: 'Lato',
+        fontWeight: FontWeight.w400,
         color: Colors.black,
       ),
       decoration: InputDecoration(
@@ -91,7 +99,7 @@ class Login extends StatelessWidget {
         ),
         contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
         filled: true,
-        fillColor: Color(0xFFf6a115),
+        fillColor: ColorCustom.orange,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
           borderSide: BorderSide(color: Colors.black)
@@ -107,20 +115,24 @@ class Login extends StatelessWidget {
   }
 
   Widget signInButton(){
-    return RaisedButton(
-      onPressed: ((){
-        print("Sign In");
-      }),
-      shape: new RoundedRectangleBorder(
-        borderRadius: new BorderRadius.circular(15.0),
-        side: BorderSide(color: Colors.black)
-      ),
-      padding: EdgeInsets.fromLTRB(52, 4, 52, 4),
-      child: Text(
-        "Sign In",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 25,
+    return ButtonTheme(
+      height: 35,
+      minWidth: 165,
+      buttonColor: Colors.white,
+      child: RaisedButton(
+        onPressed: ((){
+          print("Sign In");
+        }),
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.black)
+        ),
+        child: Text(
+          "Sign In",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 27,
+          ),
         ),
       ),
     );
@@ -137,11 +149,13 @@ class Login extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () {print("Sign Up");},
+          onTap: () {
+            print("Sign Up");
+            },
           child: Text(
             "Sign Up",
             style: TextStyle(
-              color: Color(0xFFf6a115),
+              color: ColorCustom.orange,
               fontSize: 17,
             ),
           ),
