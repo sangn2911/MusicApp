@@ -1,8 +1,8 @@
 import 'package:MusicApp/color.dart';
 import 'package:MusicApp/customIcons.dart';
-import 'package:MusicApp/sizeConfig.dart';
+import 'sizeConfig.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+// import 'main.dart';
 
 // var song = {"Beautiful In White", "Happy Together"};
 // var singer = {"Westlife", "The Turtles"};
@@ -25,6 +25,7 @@ class _DownloadlistState extends State<Downloadlist> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.black,
@@ -32,9 +33,9 @@ class _DownloadlistState extends State<Downloadlist> {
         child: Column(
           children: <Widget>[
             searchBar(),
-            SizedBox(height: SizeConfig.screenHeight*13/640),
+            SizedBox(height: SizeConfig.screenHeight*12/640),
             shuffleButton(),
-            SizedBox(height: SizeConfig.screenHeight*18/640),
+            SizedBox(height: SizeConfig.screenHeight*12/640),
             musicList(),
           ],
         ),
@@ -87,7 +88,7 @@ class _DownloadlistState extends State<Downloadlist> {
             fontFamily: 'Lato',
             fontWeight: FontWeight.w400,
             color: Colors.black,
-            fontSize: 27,
+            fontSize: 15,
           ),
         ),
       ),
