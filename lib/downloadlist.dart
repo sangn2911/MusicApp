@@ -1,7 +1,8 @@
 import 'package:MusicApp/color.dart';
 import 'package:MusicApp/customIcons.dart';
+import 'sizeConfig.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+// import 'main.dart';
 
 // var song = {"Beautiful In White", "Happy Together"};
 // var singer = {"Westlife", "The Turtles"};
@@ -24,6 +25,7 @@ class _DownloadlistState extends State<Downloadlist> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.black,
@@ -31,7 +33,9 @@ class _DownloadlistState extends State<Downloadlist> {
         child: Column(
           children: <Widget>[
             searchBar(),
-            SizedBox(height: 20.0),
+            SizedBox(height: SizeConfig.screenHeight*12/640),
+            shuffleButton(),
+            SizedBox(height: SizeConfig.screenHeight*12/640),
             musicList(),
           ],
         ),
@@ -65,6 +69,32 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
+  Widget shuffleButton(){
+    return ButtonTheme(
+      height: 31,
+      minWidth: 158,
+      buttonColor: ColorCustom.orange,
+      child: RaisedButton(
+        onPressed: ((){
+          print("Shuffle Butoon");
+        }),
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.black)
+        ),
+        child: Text(
+          "Shuffle Play",
+          style: TextStyle(
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
+            color: Colors.black,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget searchBar(){
     return Padding(
       padding: EdgeInsets.only(left: 32,right: 32),
@@ -94,12 +124,12 @@ class _DownloadlistState extends State<Downloadlist> {
                   print(str);
                 },
                 decoration: InputDecoration(
-                  hintText: 'Songs, albums, artists',
+                  hintText: ' Songs, albums, artists',
                   hintStyle: TextStyle(
                     color: Colors.black,
                     fontFamily: 'Lato',
                     fontWeight: FontWeight.w300,
-                    fontSize: 19,
+                    fontSize: 18,
                     letterSpacing: 0,
                   ),
                 border: InputBorder.none,
@@ -115,15 +145,27 @@ class _DownloadlistState extends State<Downloadlist> {
       ),
     );
   }
+
   Widget musicList(){
     return Expanded(
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index){                      
           return ListTile(
-              leading: Icon(
+              leading: Container(
+                height: 45,
+                width: 45,
+                decoration: BoxDecoration(
+                  color: ColorCustom.orange,
+                  border: Border.all(
+                  color: Colors.black,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(15))
+                ),
+                child: Icon(
                 Icons.music_note,
-                color: Colors.white,
-                size: 40.0,
+                color: Colors.black,
+                size: 40,
+                  ),
               ),
               title: Text(
                 "Song $index",
@@ -149,9 +191,10 @@ class _DownloadlistState extends State<Downloadlist> {
                 size: 30.0,
               ),
               onTap: () {
-                Music.song = "Song $index"; // musicLst[index]['Song'];
-                Music.singer = "Singer $index"; // musicLst[index]['Singer'];
-                Navigator.pushNamed(context, '/musicplayer');
+                print("Choose Song $index");
+                // Music.song = "Song $index"; // musicLst[index]['Song'];
+                // Music.singer = "Singer $index"; // musicLst[index]['Singer'];
+                // Navigator.pushNamed(context, '/musicplayer');
               },
             );
           },

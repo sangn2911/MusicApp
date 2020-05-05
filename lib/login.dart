@@ -94,6 +94,8 @@ class Login extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
+        fontFamily: 'Lato',
+        fontWeight: FontWeight.w300,
           fontSize: 18.0,
           color: Colors.black,
         ),
@@ -130,8 +132,10 @@ class Login extends StatelessWidget {
         child: Text(
           "Sign In",
           style: TextStyle(
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
             color: Colors.black,
-            fontSize: 27,
+            fontSize: 18,
           ),
         ),
       ),
@@ -144,6 +148,8 @@ class Login extends StatelessWidget {
         Text(
           "Don't Have An Account? ",
           style: TextStyle(
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
             color: Colors.white,
             fontSize: 17,
           ),
@@ -155,6 +161,8 @@ class Login extends StatelessWidget {
           child: Text(
             "Sign Up",
             style: TextStyle(
+              fontFamily: 'Lato',
+              fontWeight: FontWeight.w400,
               color: ColorCustom.orange,
               fontSize: 17,
             ),
