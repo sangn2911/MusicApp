@@ -1,18 +1,20 @@
+import 'package:MusicApp/color.dart';
+import 'package:MusicApp/customIcons.dart';
 import 'package:flutter/material.dart';
 import 'main.dart';
 
 // var song = {"Beautiful In White", "Happy Together"};
 // var singer = {"Westlife", "The Turtles"};
 
-class MusicList extends StatefulWidget {
-  MusicList({Key key, this.title}) : super(key: key);
+class Downloadlist extends StatefulWidget {
+  Downloadlist({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _MusicListState createState() => _MusicListState();
+  _DownloadlistState createState() => _DownloadlistState();
 }
 
-class _MusicListState extends State<MusicList> {
+class _DownloadlistState extends State<Downloadlist> {
 
   @override
   void initState() {
@@ -20,11 +22,11 @@ class _MusicListState extends State<MusicList> {
     // getMusicList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF090e42),
+      appBar: appBar(),
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -37,40 +39,79 @@ class _MusicListState extends State<MusicList> {
     );
   }
 
+  Widget appBar(){
+    return AppBar(
+      backgroundColor: Colors.black,
+      centerTitle: true,
+      leading: BackButton(
+        color: Colors.white,
+        onPressed: () {
+          print("Back Button in Downloaded Song");
+        },
+      ),
+
+      title: Text(
+        "Downloaded Songs",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+
+      actions: <Widget>[
+        IconButton(icon: Icon(IconCustom.settings_1), onPressed: (){}),
+      ],
+    );
+  }
+
   Widget searchBar(){
-    return Container(
-      height: 40.0,
-      color: Colors.grey.withOpacity(0.16),
-      child: Row(
-        children: <Widget>[
-// Search Icon
-          SizedBox(width: 5.0),
-          Icon(
-            Icons.search,
-            color: Colors.white,
+    return Padding(
+      padding: EdgeInsets.only(left: 32,right: 32),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+          color: Colors.black,
           ),
+          borderRadius: BorderRadius.all(Radius.circular(20))
+        ),
+        child: Row(
+          children: <Widget>[
+// Search Icon
+            SizedBox(width: 9.0),
+            Icon(
+              Icons.search,
+              color: ColorCustom.orange,
+              size: 25,
+            ),
 //-----------------------------------------------------------
-          SizedBox(width: 5.0),
+            SizedBox(width: 20),
 // Text Input Field
-          Expanded(
-            child: TextField(
-              onChanged: (String str){
-                print(str);
-              },
-              decoration: InputDecoration(
-                hintText: 'Filter song...',
-                hintStyle: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 0.75,
+            Expanded(
+              child: TextField(
+                onChanged: (String str){
+                  print(str);
+                },
+                decoration: InputDecoration(
+                  hintText: 'Songs, albums, artists',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 19,
+                    letterSpacing: 0,
+                  ),
+                border: InputBorder.none,
                 ),
-              border: InputBorder.none,
-              ),
-            showCursor: true,
-            cursorColor: Colors.black,
-            )
-          )
+              showCursor: true,
+              cursorColor: Colors.black,
+              )
+            ),
+            SizedBox(width: 49),
 //-----------------------------------------------------------
-        ],
+          ],
+        ),
       ),
     );
   }
