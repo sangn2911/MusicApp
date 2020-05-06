@@ -7,8 +7,8 @@ class MusicPlayer extends StatefulWidget {
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-  String song = Music.song;
-  String singer = Music.singer;
+  String song = "Beautiful In White";//Music.song;
+  String singer = "Westlife";//Music.singer;
   double value = 0.0; // Track current music
   bool pause = true;
 // Button play (temporary)
