@@ -1,5 +1,9 @@
+import 'package:MusicApp/color.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'customIcons.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+import 'sizeConfig.dart';
+//import 'main.dart';
 
 class MusicPlayer extends StatefulWidget {
   @override
@@ -29,147 +33,169 @@ class _MusicPlayerState extends State<MusicPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-//--Wallpaper
-            Container(
-              height: 450.0,
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    height: 450.0,
-                    decoration: BoxDecoration(
-                      gradient:
-                          LinearGradient(colors: [Colors.black, Colors.red]),
-                      image: DecorationImage(
-                        image: AssetImage('images/a.jpg'),
-                        fit: BoxFit.cover,
-                      )
-                    ),
-                  ),
-                  //Image Decoration for Player
-                  Container(
-                    height: 450.0,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF090e42).withOpacity(0.1),
-                          Color(0xFF090e42)
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 100.0,
-                  ),
-                  //Back Button
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                    iconSize: 30.0,
-                    
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(),
-                      child: Column(
-                        children: <Widget>[
-                          Spacer(),
-                          Text(
-                            song,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            singer,
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Color(0xFF090e42),
-                child: Column(
-                  children: <Widget>[
-                  //Button Sets
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                      child: Slider(
-                        value: value,
-                        onChanged: (double newvalue) {
-                          setState(() {
-                            value = newvalue;
-                          });
-                        },
-                        activeColor: Colors.grey,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        // Button "Back Music"
-                        IconButton(
-                          iconSize: 40.0,
-                          icon: Icon(
-                            Icons.skip_previous,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {}),
-                        // Button "Pause/Play"
-                        IconButton(
-                          iconSize: 50.0,
-                          icon: icon1,
-                          onPressed: () {
-                            setState(() {
-                              if (pause == true) {
-                                icon1 = icon2;
-                                pause = false;
-                              } else {
-                                icon1 = icon3;
-                                pause = true;
-                              }
-                            });
-                          }),
-                        // Button "Next Music"
-                        IconButton(
-                          iconSize: 40.0,
-                          icon: Icon(
-                            Icons.skip_next,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {})
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            print("Dropdown Button");
+            // Navigator.pop(context);
+          },
         ),
       ),
+      body: body()
+    );
+  }
+
+  Widget body(){
+    return Center(
+      child: Column(
+          children: <Widget>[
+//--Wallpaper
+            SizedBox(height: SizeConfig.screenHeight*28/640),
+            imageDecoration(),
+            SizedBox(height: SizeConfig.screenHeight*28/640),
+            Text(
+              song,
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w700,
+                fontSize: 25,
+              ),
+            ),
+            Text(
+              singer,
+              style: TextStyle(
+                color: ColorCustom.grey1,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w400,
+                fontSize: 19,
+              ),
+            ),
+            SizedBox(height: SizeConfig.screenHeight*20/640),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.star_border,
+                    color: Colors.white,
+                    size: 28,
+                  ), 
+                  onPressed: (){
+                    print("Favorite Button");
+                    }
+                  ),
+                SizedBox(width: SizeConfig.screenWidth*200/360),
+                IconButton(
+                  icon: Icon(
+                    IconCustom.playlist,
+                    color: Colors.white,
+                    size: 25,
+                  ), 
+                  onPressed: (){
+                    print("Playlist button");
+                    }
+                  ),
+              ]
+            ),
+            musicControl(),
+            
+//---------------------------------------------------
+          ],
+        ),
+    );
+  }
+
+  Widget imageDecoration(){
+    // return SvgPicture.asset(
+    //   "images/album_1.svg", 
+    //   color: ColorCustom.orange,
+    // );
+    return Icon(
+      IconCustom.album_1,
+      size: 185,
+      color: ColorCustom.orange,
+      );
+  }
+
+  Widget musicControl(){
+    return Column(
+      children: <Widget>[
+//Button Sets
+        Padding(
+          padding: const EdgeInsets.only(left: 30,right: 30),
+          child: Slider(
+            value: value,
+            onChanged: (double newvalue) {
+              setState(() {
+                value = newvalue;
+              });
+            },
+            activeColor: Colors.grey,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+              iconSize: 28,
+              icon: Icon(
+                IconCustom.shuffle,
+                color: Colors.white,
+              ), 
+              onPressed: null
+              ),
+            SizedBox(width: 10),
+// Button "Back Music"
+            IconButton(
+              iconSize: 54.0,
+              icon: Icon(
+                Icons.skip_previous,
+                color: Colors.grey,
+              ),
+              onPressed: () {}),
+// Button "Pause/Play"
+            IconButton(
+              iconSize: 68.0,
+              icon: pause ? icon3 : icon2,
+              onPressed: () {
+                setState(() {
+                  pause = pause ? false : true;
+                  print(pause ? "Pause" : "Play");
+                });
+              }),
+// Button "Next Music"
+            IconButton(
+              iconSize: 54.0,
+              icon: Icon(
+                Icons.skip_next,
+                color: Colors.grey,
+              ),
+              onPressed: () {}),
+            SizedBox(width: 10),
+// Button "repeat"
+            IconButton(
+              iconSize: 28,
+              icon: Icon(
+                IconCustom.repeat,
+                color: Colors.white,
+              ), 
+              onPressed: null
+              ),
+
+          ],
+        ),
+      ],
     );
   }
 }

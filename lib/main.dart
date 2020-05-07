@@ -13,7 +13,7 @@ class Music {
 
 void main() {
   //WidgetsFlutterBinding.ensureInitialized();
-  debugPaintSizeEnabled=false;
+  debugPaintSizeEnabled=true;
   runApp(MyApp());
 }
 

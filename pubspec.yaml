@@ -50,6 +50,7 @@ flutter:
     - images/b.svg
     - images/b.png
     - images/MyMusic.svg
+    - images/album_1.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -63,10 +64,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: GreatVibes
-      fonts:
-        - asset: fonts/GreatVibes-Regular.ttf
-          weight: 400
     - family: Lato
       fonts:
         - asset: fonts/Lato/Lato-Bold.ttf
@@ -77,7 +74,7 @@ flutter:
           weight: 400
     - family: IconCustom
       fonts:
-        - asset: fonts/IconCustom.ttf
+        - asset: fonts/Icons1.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

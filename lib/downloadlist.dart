@@ -108,14 +108,14 @@ class _DownloadlistState extends State<Downloadlist> {
         ),
         child: Row(
           children: <Widget>[
-// Search Icon
             SizedBox(width: 9.0),
+// Search Icon
             Icon(
               Icons.search,
               color: ColorCustom.orange,
               size: 25,
             ),
-//-----------------------------------------------------------
+
             SizedBox(width: 20),
 // Text Input Field
             Expanded(
@@ -123,7 +123,7 @@ class _DownloadlistState extends State<Downloadlist> {
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 18),
-
+//Hint text for textfield
                 decoration: InputDecoration(
                   hintText: 'Songs, albums, artists',
                   hintStyle: TextStyle(

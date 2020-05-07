@@ -10,32 +10,30 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    SizeConfig().printAllDetail();
+    //SizeConfig().printAllDetail();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          crossAxisAlignment:CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: SizeConfig.screenHeight*52/640,),
-            logoWidget(),
-            SizedBox(height: SizeConfig.screenHeight*31/640,),
-            textInput(),
-            SizedBox(height: SizeConfig.screenHeight*57/640,),
-            signInButton(),
-            SizedBox(height: SizeConfig.screenHeight*8/640,),
-            signUp(),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment:CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: SizeConfig.screenHeight*52/640,),
+          logoWidget(),
+          SizedBox(height: SizeConfig.screenHeight*31/640,),
+          textInput(),
+          SizedBox(height: SizeConfig.screenHeight*57/640,),
+          signInButton(),
+          SizedBox(height: SizeConfig.screenHeight*8/640,),
+          signUp(),
+        ],
       ),
     );
   }
 
   Widget logoWidget(){
-    return  Container(
-      height: 145.0,
-      width: 217.0,
+    return Container(
+      height: 150.0,
+      width: 250.0,
       // child: SvgPicture.asset(
       //   "images/b.svg",
       //   color: Color(0xFFf6a115),
