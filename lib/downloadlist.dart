@@ -184,7 +184,7 @@ class _DownloadlistState extends State<Downloadlist> {
                 print("Choose Song $index");
                 // Music.song = "Song $index"; // musicLst[index]['Song'];
                 // Music.singer = "Singer $index"; // musicLst[index]['Singer'];
-                // Navigator.pushNamed(context, '/musicplayer');
+                Navigator.pushNamed(context, '/musicplayer');
               },
 //-----------------------------------------------------------
             );

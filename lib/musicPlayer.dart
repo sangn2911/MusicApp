@@ -47,7 +47,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
           ),
           onPressed: () {
             print("Dropdown Button");
-            // Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
       ),
