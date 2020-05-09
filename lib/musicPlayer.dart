@@ -190,8 +190,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 IconCustom.repeat,
                 color: Colors.white,
               ), 
-              onPressed: null
-              ),
+              onPressed: (){
+                print("Repeat");
+              }
+            ),
 
           ],
         ),
