@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'musicPlayer.dart';
-import 'downloadlist.dart';
+import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 //import 'login.dart';
 
 class Music {
