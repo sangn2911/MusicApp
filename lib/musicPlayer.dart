@@ -1,6 +1,6 @@
-import 'package:MusicApp/color.dart';
+import 'package:MusicApp/Custom/color.dart';
 import 'package:flutter/material.dart';
-import 'customIcons.dart';
+import 'package:MusicApp/Custom/customIcons.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'sizeConfig.dart';
 //import 'main.dart';
