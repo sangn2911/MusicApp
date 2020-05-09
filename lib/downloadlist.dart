@@ -1,6 +1,6 @@
-import 'package:MusicApp/color.dart';
-import 'package:MusicApp/customIcons.dart';
-import 'sizeConfig.dart';
+import 'package:MusicApp/Custom/color.dart';
+import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 
@@ -184,7 +184,7 @@ class _DownloadlistState extends State<Downloadlist> {
                 print("Choose Song $index");
                 // Music.song = "Song $index"; // musicLst[index]['Song'];
                 // Music.singer = "Singer $index"; // musicLst[index]['Singer'];
-                // Navigator.pushNamed(context, '/musicplayer');
+                Navigator.pushNamed(context, '/musicplayer');
               },
 //-----------------------------------------------------------
             );

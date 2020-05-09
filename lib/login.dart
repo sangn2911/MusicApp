@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sizeConfig.dart';
-import 'color.dart';
-import 'customIcons.dart';
+import 'package:MusicApp/Custom/color.dart';
+import 'package:MusicApp/Custom/customIcons.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 //import 'package:keyboard_avoider/keyboard_avoider.dart';
 
