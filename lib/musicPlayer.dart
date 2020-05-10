@@ -109,6 +109,18 @@ class _MusicPlayerState extends State<MusicPlayer> {
       });
   }
 
+  Future next(Mp3Access f) async {
+    stop();
+    setState(() {
+      play(f.nextSong);
+    });
+  }
+
+  Future prev(Mp3Access f) async {
+    stop();
+    play(f.prevSong);
+  }
+
 //--------------------------------
   Song file;
 
@@ -168,28 +180,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
     return Center(
       child: Column(
           children: <Widget>[
-//--Wallpaper
             SizedBox(height: SizeConfig.screenHeight*28/640),
             imageDecoration(),
             SizedBox(height: SizeConfig.screenHeight*28/640),
-            Text(
-              song.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.w700,
-                fontSize: 25,
-              ),
-            ),
-            Text(
-              song.artist,
-              style: TextStyle(
-                color: ColorCustom.grey1,
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.w400,
-                fontSize: 19,
-              ),
-            ),
+            songInfo(),
             SizedBox(height: SizeConfig.screenHeight*20/640),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -218,13 +212,40 @@ class _MusicPlayerState extends State<MusicPlayer> {
               ]
             ),
             musicControl(),
-//---------------------------------------------------
           ],
         ),
     );
   }
 
-
+  Widget songInfo(){
+    return Container(
+      width: 250,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Text(
+              song.title,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w700,
+                fontSize: 25,
+              ),
+            ),
+            Text(
+              song.artist,
+              style: TextStyle(
+                color: ColorCustom.grey1,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w400,
+                fontSize: 19,
+              ),
+            ),
+        ],
+      )
+    );
+  }
 
 
   Widget imageDecoration(){
@@ -240,15 +261,19 @@ class _MusicPlayerState extends State<MusicPlayer> {
       children: <Widget>[
 //Button Sets
         Padding(
-          padding: const EdgeInsets.only(left: 30,right: 30),
-          child: Slider(
-            value: value,
-            onChanged: (double newvalue) {
-              setState(() {
-                value = newvalue;
-              });
-            },
-            activeColor: Colors.grey,
+          padding: const EdgeInsets.only(left: 50,right: 50),
+          child: Column(
+            children: <Widget>[
+              Slider(
+                min: 0.0,
+                max: duration.inMilliseconds.toDouble(),
+                value: position?.inMilliseconds?.toDouble() ?? 0,
+                onChanged: (double value) =>
+                  audioPlayer.seek((value / 1000).roundToDouble()),
+                activeColor: Colors.white,
+              ),
+
+            ],
           ),
         ),
         Row(
@@ -270,16 +295,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 Icons.skip_previous,
                 color: Colors.grey,
               ),
-              onPressed: () {}),
+              onPressed: () => prev(widget.fileData)
+            ),
 // Button "Pause/Play"
             IconButton(
               iconSize: 68.0,
-              icon: pauseState ? iconPlay : iconPause,
-              onPressed: () {
-                setState(() {
-                  pauseState = pauseState ? false : true;
-                });
-              }),
+              icon: isPlaying ? iconPause : iconPlay,
+              onPressed: isPlaying ? () => pause() : () => play(widget._song)
+              ),
 // Button "Next Music"
             IconButton(
               iconSize: 54.0,
@@ -287,7 +310,8 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 Icons.skip_next,
                 color: Colors.grey,
               ),
-              onPressed: () {}),
+              onPressed: () => next(widget.fileData)
+              ),
             SizedBox(width: 10),
 // Button "repeat"
             IconButton(

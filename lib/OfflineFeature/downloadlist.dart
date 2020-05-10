@@ -61,7 +61,7 @@ class _DownloadlistState extends State<Downloadlist> {
       leading: BackButton(
         color: Colors.white,
         onPressed: () {
-          print("Back Button in Downloaded Song");
+          Navigator.pop(context);
         },
       ),
 
