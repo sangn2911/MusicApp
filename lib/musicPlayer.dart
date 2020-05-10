@@ -1,6 +1,7 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'sizeConfig.dart';
 //import 'main.dart';
@@ -117,10 +118,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
   }
 
   Widget imageDecoration(){
-    // return SvgPicture.asset(
-    //   "images/album_1.svg", 
-    //   color: ColorCustom.orange,
-    // );
     return Icon(
       IconCustom.album_1,
       size: 185,

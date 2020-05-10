@@ -2,14 +2,17 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:MusicApp/OfflineFeature/mp3Access.dart';
+import 'package:MusicApp/ParentWidget.dart';
 // import 'main.dart';
 
 // var song = {"Beautiful In White", "Happy Together"};
 // var singer = {"Westlife", "The Turtles"};
 
 class Downloadlist extends StatefulWidget {
-  Downloadlist({Key key, this.title}) : super(key: key);
-  final String title;
+  final Mp3Access fileData;
+
+  Downloadlist(this.fileData);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -25,7 +28,9 @@ class _DownloadlistState extends State<Downloadlist> {
 
   @override
   Widget build(BuildContext context) {
+    print("FileData: $widget.fileData");
     SizeConfig().init(context);
+
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.black,
@@ -36,7 +41,7 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(),
+            musicList(widget.fileData),
           ],
         ),
       ),
@@ -151,15 +156,17 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget musicList(){
+  Widget musicList(Mp3Access fileData){
     return Expanded(
       child: ListView.builder(
-        itemBuilder: (BuildContext context, int index){                      
+        itemBuilder: (BuildContext context, int index){   
+          var song = fileData.songs[index];
+
           return ListTile(
               leading: musicIcon(),
               title: Text(
-                "Song $index",
-                // musicLst[index]['Song'],
+                //"Song $index",
+                song.title,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
@@ -168,8 +175,8 @@ class _DownloadlistState extends State<Downloadlist> {
                 ),
               ),
               subtitle: Text(
-                "Singer $index",
-                // musicLst[index]['Singer'],
+                //"Singer $index",
+                song.artist,
                 style: TextStyle(
                   color: ColorCustom.grey1,
                   fontSize: 14.0,
@@ -189,7 +196,7 @@ class _DownloadlistState extends State<Downloadlist> {
 //-----------------------------------------------------------
             );
           },
-        itemCount: 10 // musicLst.length
+        itemCount: fileData.songs.length // musicLst.length
       )
     );
   }

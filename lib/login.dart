@@ -1,9 +1,9 @@
+import 'package:MusicApp/OfflineFeature/downloadlist.dart';
+import 'package:MusicApp/ParentWidget.dart';
 import 'package:flutter/material.dart';
 import 'sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-//import 'package:flutter_svg/flutter_svg.dart';
-//import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 class Login extends StatelessWidget {
 
@@ -11,6 +11,7 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     //SizeConfig().printAllDetail();
+    final rootIW = ParentdWidget.of(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
@@ -25,6 +26,8 @@ class Login extends StatelessWidget {
           signInButton(),
           SizedBox(height: SizeConfig.screenHeight*8/640,),
           signUp(),
+          SizedBox(height: SizeConfig.screenHeight*8/640,),
+          offlineButton(context,rootIW),
         ],
       ),
     );
@@ -139,6 +142,7 @@ class Login extends StatelessWidget {
       ),
     );
   }
+
   Widget signUp(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -169,4 +173,37 @@ class Login extends StatelessWidget {
       ],
     );
   }
+
+  
+  Widget offlineButton(BuildContext context,ParentdWidget rootIW){
+    return ButtonTheme(
+      height: 35,
+      minWidth: 165,
+      buttonColor: Colors.white,
+      child: RaisedButton(
+        onPressed: ((){
+          Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (context) => new Downloadlist(rootIW.fileData)
+              )
+          );
+        }),
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.black)
+        ),
+        child: Text(
+          "Offline",
+          style: TextStyle(
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
+    );
+  }
+
 }
