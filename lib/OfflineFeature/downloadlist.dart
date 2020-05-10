@@ -20,15 +20,20 @@ class Downloadlist extends StatefulWidget {
 
 class _DownloadlistState extends State<Downloadlist> {
 
+  List<dynamic> filterList = List();
+  List<dynamic> songList = List();
+
   @override
   void initState() {
     super.initState();
-    // getMusicList();
+    setState(() {
+      songList = widget.fileData.songs;
+      filterList = songList;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("FileData: $widget.fileData");
     SizeConfig().init(context);
 
     return Scaffold(
@@ -41,7 +46,7 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(widget.fileData),
+            musicList(),
           ],
         ),
       ),
@@ -141,8 +146,13 @@ class _DownloadlistState extends State<Downloadlist> {
                 border: InputBorder.none,
                 ),
 //Function for textfield
-              onChanged: (String str){
-                print(str);
+              onChanged: (string){
+                setState(() {
+                  filterList = songList.where((element) => 
+                  (element.title.toLowerCase().contains(string.toLowerCase()) || 
+                  element.artist.toLowerCase().contains(string.toLowerCase())))
+                  .toList();
+                });
               },
               showCursor: true,
               cursorColor: Colors.black,
@@ -156,11 +166,11 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget musicList(Mp3Access fileData){
+  Widget musicList(){
     return Expanded(
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index){   
-          var song = fileData.songs[index];
+          var song = filterList[index];
 
           return ListTile(
               leading: musicIcon(),
@@ -196,7 +206,7 @@ class _DownloadlistState extends State<Downloadlist> {
 //-----------------------------------------------------------
             );
           },
-        itemCount: fileData.songs.length // musicLst.length
+        itemCount: filterList.length // musicLst.length
       )
     );
   }
