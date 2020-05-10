@@ -1,9 +1,10 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/OfflineFeature/mp3Access.dart';
-import 'package:MusicApp/ParentWidget.dart';
+//import 'package:MusicApp/ParentWidget.dart';
 // import 'main.dart';
 
 // var song = {"Beautiful In White", "Happy Together"};
@@ -46,7 +47,7 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(),
+            musicList(widget.fileData),
           ],
         ),
       ),
@@ -166,7 +167,7 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget musicList(){
+  Widget musicList(Mp3Access fileData){
     return Expanded(
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index){   
@@ -199,9 +200,13 @@ class _DownloadlistState extends State<Downloadlist> {
 //Function for song cards
               onTap: () {
                 print("Choose Song $index");
-                // Music.song = "Song $index"; // musicLst[index]['Song'];
-                // Music.singer = "Singer $index"; // musicLst[index]['Singer'];
-                Navigator.pushNamed(context, '/musicplayer');
+                fileData.setCurrentIndex(index);
+                Navigator.push(
+                  context, 
+                  new MaterialPageRoute(
+                    builder: (context) => new MusicPlayer(fileData, song) 
+                  )
+                );
               },
 //-----------------------------------------------------------
             );

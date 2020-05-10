@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'musicPlayer.dart';
+//import 'musicPlayer.dart';
 //import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 import 'login.dart';
 
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => MusicApp(),
         //'/downloadlist': (context) => Downloadlist(),
-        '/musicplayer': (context) => MusicPlayer(),
+        //'/musicplayer': (context) => MusicPlayer(),
         '/login': (context) => Login(),
       },
     );

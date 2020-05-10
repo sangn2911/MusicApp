@@ -1,44 +1,151 @@
 import 'package:MusicApp/Custom/color.dart';
+import 'package:MusicApp/OfflineFeature/mp3Access.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/OfflineFeature/downloadlist.dart';
+import 'package:flute_music_player/flute_music_player.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'sizeConfig.dart';
 //import 'main.dart';
 
+enum PlayerState { stopped, playing, paused }
+
 class MusicPlayer extends StatefulWidget {
+  final Mp3Access fileData;
+  final Song _song;
+  final bool nowPlaying;
+  MusicPlayer(this.fileData, this._song, {this.nowPlaying});
+
   @override
   _MusicPlayerState createState() => _MusicPlayerState();
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-  String song = "Beautiful In White";//Music.song;
-  String singer = "Westlife";//Music.singer;
+  // String song = "Beautiful In White";//Music.song;
+  // String singer = "Westlife";//Music.singer;
+
+  Song song;
+  
+//Package Music
+  MusicFinder audioPlayer;
+  Duration duration;
+  Duration position;
+  PlayerState playerState;
+
+  get isPlaying => playerState == PlayerState.playing;
+  get isPaused => playerState == PlayerState.paused;
+
+  get durationText =>
+      duration != null ? duration.toString().split('.').first : '';
+  get positionText =>
+      position != null ? position.toString().split('.').first : '';
+    
+  bool isMuted = false;
+
+  void onComplete() {
+    setState(() => playerState = PlayerState.stopped);
+    play(widget.fileData.nextSong);
+  }
+
+  initPlayer() async {
+    if (audioPlayer == null) {
+      audioPlayer = widget.fileData.audioPlayer;
+    }
+    setState(() {
+      song = widget._song;
+      if (widget.nowPlaying == null || widget.nowPlaying == false)
+        if (playerState != PlayerState.stopped) 
+          stop();
+      play(song);
+    });
+    
+    audioPlayer.setDurationHandler((d) => 
+      setState(() {
+        duration = d;
+      }));
+
+    audioPlayer.setPositionHandler((p) => 
+      setState(() {
+          position = p;
+      }));
+
+    audioPlayer.setCompletionHandler(() {
+      onComplete();
+      setState(() {
+        position = duration;
+      });
+    });
+
+    audioPlayer.setErrorHandler((msg) {
+      setState(() {
+        playerState = PlayerState.stopped;
+        duration = new Duration(seconds: 0);
+        position = new Duration(seconds: 0);
+      });
+    });
+  }
+
+  Future play(Song s) async {
+    if (s != null) {
+      final result = await audioPlayer.play(s.uri, isLocal: true);
+      if (result == 1)
+        setState(() {
+          playerState = PlayerState.playing;
+          song = s;
+        });
+    }
+  }
+
+  Future pause() async {
+    final result = await audioPlayer.pause();
+    if (result == 1) setState(() => playerState = PlayerState.paused);
+  }
+
+  Future stop() async {
+    final result = await audioPlayer.stop();
+    if (result == 1)
+      setState(() {
+        playerState = PlayerState.stopped;
+        position = new Duration();
+      });
+  }
+
+//--------------------------------
+  Song file;
+
   double value = 0.0; // Track current music
-  bool pause = true;
-// Button play (temporary)
-  Icon icon1 = Icon(
+  bool pauseState = true;
+
+// Button play
+  Icon iconPlay = Icon(
     Icons.play_circle_filled,
     color: Colors.white,
   );
 // Button pause
-  Icon icon2 = Icon(
+  Icon iconPause = Icon(
     Icons.pause_circle_filled,
-    color: Colors.white,
-  );
-// Button play
-  Icon icon3 = Icon(
-    Icons.play_circle_filled,
     color: Colors.white,
   );
 
   @override
+  void initState() {
+    super.initState();
+    initPlayer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
       appBar: AppBar(
+
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(
@@ -51,6 +158,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
             Navigator.pop(context);
           },
         ),
+
       ),
       body: body()
     );
@@ -65,7 +173,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
             imageDecoration(),
             SizedBox(height: SizeConfig.screenHeight*28/640),
             Text(
-              song,
+              song.title,
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Lato',
@@ -74,7 +182,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
               ),
             ),
             Text(
-              singer,
+              song.artist,
               style: TextStyle(
                 color: ColorCustom.grey1,
                 fontFamily: 'Lato',
@@ -110,12 +218,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
               ]
             ),
             musicControl(),
-            
 //---------------------------------------------------
           ],
         ),
     );
   }
+
+
+
 
   Widget imageDecoration(){
     return Icon(
@@ -164,11 +274,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
 // Button "Pause/Play"
             IconButton(
               iconSize: 68.0,
-              icon: pause ? icon3 : icon2,
+              icon: pauseState ? iconPlay : iconPause,
               onPressed: () {
                 setState(() {
-                  pause = pause ? false : true;
-                  print(pause ? "Pause" : "Play");
+                  pauseState = pauseState ? false : true;
                 });
               }),
 // Button "Next Music"
