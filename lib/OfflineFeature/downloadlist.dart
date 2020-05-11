@@ -47,7 +47,8 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(widget.fileData),
+            musicList(widget.fileData, SizeConfig.screenHeight*437/640),
+            currentPlay(widget.fileData),
           ],
         ),
       ),
@@ -167,8 +168,9 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget musicList(Mp3Access fileData){
-    return Expanded(
+  Widget musicList(Mp3Access fileData, double _height){
+    return Container(
+      height: _height,
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index){   
           var song = filterList[index];
@@ -212,7 +214,7 @@ class _DownloadlistState extends State<Downloadlist> {
             );
           },
         itemCount: filterList.length // musicLst.length
-      )
+      ),
     );
   }
 
@@ -278,5 +280,62 @@ class _DownloadlistState extends State<Downloadlist> {
 //-----------------------------------------------------------
     );
   }
+
+  Widget currentPlay(Mp3Access fileData){
+    var song = filterList[fileData.currentIndex];
+    return Container(
+      color: ColorCustom.orange,
+      height: 72,
+      child: Row(
+        children: <Widget>[
+          Container(
+            height: 72,
+            width: 72,
+            decoration: BoxDecoration(
+              color: ColorCustom.orange,
+              border: Border.all(
+              color: Colors.black,
+              ),
+            ),
+            child: Icon(
+              Icons.music_note,
+              color: Colors.black,
+              size: 50,
+            ),
+          ),
+          SizedBox(width: 15),
+          Container(
+            width: 200,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 12),
+                Text(
+                  song.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                  ),
+                ),
+                Text(
+                  song.artist,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                  ),
+                )
+              ]
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
 
 }

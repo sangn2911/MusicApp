@@ -25,6 +25,8 @@ class Login extends StatelessWidget {
           SizedBox(height: SizeConfig.screenHeight*57/640,),
           signInButton(),
           SizedBox(height: SizeConfig.screenHeight*8/640,),
+          signInWithVoiceButton(),
+          SizedBox(height: SizeConfig.screenHeight*8/640,),
           signUp(),
           SizedBox(height: SizeConfig.screenHeight*8/640,),
           offlineButton(context,rootIW),
@@ -114,6 +116,33 @@ class Login extends StatelessWidget {
       ),
       showCursor: true,
       cursorColor: Colors.black,
+    );
+  }
+
+
+  Widget signInWithVoiceButton(){
+    return ButtonTheme(
+      height: 40,
+      minWidth: 170,
+      buttonColor: Colors.white,
+      child: RaisedButton(
+        onPressed: ((){
+          print("Voice Sign in");
+        }),
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.black)
+        ),
+        child: Text(
+          "Sign in with voice",
+          style: TextStyle(
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
     );
   }
 

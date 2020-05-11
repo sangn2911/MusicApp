@@ -19,7 +19,11 @@ class Mp3Access{
     _currentFileIndex = index;
   }
 
-  int get currentIndex => _currentFileIndex;
+  int get currentIndex {
+    if (_currentFileIndex == -1 || _currentFileIndex > _mp3Files.length)
+      return 0;
+    return _currentFileIndex;
+  } 
 
   Song get nextSong {
     int nextIndex = 0;
