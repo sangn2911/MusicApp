@@ -1,14 +1,11 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/OfflineFeature/currentPlaying.dart';
 import 'package:MusicApp/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/OfflineFeature/mp3Access.dart';
-//import 'package:MusicApp/ParentWidget.dart';
-// import 'main.dart';
-
-// var song = {"Beautiful In White", "Happy Together"};
-// var singer = {"Westlife", "The Turtles"};
+import 'package:MusicApp/OfflineFeature/currentPlaying.dart';
 
 class Downloadlist extends StatefulWidget {
   final Mp3Access fileData;
@@ -23,6 +20,16 @@ class _DownloadlistState extends State<Downloadlist> {
 
   List<dynamic> filterList = List();
   List<dynamic> songList = List();
+  
+  var currentSong;
+
+  bool isUsed;
+
+  bool isEmpty() {
+    if (widget.fileData.songs.length <= 0)
+      return true;
+    return false;
+  }
 
   @override
   void initState() {
@@ -30,6 +37,9 @@ class _DownloadlistState extends State<Downloadlist> {
     setState(() {
       songList = widget.fileData.songs;
       filterList = songList;
+      isUsed = false;
+      if (!isEmpty())
+        currentSong = widget.fileData.songs[widget.fileData.currentIndex];
     });
   }
 
@@ -47,8 +57,8 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(widget.fileData, SizeConfig.screenHeight*437/640),
-            currentPlay(widget.fileData),
+            isEmpty() ? empTylist() : musicList(widget.fileData, SizeConfig.screenHeight*437/640),
+            (isEmpty() || !isUsed) ? Container(height: 72,) : CurrentPlayBar(widget.fileData,currentSong),
           ],
         ),
       ),
@@ -90,8 +100,8 @@ class _DownloadlistState extends State<Downloadlist> {
         onPressed: ((){
           print("Shuffle Butoon");
         }),
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
         child: Text(
@@ -168,52 +178,76 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
+  Widget empTylist(){
+    return Expanded(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 85,),
+            Text(
+                  //"Song $index",
+                  "Song Not Found",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 30.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+          ],
+        ),
+      )
+      );
+  }
+
   Widget musicList(Mp3Access fileData, double _height){
-    return Container(
-      height: _height,
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index){   
-          var song = filterList[index];
+    return Expanded(
+      child: Container(
+        height: _height,
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index){   
+            var song = filterList[index];
 
-          return ListTile(
-              leading: musicIcon(),
-              title: Text(
-                //"Song $index",
-                song.title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
+            return ListTile(
+                leading: musicIcon(),
+                title: Text(
+                  //"Song $index",
+                  song.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              subtitle: Text(
-                //"Singer $index",
-                song.artist,
-                style: TextStyle(
-                  color: ColorCustom.grey1,
-                  fontSize: 14.0,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
+                subtitle: Text(
+                  //"Singer $index",
+                  song.artist,
+                  style: TextStyle(
+                    color: ColorCustom.grey1,
+                    fontSize: 14.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              trailing: moreSetting(),
-
-//Function for song cards
-              onTap: () {
-                print("Choose Song $index");
-                fileData.setCurrentIndex(index);
-                Navigator.push(
-                  context, 
-                  new MaterialPageRoute(
-                    builder: (context) => new MusicPlayer(fileData, song) 
-                  )
-                );
-              },
-//-----------------------------------------------------------
-            );
-          },
-        itemCount: filterList.length // musicLst.length
+                trailing: moreSetting(),
+                onTap: () {                                                         //Function for song cards
+                  fileData.setCurrentIndex(index);
+                  setState(() {
+                    currentSong = fileData.songs[fileData.currentIndex];
+                    isUsed = true;
+                  });
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(
+                      builder: (context) => MusicPlayer(fileData, song, nowPlaying: false,)
+                    )
+                  );
+                },
+              );
+            },
+          itemCount: filterList.length                                              // musicLst.length
+        ),
       ),
     );
   }
@@ -278,62 +312,6 @@ class _DownloadlistState extends State<Downloadlist> {
         else print("Add to playlist");
       },
 //-----------------------------------------------------------
-    );
-  }
-
-  Widget currentPlay(Mp3Access fileData){
-    var song = filterList[fileData.currentIndex];
-    return Container(
-      color: ColorCustom.orange,
-      height: 72,
-      child: Row(
-        children: <Widget>[
-          Container(
-            height: 72,
-            width: 72,
-            decoration: BoxDecoration(
-              color: ColorCustom.orange,
-              border: Border.all(
-              color: Colors.black,
-              ),
-            ),
-            child: Icon(
-              Icons.music_note,
-              color: Colors.black,
-              size: 50,
-            ),
-          ),
-          SizedBox(width: 15),
-          Container(
-            width: 200,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 12),
-                Text(
-                  song.title,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ),
-                Text(
-                  song.artist,
-                  style: TextStyle(
-                    color: Colors.black.withOpacity(0.75),
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15,
-                  ),
-                )
-              ]
-            ),
-          )
-        ],
-      ),
     );
   }
 

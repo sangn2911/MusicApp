@@ -8,6 +8,9 @@ import 'sizeConfig.dart';
 //import 'main.dart';
 
 enum PlayerState { stopped, playing, paused }
+enum PlayerMode { shuffle, repeat, normal }
+
+Song song;
 
 class MusicPlayer extends StatefulWidget {
   final Mp3Access fileData;
@@ -20,19 +23,21 @@ class MusicPlayer extends StatefulWidget {
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-  // String song = "Beautiful In White";//Music.song;
-  // String singer = "Westlife";//Music.singer;
-
-  Song song;
   
 //Package Music
   MusicFinder audioPlayer;
   Duration duration;
   Duration position;
   PlayerState playerState;
+  PlayerMode playerMode;
+
+  get currentSong => song;
 
   get isPlaying => playerState == PlayerState.playing;
   get isPaused => playerState == PlayerState.paused;
+
+  get isShuffle => playerMode == PlayerMode.shuffle;
+  get isRepeat => playerMode == PlayerMode.repeat;
 
   get durationText =>
       duration != null ? duration.toString().split('.').first : '';
@@ -43,7 +48,12 @@ class _MusicPlayerState extends State<MusicPlayer> {
 
   void onComplete() {
     setState(() => playerState = PlayerState.stopped);
-    play(widget.fileData.nextSong);
+    if (isRepeat) 
+      play(song);
+    else if (isShuffle)
+      play(widget.fileData.randomSong);
+    else
+      play(widget.fileData.nextSong);
   }
 
   initPlayer() async {
@@ -107,6 +117,13 @@ class _MusicPlayerState extends State<MusicPlayer> {
         playerState = PlayerState.stopped;
         position = new Duration();
       });
+  }
+
+  Future repeat(Mp3Access f) async {
+    stop();
+    setState(() {
+      play(f.nextSong);
+    });
   }
 
   Future next(Mp3Access f) async {
@@ -219,7 +236,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
 
   Widget songInfo(){
     return Container(
-      width: 250,
+      padding: EdgeInsets.only(left: 50, right: 50),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -260,11 +277,12 @@ class _MusicPlayerState extends State<MusicPlayer> {
     return Column(
       children: <Widget>[
 //Button Sets
-        Padding(
-          padding: const EdgeInsets.only(left: 50,right: 50),
+        Container(
+          width: 360,
           child: Column(
             children: <Widget>[
-              Slider(
+              duration == null ? Container() 
+              : Slider(
                 min: 0.0,
                 max: duration.inMilliseconds.toDouble(),
                 value: position?.inMilliseconds?.toDouble() ?? 0,
@@ -272,7 +290,30 @@ class _MusicPlayerState extends State<MusicPlayer> {
                   audioPlayer.seek((value / 1000).roundToDouble()),
                 activeColor: Colors.white,
               ),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    positionText,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.w200,
+                      fontSize: 15,
+                    ),
+                  ),
+                  SizedBox(width: 200),
+                  Text(
+                    durationText,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.w200,
+                      fontSize: 15,
+                    ),
+                  ),
+                ]
+              )
             ],
           ),
         ),
@@ -283,10 +324,13 @@ class _MusicPlayerState extends State<MusicPlayer> {
               iconSize: 28,
               icon: Icon(
                 IconCustom.shuffle,
-                color: Colors.white,
+                color: isShuffle ? ColorCustom.orange : Colors.white,
               ), 
-              onPressed: null
-              ),
+              onPressed: (){
+                if (!isShuffle) playerMode = PlayerMode.shuffle;
+                else playerMode = PlayerMode.normal;
+              }
+            ),
             SizedBox(width: 10),
 // Button "Back Music"
             IconButton(
@@ -318,10 +362,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
               iconSize: 28,
               icon: Icon(
                 IconCustom.repeat,
-                color: Colors.white,
+                color: isRepeat ? ColorCustom.orange : Colors.white,
               ), 
               onPressed: (){
                 print("Repeat");
+                setState(() {
+                  if (!isRepeat) playerMode = PlayerMode.repeat;
+                  else playerMode = PlayerMode.normal;
+                });
               }
             ),
 

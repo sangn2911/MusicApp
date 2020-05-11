@@ -129,8 +129,8 @@ class Login extends StatelessWidget {
         onPressed: ((){
           print("Voice Sign in");
         }),
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
         child: Text(
@@ -155,8 +155,8 @@ class Login extends StatelessWidget {
         onPressed: ((){
           print("Sign In");
         }),
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
         child: Text(
@@ -213,13 +213,13 @@ class Login extends StatelessWidget {
         onPressed: ((){
           Navigator.push(
           context,
-          new MaterialPageRoute(
-              builder: (context) => new Downloadlist(rootIW.fileData)
-              )
+          MaterialPageRoute(
+            builder: (context) => Downloadlist(rootIW.fileData)
+            )
           );
         }),
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
         child: Text(
