@@ -1,15 +1,16 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/OfflineFeature/currentPlaying.dart';
+import 'package:MusicApp/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
-// import 'main.dart';
-
-// var song = {"Beautiful In White", "Happy Together"};
-// var singer = {"Westlife", "The Turtles"};
+import 'package:MusicApp/OfflineFeature/mp3Access.dart';
+import 'package:MusicApp/ParentWidget.dart';
 
 class Downloadlist extends StatefulWidget {
-  Downloadlist({Key key, this.title}) : super(key: key);
-  final String title;
+  final Mp3Access fileData;
+  final ParentdWidget rootIW;
+  Downloadlist(this.fileData, this.rootIW);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -17,15 +18,31 @@ class Downloadlist extends StatefulWidget {
 
 class _DownloadlistState extends State<Downloadlist> {
 
+  List<dynamic> filterList = List();
+  List<dynamic> songList = List();
+
+  bool isUsed;
+
+  bool isEmpty() {
+    if (widget.fileData.songs.length <= 0)
+      return true;
+    return false;
+  }
+
   @override
   void initState() {
     super.initState();
-    // getMusicList();
+    setState(() {
+      songList = widget.rootIW.fileData.songs;
+      filterList = songList;
+      isUsed = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.black,
@@ -36,7 +53,8 @@ class _DownloadlistState extends State<Downloadlist> {
             SizedBox(height: SizeConfig.screenHeight*7/640),
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
-            musicList(),
+            isEmpty() ? empTylist() : musicList(widget.fileData, SizeConfig.screenHeight*437/640),
+            (isEmpty() || !isUsed) ? Container() : CurrentPlayBar(widget.rootIW),
           ],
         ),
       ),
@@ -50,7 +68,7 @@ class _DownloadlistState extends State<Downloadlist> {
       leading: BackButton(
         color: Colors.white,
         onPressed: () {
-          print("Back Button in Downloaded Song");
+          Navigator.pop(context);
         },
       ),
 
@@ -78,8 +96,8 @@ class _DownloadlistState extends State<Downloadlist> {
         onPressed: ((){
           print("Shuffle Butoon");
         }),
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
         child: Text(
@@ -136,8 +154,13 @@ class _DownloadlistState extends State<Downloadlist> {
                 border: InputBorder.none,
                 ),
 //Function for textfield
-              onChanged: (String str){
-                print(str);
+              onChanged: (string){
+                setState(() {
+                  filterList = songList.where((element) => 
+                  (element.title.toLowerCase().contains(string.toLowerCase()) || 
+                  element.artist.toLowerCase().contains(string.toLowerCase())))
+                  .toList();
+                });
               },
               showCursor: true,
               cursorColor: Colors.black,
@@ -151,46 +174,76 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget musicList(){
+  Widget empTylist(){
     return Expanded(
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index){                      
-          return ListTile(
-              leading: musicIcon(),
-              title: Text(
-                "Song $index",
-                // musicLst[index]['Song'],
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 85,),
+            Text(
+                  //"Song $index",
+                  "Song Not Found",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 30.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w200,
+                  ),
                 ),
-              ),
-              subtitle: Text(
-                "Singer $index",
-                // musicLst[index]['Singer'],
-                style: TextStyle(
-                  color: ColorCustom.grey1,
-                  fontSize: 14.0,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              trailing: moreSetting(),
-
-//Function for song cards
-              onTap: () {
-                print("Choose Song $index");
-                // Music.song = "Song $index"; // musicLst[index]['Song'];
-                // Music.singer = "Singer $index"; // musicLst[index]['Singer'];
-                Navigator.pushNamed(context, '/musicplayer');
-              },
-//-----------------------------------------------------------
-            );
-          },
-        itemCount: 10 // musicLst.length
+          ],
+        ),
       )
+      );
+  }
+
+  Widget musicList(Mp3Access fileData, double _height){
+    return Expanded(
+      child: Container(
+        height: _height,
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index){   
+            var song = filterList[index];
+
+            return ListTile(
+                leading: musicIcon(),
+                title: Text(
+                  //"Song $index",
+                  song.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                subtitle: Text(
+                  //"Singer $index",
+                  song.artist,
+                  style: TextStyle(
+                    color: ColorCustom.grey1,
+                    fontSize: 14.0,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                trailing: moreSetting(),
+                onTap: () {                                                         //Function for song cards
+                  fileData.setCurrentIndex(index);
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(
+                      builder: (context) => MusicPlayer(fileData, song, nowPlaying: false,)
+                    )
+                  );
+                  setState(() {
+                    isUsed = true;
+                  });
+                },
+              );
+            },
+          itemCount: filterList.length                                              // musicLst.length
+        ),
+      ),
     );
   }
 
@@ -256,5 +309,6 @@ class _DownloadlistState extends State<Downloadlist> {
 //-----------------------------------------------------------
     );
   }
+
 
 }
