@@ -1,13 +1,9 @@
 import 'package:MusicApp/Custom/color.dart';
-import 'package:MusicApp/OfflineFeature/mp3Access.dart';
 import 'package:flutter/material.dart';
-import 'package:MusicApp/musicPlayer.dart';
-import 'package:flute_music_player/flute_music_player.dart';
 import 'package:MusicApp/musicPlayer.dart';
 import 'package:MusicApp/ParentWidget.dart';
 
 class CurrentPlayBar extends StatefulWidget {
-
 
   final ParentdWidget rootIW;
   CurrentPlayBar(this.rootIW);

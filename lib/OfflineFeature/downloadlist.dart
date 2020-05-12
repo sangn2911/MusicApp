@@ -71,7 +71,6 @@ class _DownloadlistState extends State<Downloadlist> {
           Navigator.pop(context);
         },
       ),
-
       title: Text(
         "Downloaded Songs",
         style: TextStyle(

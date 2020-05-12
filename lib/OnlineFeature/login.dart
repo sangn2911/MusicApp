@@ -1,7 +1,7 @@
 import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 import 'package:MusicApp/ParentWidget.dart';
 import 'package:flutter/material.dart';
-import 'sizeConfig.dart';
+import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 
@@ -39,17 +39,6 @@ class Login extends StatelessWidget {
     return Container(
       height: 150.0,
       width: 250.0,
-      // child: SvgPicture.asset(
-      //   "images/b.svg",
-      //   color: Color(0xFFf6a115),
-      //   fit: BoxFit.none,
-      //   ),
-      // decoration: BoxDecoration(
-      //   image: DecorationImage(
-      //     image: AssetImage("images/b.png"),
-      //     fit: BoxFit.none,
-      //     )
-      //   ),
       child: Icon(
         IconCustom.mymusic,
         color: ColorCustom.orange,

@@ -3,6 +3,7 @@ import 'package:MusicApp/OfflineFeature/mp3Access.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flute_music_player/flute_music_player.dart';
+
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'sizeConfig.dart';
 //import 'main.dart';
@@ -135,7 +136,6 @@ class MusicPlayerState extends State<MusicPlayer> {
   }
 
 //--------------------------------
-  Song file;
 
   double value = 0.0; // Track current music
   bool pauseState = true;
@@ -165,12 +165,10 @@ class MusicPlayerState extends State<MusicPlayer> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
       appBar: AppBar(
-
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(
@@ -197,7 +195,7 @@ class MusicPlayerState extends State<MusicPlayer> {
             SizedBox(height: SizeConfig.screenHeight*28/640),
             songInfo(),
             SizedBox(height: SizeConfig.screenHeight*20/640),
-            Row(
+            Row(                                                              //Playlist and RateButton
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconButton(
@@ -272,47 +270,58 @@ class MusicPlayerState extends State<MusicPlayer> {
     return Column(
       children: <Widget>[
 //Button Sets
-        Container(
-          width: 360,
-          child: Column(
-            children: <Widget>[
-              duration == null ? Slider(value: 0, onChanged: null, activeColor: Colors.white,)
-              : Slider(
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble(),
-                value: position?.inMilliseconds?.toDouble() ?? 0,
-                onChanged: (double value) =>
-                  audioPlayer.seek((value / 1000).roundToDouble()),
-                activeColor: Colors.white,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    positionText,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 15,
-                    ),
-                  ),
-                  SizedBox(width: 200),
-                  Text(
-                    durationText,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 15,
-                    ),
-                  ),
-                ]
-              )
-            ],
+        musicSlider(),
+        controlButton(),
+      ],
+    );
+  }
+
+  Widget musicSlider(){
+    return Container(
+      width: 360,
+      child: Column(
+        children: <Widget>[
+          duration == null 
+          ? Slider(value: 0, onChanged: null, activeColor: Colors.white,)
+          : Slider(
+            min: 0.0,
+            max: duration.inMilliseconds.toDouble(),
+            value: position?.inMilliseconds?.toDouble() ?? 0,
+            onChanged: (double value) =>
+              audioPlayer.seek((value / 1000).roundToDouble()),
+            activeColor: Colors.white,
           ),
-        ),
-        Row(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                positionText,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w200,
+                  fontSize: 15,
+                ),
+              ),
+              SizedBox(width: 200),
+              Text(
+                durationText,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w200,
+                  fontSize: 15,
+                ),
+              ),
+            ]
+          )
+
+        ],
+      ),
+    );
+  }
+  Widget controlButton(){
+    return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             IconButton(
@@ -368,8 +377,7 @@ class MusicPlayerState extends State<MusicPlayer> {
             ),
 
           ],
-        ),
-      ],
-    );
+        );
   }
+
 }
