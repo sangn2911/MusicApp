@@ -5,12 +5,12 @@ import 'package:MusicApp/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/OfflineFeature/mp3Access.dart';
-import 'package:MusicApp/OfflineFeature/currentPlaying.dart';
+import 'package:MusicApp/ParentWidget.dart';
 
 class Downloadlist extends StatefulWidget {
   final Mp3Access fileData;
-
-  Downloadlist(this.fileData);
+  final ParentdWidget rootIW;
+  Downloadlist(this.fileData, this.rootIW);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -20,8 +20,6 @@ class _DownloadlistState extends State<Downloadlist> {
 
   List<dynamic> filterList = List();
   List<dynamic> songList = List();
-  
-  var currentSong;
 
   bool isUsed;
 
@@ -35,11 +33,9 @@ class _DownloadlistState extends State<Downloadlist> {
   void initState() {
     super.initState();
     setState(() {
-      songList = widget.fileData.songs;
+      songList = widget.rootIW.fileData.songs;
       filterList = songList;
       isUsed = false;
-      if (!isEmpty())
-        currentSong = widget.fileData.songs[widget.fileData.currentIndex];
     });
   }
 
@@ -58,7 +54,7 @@ class _DownloadlistState extends State<Downloadlist> {
             shuffleButton(),
             SizedBox(height: SizeConfig.screenHeight*7/640),
             isEmpty() ? empTylist() : musicList(widget.fileData, SizeConfig.screenHeight*437/640),
-            (isEmpty() || !isUsed) ? Container(height: 72,) : CurrentPlayBar(widget.fileData,currentSong),
+            (isEmpty() || !isUsed) ? Container() : CurrentPlayBar(widget.rootIW),
           ],
         ),
       ),
@@ -233,16 +229,15 @@ class _DownloadlistState extends State<Downloadlist> {
                 trailing: moreSetting(),
                 onTap: () {                                                         //Function for song cards
                   fileData.setCurrentIndex(index);
-                  setState(() {
-                    currentSong = fileData.songs[fileData.currentIndex];
-                    isUsed = true;
-                  });
                   Navigator.push(
                     context, 
                     MaterialPageRoute(
                       builder: (context) => MusicPlayer(fileData, song, nowPlaying: false,)
                     )
                   );
+                  setState(() {
+                    isUsed = true;
+                  });
                 },
               );
             },

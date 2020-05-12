@@ -22,7 +22,7 @@ class Login extends StatelessWidget {
           logoWidget(),
           SizedBox(height: SizeConfig.screenHeight*31/640,),
           textInput(),
-          SizedBox(height: SizeConfig.screenHeight*57/640,),
+          SizedBox(height: SizeConfig.screenHeight*33/640,),
           signInButton(),
           SizedBox(height: SizeConfig.screenHeight*8/640,),
           signInWithVoiceButton(),
@@ -214,7 +214,7 @@ class Login extends StatelessWidget {
           Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Downloadlist(rootIW.fileData)
+            builder: (context) => Downloadlist(rootIW.fileData, rootIW)
             )
           );
         }),

@@ -19,10 +19,10 @@ class MusicPlayer extends StatefulWidget {
   MusicPlayer(this.fileData, this._song, {this.nowPlaying});
 
   @override
-  _MusicPlayerState createState() => _MusicPlayerState();
+  MusicPlayerState createState() => MusicPlayerState();
 }
 
-class _MusicPlayerState extends State<MusicPlayer> {
+class MusicPlayerState extends State<MusicPlayer> {
   
 //Package Music
   MusicFinder audioPlayer;
@@ -43,15 +43,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
       duration != null ? duration.toString().split('.').first : '';
   get positionText =>
       position != null ? position.toString().split('.').first : '';
-    
-  bool isMuted = false;
 
   void onComplete() {
     setState(() => playerState = PlayerState.stopped);
     if (isRepeat) 
       play(song);
-    else if (isShuffle)
-      play(widget.fileData.randomSong);
+    else if (isShuffle) {
+      play(widget.fileData.randomSong);   
+    }
     else
       play(widget.fileData.nextSong);
   }
@@ -119,23 +118,20 @@ class _MusicPlayerState extends State<MusicPlayer> {
       });
   }
 
-  Future repeat(Mp3Access f) async {
-    stop();
-    setState(() {
-      play(f.nextSong);
-    });
-  }
-
   Future next(Mp3Access f) async {
     stop();
     setState(() {
-      play(f.nextSong);
+      song = f.nextSong;
+      play(song);
     });
   }
 
   Future prev(Mp3Access f) async {
     stop();
-    play(f.prevSong);
+    setState(() {
+      song = f.prevSong;
+      play(song);
+    });
   }
 
 //--------------------------------
@@ -183,7 +179,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
             size: 30,
           ),
           onPressed: () {
-            print("Dropdown Button");
             Navigator.pop(context);
           },
         ),
@@ -270,7 +265,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
       IconCustom.album_1,
       size: 185,
       color: ColorCustom.orange,
-      );
+    );
   }
 
   Widget musicControl(){
@@ -281,7 +276,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
           width: 360,
           child: Column(
             children: <Widget>[
-              duration == null ? Container() 
+              duration == null ? Slider(value: 0, onChanged: null, activeColor: Colors.white,)
               : Slider(
                 min: 0.0,
                 max: duration.inMilliseconds.toDouble(),
@@ -365,7 +360,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 color: isRepeat ? ColorCustom.orange : Colors.white,
               ), 
               onPressed: (){
-                print("Repeat");
                 setState(() {
                   if (!isRepeat) playerMode = PlayerMode.repeat;
                   else playerMode = PlayerMode.normal;

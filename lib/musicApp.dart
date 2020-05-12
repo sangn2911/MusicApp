@@ -38,7 +38,7 @@ class _MusicAppState extends State<MusicApp> {
     if (!mounted) return; // only can setState() when mounted == true
 
     setState(() {
-      fileData = new Mp3Access((songs));
+      fileData = Mp3Access((songs));
       _isLoading = false;
     });
 
@@ -46,6 +46,6 @@ class _MusicAppState extends State<MusicApp> {
 
   @override
   Widget build(BuildContext context) {
-    return new ParentdWidget(fileData, _isLoading, Login());
+    return ParentdWidget(fileData, _isLoading, Login());
   }
 }

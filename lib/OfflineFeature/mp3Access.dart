@@ -26,28 +26,25 @@ class Mp3Access{
   } 
 
   Song get nextSong {
-    int nextIndex = 0;
     if (_currentFileIndex < length) {
       _currentFileIndex++;
-      nextIndex = _currentFileIndex;
     }
-    if (_currentFileIndex >= length) nextIndex = 0;
-    return _mp3Files[nextIndex];
+    if (_currentFileIndex >= length) _currentFileIndex = 0;
+    return _mp3Files[_currentFileIndex];
   }
 
   Song get randomSong {
     Random r = new Random();
-    return _mp3Files[r.nextInt(_mp3Files.length)];
+    _currentFileIndex = r.nextInt(_mp3Files.length);
+    return _mp3Files[_currentFileIndex];
   }
 
   Song get prevSong {
-    int prevIndex = _mp3Files.length;
     if (_currentFileIndex > 0) {
       _currentFileIndex--;
-      prevIndex = _currentFileIndex;
     }
-    if (_currentFileIndex < 0) prevIndex = _mp3Files.length;
-    return _mp3Files[prevIndex];
+    if (_currentFileIndex == 0) _currentFileIndex = _mp3Files.length - 1;
+    return _mp3Files[_currentFileIndex];
   }
 
   MusicFinder get audioPlayer => musicFinder;

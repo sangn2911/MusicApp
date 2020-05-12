@@ -4,29 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:MusicApp/musicPlayer.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:MusicApp/musicPlayer.dart';
+import 'package:MusicApp/ParentWidget.dart';
 
 class CurrentPlayBar extends StatefulWidget {
-  final Song currentSong;
-  final Mp3Access fileData;
-  CurrentPlayBar(this.fileData, this.currentSong);
+
+
+  final ParentdWidget rootIW;
+  CurrentPlayBar(this.rootIW);
 
   @override
-  _CurrentPlayBarState createState() => _CurrentPlayBarState();
+  CurrentPlayBarState createState() => CurrentPlayBarState();
 }
 
-class _CurrentPlayBarState extends State<CurrentPlayBar> {
+class CurrentPlayBarState extends State<CurrentPlayBar> {
+
+  var currentSong;
+
   @override
   Widget build(BuildContext context) {
-    var currentSong = song;
+    currentSong = song;
     return GestureDetector(
         onTap: (){
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) 
-                    => MusicPlayer(widget.fileData, currentSong, nowPlaying: true,)
+                    => MusicPlayer(widget.rootIW.fileData, currentSong, nowPlaying: true,)
               )
-          );
+          ).then((value) {
+              setState(() {
+                currentSong = song;
+              });
+            });
         },
         child: Container(
         color: ColorCustom.orange,
