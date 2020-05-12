@@ -26,6 +26,7 @@ dependencies:
   flutter_svg: ^0.17.4
   # keyboard_avoider: ^0.1.2
   flute_music_player: ^0.0.6
+  http: ^0.12.1
 
 dev_dependencies:
   flutter_test:
