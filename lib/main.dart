@@ -2,11 +2,11 @@ import 'package:MusicApp/musicApp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-// import 'package:MusicApp/signUp.dart';
+import 'package:MusicApp/OnlineFeature/signUp.dart';
 //import 'musicPlayer.dart';
 //import 'package:MusicApp/OfflineFeature/downloadlist.dart';
-// import 'login.dart';
-// import 'package:MusicApp/OnlineFeature/httpTest.dart';
+import 'package:MusicApp/OnlineFeature/login.dart';
+import 'package:MusicApp/OnlineFeature/httpTest.dart';
 
 class Music {
   static String song;
@@ -26,14 +26,14 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => MusicApp(),
+        //'/': (context) => MusicApp(),
         //'/downloadlist': (context) => Downloadlist(),
         //'/musicplayer': (context) => MusicPlayer(),
-        // '/login': (context) => Login(),
-        // '/signup': (context) => SignUp(),
-        //'/testhttp':  (context) => MyAppTest(),
+        '/login': (context) => Login(),
+        '/signup': (context) => SignUp(),
+        '/testhttp':  (context) => MyAppTest(),
       },
     );
   }

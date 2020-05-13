@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 Future<Album> createAlbum() async {
   final http.Response response = await http.post(
-    'http://25.40.136.16:5000/register',
+    'http://10.127.29.30:5000/register',
     body: {
       'username': 'sangNguyen',
       'password': '12345',
