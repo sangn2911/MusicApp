@@ -35,7 +35,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
         },
         child: Container(
         color: ColorCustom.orange,
-        height: 72,
+        height: 70,
         child: Row(
           children: <Widget>[
             Container(

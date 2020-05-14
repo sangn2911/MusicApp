@@ -67,10 +67,10 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Username or Email:"),
-            textField(usernameInput,hint: "example@example.com"),
+            textField(input: usernameInput,hint: "example@example.com"),
             SizedBox(height: SizeConfig.screenHeight*38/640,),
             text("Password:"),
-            textField(passwordInput),
+            textField(input: passwordInput),
           ],
         ),
       ),
@@ -87,7 +87,7 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget textField(TextEditingController input, {String hint = ""}){
+  Widget textField({TextEditingController input, String hint = ""}){
     return TextField(
       controller: input,
       style: TextStyle(
@@ -145,7 +145,7 @@ class Login extends StatelessWidget {
           final username = usernameInput.text;
           final password = passwordInput.text;
 
-          final int isSuccess = await createUser(username, password, false);
+          final int isSuccess = await verifyUser(username, password);
 
           if (isSuccess == 1)
             createAlertDialog("Check your info",context);

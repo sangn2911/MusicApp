@@ -11,6 +11,7 @@ import 'package:MusicApp/OnlineFeature/httpService.dart';
 
 class SignUp extends StatelessWidget {
 
+  final TextEditingController emailInput = TextEditingController();
   final TextEditingController usernameInput = TextEditingController();
   final TextEditingController passwordInput = TextEditingController();
   final TextEditingController passwordInput2 = TextEditingController();
@@ -32,7 +33,7 @@ class SignUp extends StatelessWidget {
           SizedBox(height: SizeConfig.screenHeight*35/640,),
           signUpButton(context),
           SizedBox(height: SizeConfig.screenHeight*8/640,),
-          signIn()
+          signIn(context)
         ],
       ),
       ),
@@ -59,7 +60,7 @@ class SignUp extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Email:"),
-            textField(hint: "example@example.com"),
+            textField(hint: "example@example.com", input: emailInput),
             SizedBox(height: SizeConfig.screenHeight*15/640,),
             text("Username:"),
             textField(hint: "", input: usernameInput),
@@ -119,7 +120,6 @@ class SignUp extends StatelessWidget {
     );
   }
 
-
   Widget signUpButton(BuildContext context){
     return ButtonTheme(
       height: 35,
@@ -127,12 +127,13 @@ class SignUp extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async {
+          final email = emailInput.text;
           final username = usernameInput.text;
           final password = passwordInput.text;
           if (password != passwordInput2.text)
             createAlertDialog("Check confirm password again",context);
           else {
-            final int isSuccess = await createUser(username, password, true);
+            final int isSuccess = await createUser(email, username, password);
             if (isSuccess == 1)
               createAlertDialog("Check your info",context);
             else if (isSuccess == 0) {
@@ -160,7 +161,7 @@ class SignUp extends StatelessWidget {
     );
   }
 
-  Widget signIn(){
+  Widget signIn(BuildContext context){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -175,7 +176,7 @@ class SignUp extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            print("Sign in");
+            Navigator.pop(context);
           },
           child: Text(
             "Sign in here!",

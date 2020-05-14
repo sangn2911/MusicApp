@@ -200,9 +200,9 @@ class _DownloadlistState extends State<Downloadlist> {
       child: Container(
         height: _height,
         child: ListView.builder(
+          itemCount: filterList.length,
           itemBuilder: (BuildContext context, int index){   
             var song = filterList[index];
-
             return ListTile(
                 leading: musicIcon(),
                 title: Text(
@@ -239,12 +239,13 @@ class _DownloadlistState extends State<Downloadlist> {
                   });
                 },
               );
-            },
-          itemCount: filterList.length                                              // musicLst.length
+            },                                     
         ),
       ),
     );
   }
+
+
 
   Widget musicIcon(){
     return Container(
