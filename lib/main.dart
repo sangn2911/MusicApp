@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 // import 'package:MusicApp/OnlineFeature/signUp.dart';
 //import 'musicPlayer.dart';
 //import 'package:MusicApp/OfflineFeature/downloadlist.dart';
-// import 'package:MusicApp/OnlineFeature/login.dart';
+import 'package:MusicApp/OnlineFeature/login.dart';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
 import 'package:MusicApp/OnlineFeature/homePage.dart';
 
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         //'/': (context) => MusicApp(),
         //'/downloadlist': (context) => Downloadlist(),
         //'/musicplayer': (context) => MusicPlayer(),
-        // '/login': (context) => Login(),
+        '/login': (context) => Login(),
         // '/signup': (context) => SignUp(),
         // '/testhttp':  (context) => MyAppTest(),
         '/homepage':  (context) => HomePage(),
