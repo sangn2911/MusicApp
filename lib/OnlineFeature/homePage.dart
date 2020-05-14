@@ -100,6 +100,7 @@ class HomePage extends StatelessWidget {
   Widget text(String str, Color color , double size, FontWeight fontweight){
     return Text(
       str,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: color,
         fontSize: size,
@@ -137,9 +138,8 @@ class HomePage extends StatelessWidget {
   Widget musicPresentation2(IconData icon, String title, String artist){
     return Container(
       width: 130/640 * SizeConfig.screenHeight,
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.start,
-        direction: Axis.vertical,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
           IconButton(
             padding: EdgeInsets.all(0),
@@ -154,12 +154,42 @@ class HomePage extends StatelessWidget {
             onPressed: (){},
           ),
           SizedBox(height: 5),
-          text(title, Colors.white, 20, FontWeight.w700),
-          text(artist, ColorCustom.grey1, 14, FontWeight.w400),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget> [
+              Container(
+                width: 86,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    text(title, Colors.white, 20, FontWeight.w700),
+                    text(artist, ColorCustom.grey1, 14, FontWeight.w400),
+                  ]
+                ),
+              ),
+              SizedBox(
+                  height: 25,
+                  width: 25,
+                  child: IconButton(
+                  padding: EdgeInsets.all(0),
+                  icon: Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                    size: 25,
+                    ), 
+                  onPressed: (){
+                    print("Buy $title");
+                  }),
+              )
+            ]
+          )
         ]
       ),
     );
   }
+
+  
+
 
   Widget buttonSet(){
     return Container(
