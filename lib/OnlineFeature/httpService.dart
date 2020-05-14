@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 
-String url = 'http://10.127.29.30:5000/';
+String url = 'http://10.127.29.30:5000/'; //localhost
 
 Future<int> createUser(String email, String name, String password) async{
 

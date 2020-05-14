@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/homepage',
+      initialRoute: '/login',
       routes: {
         //'/': (context) => MusicApp(),
         //'/downloadlist': (context) => Downloadlist(),
