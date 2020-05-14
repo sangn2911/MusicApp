@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:MusicApp/OnlineFeature/signUp.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 
 class Login extends StatelessWidget {
+
+  final TextEditingController usernameInput = TextEditingController();
+  final TextEditingController passwordInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -13,37 +18,44 @@ class Login extends StatelessWidget {
     //SizeConfig().printAllDetail();
     final rootIW = ParentdWidget.of(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
-      body: Column(
-        crossAxisAlignment:CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(height: SizeConfig.screenHeight*52/640,),
-          logoWidget(),
-          SizedBox(height: SizeConfig.screenHeight*31/640,),
-          textInput(),
-          SizedBox(height: SizeConfig.screenHeight*33/640,),
-          signInButton(),
-          SizedBox(height: SizeConfig.screenHeight*8/640,),
-          signInWithVoiceButton(),
-          SizedBox(height: SizeConfig.screenHeight*8/640,),
-          signUp(),
-          SizedBox(height: SizeConfig.screenHeight*8/640,),
-          offlineButton(context,rootIW),
-        ],
+      body: SingleChildScrollView(
+          child: Column(
+          crossAxisAlignment:CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: SizeConfig.screenHeight*52/640,),
+            logoWidget(),
+            SizedBox(height: SizeConfig.screenHeight*31/640,),
+            textInput(),
+            SizedBox(height: SizeConfig.screenHeight*33/640,),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: SizeConfig.screenWidth / 2 - 82),
+                  child: signInButton(context),
+                ),
+                signInWithVoiceButton(),
+              ]
+            ),
+            SizedBox(height: SizeConfig.screenHeight*8/640,),
+            signUp(context),
+            SizedBox(height: SizeConfig.screenHeight*8/640,),
+            offlineButton(context,rootIW),
+          ],
+        ),
       ),
     );
   }
 
   Widget logoWidget(){
-    return Container(
-      height: 150.0,
+    return Container(      
       width: 250.0,
+      height: 150.0,
       child: Icon(
         IconCustom.mymusic,
         color: ColorCustom.orange,
         size: 100,
-        ),
+      ),
     );
   }
 
@@ -55,10 +67,10 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Username or Email:"),
-            textField(hint: "example@example.com"),
+            textField(input: usernameInput,hint: "example@example.com"),
             SizedBox(height: SizeConfig.screenHeight*38/640,),
             text("Password:"),
-            textField(),
+            textField(input: passwordInput),
           ],
         ),
       ),
@@ -75,8 +87,9 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget textField({String hint = ""}){
+  Widget textField({TextEditingController input, String hint = ""}){
     return TextField(
+      controller: input,
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'Lato',
@@ -108,41 +121,40 @@ class Login extends StatelessWidget {
     );
   }
 
-
   Widget signInWithVoiceButton(){
-    return ButtonTheme(
-      height: 40,
-      minWidth: 170,
-      buttonColor: Colors.white,
-      child: RaisedButton(
-        onPressed: ((){
-          print("Voice Sign in");
-        }),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.black)
+    return IconButton(
+        onPressed: (){
+          print("Voice Authentication");
+        },
+        iconSize: 35,
+        icon: Icon(
+          Icons.mic,
+          color: Colors.green.withBlue(135).withOpacity(0.9),
         ),
-        child: Text(
-          "Sign in with voice",
-          style: TextStyle(
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-      ),
-    );
+      );
   }
 
-  Widget signInButton(){
+  Widget signInButton(BuildContext context){
     return ButtonTheme(
       height: 35,
-      minWidth: 165,
+      minWidth: 164,
       buttonColor: Colors.white,
       child: RaisedButton(
-        onPressed: ((){
-          print("Sign In");
+        onPressed: (() async{
+          
+          final username = usernameInput.text;
+          final password = passwordInput.text;
+
+          final int isSuccess = await verifyUser(username, password);
+
+          if (isSuccess == 1)
+            createAlertDialog("Check your info",context);
+          else if (isSuccess == 0) {
+            createAlertDialog("Sign In Successfully",context);
+          }
+          else
+            createAlertDialog("Fail",context);
+
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -161,7 +173,7 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget signUp(){
+  Widget signUp(BuildContext context){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -176,7 +188,12 @@ class Login extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            print("Sign Up");
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SignUp(),
+                )
+              );
             },
           child: Text(
             "Sign Up",
