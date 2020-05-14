@@ -163,7 +163,7 @@ class HomePage extends StatelessWidget {
 
   Widget buttonSet(){
     return Container(
-      height: 85/640 * SizeConfig.screenHeight,
+      height: 75/640 * SizeConfig.screenHeight,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
