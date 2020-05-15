@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-// import 'package:MusicApp/musicApp.dart';
+import 'package:MusicApp/musicApp.dart';
 // import 'package:MusicApp/OnlineFeature/signUp.dart';
-//import 'musicPlayer.dart';
-//import 'package:MusicApp/OfflineFeature/downloadlist.dart';
+// import 'musicPlayer.dart';
+// import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 import 'package:MusicApp/OnlineFeature/login.dart';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
 import 'package:MusicApp/OnlineFeature/homePage.dart';
@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        //'/': (context) => MusicApp(),
-        //'/downloadlist': (context) => Downloadlist(),
-        //'/musicplayer': (context) => MusicPlayer(),
+        '/': (context) => MusicApp(),
+        // '/downloadlist': (context) => Downloadlist(),
+        // '/musicplayer': (context) => MusicPlayer(),
         '/login': (context) => Login(),
         // '/signup': (context) => SignUp(),
         // '/testhttp':  (context) => MyAppTest(),
