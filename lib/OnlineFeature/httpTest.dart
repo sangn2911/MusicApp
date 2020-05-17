@@ -19,6 +19,7 @@ Future<Album> createAlbum() async {
     print("Respone status ${response.statusCode}");
     print("Respone body ${response.body}");
     print("Respone headers ${response.headers}");
+    return null;
   }
 }
 
@@ -46,7 +47,7 @@ class MyAppTest extends StatefulWidget {
 }
 
 class _MyAppTestState extends State<MyAppTest> {
-  final TextEditingController _controller = TextEditingController();
+  //final TextEditingController _controller = TextEditingController();
   Future<Album> _futureAlbum;
 
   @override

@@ -8,6 +8,7 @@ import 'package:MusicApp/musicApp.dart';
 import 'package:MusicApp/OnlineFeature/login.dart';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
 import 'package:MusicApp/OnlineFeature/homePage.dart';
+import 'package:MusicApp/OnlineFeature/userProfile.dart';
 
 class Music {
   static String song;
@@ -27,15 +28,16 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
         '/': (context) => MusicApp(),
-        // '/downloadlist': (context) => Downloadlist(),
-        // '/musicplayer': (context) => MusicPlayer(),
-        '/login': (context) => Login(),
-        // '/signup': (context) => SignUp(),
-        // '/testhttp':  (context) => MyAppTest(),
-        '/homepage':  (context) => HomePage(),
+        // 'downloadlist': (context) => Downloadlist(),
+        // 'musicplayer': (context) => MusicPlayer(),
+        'login': (context) => Login(),
+        // 'signup': (context) => SignUp(),
+        // 'testhttp':  (context) => MyAppTest(),
+        'homepage':  (context) => HomePage(),
+        'userprofile': (context) => UserProfile(),
       },
     );
   }

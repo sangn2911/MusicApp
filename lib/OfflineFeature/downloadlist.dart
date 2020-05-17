@@ -8,6 +8,7 @@ import 'package:MusicApp/OfflineFeature/mp3Access.dart';
 import 'package:MusicApp/ParentWidget.dart';
 
 class Downloadlist extends StatefulWidget {
+
   final Mp3Access fileData;
   final ParentdWidget rootIW;
   Downloadlist(this.fileData, this.rootIW);
@@ -33,7 +34,7 @@ class _DownloadlistState extends State<Downloadlist> {
   void initState() {
     super.initState();
     setState(() {
-      songList = widget.rootIW.fileData.songs;
+      songList = widget.fileData.songs;
       filterList = songList;
       isUsed = false;
     });

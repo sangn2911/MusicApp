@@ -1,3 +1,4 @@
+import 'package:MusicApp/OnlineFeature/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
@@ -6,6 +7,18 @@ import 'package:MusicApp/sizeConfig.dart';
 
 class HomePage extends StatelessWidget {
 
+  Widget text(String str, Color color , double size, FontWeight fontweight){
+    return Text(
+      str,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        color: color,
+        fontSize: size,
+        fontFamily: 'Lato',
+        fontWeight: fontweight,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +28,7 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomPadding: false,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50.0),
-        child: appBar()
+        child: appBar(context)
       ),
       backgroundColor: Colors.black,
       body: Column(
@@ -67,7 +80,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget appBar(){
+  Widget appBar(BuildContext context){
     return AppBar(
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -85,8 +98,13 @@ class HomePage extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        onPressed: null
-        ),
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserProfile())
+          );
+        }
+      ),
       title: text("Home", Colors.white ,20, FontWeight.w700),
       actions: <Widget>[
         IconButton(
@@ -97,24 +115,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget text(String str, Color color , double size, FontWeight fontweight){
-    return Text(
-      str,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: color,
-        fontSize: size,
-        fontFamily: 'Lato',
-        fontWeight: fontweight,
-      ),
-    );
-  }
-
   Widget musicPresentation(IconData icon, String title){
     return Container(
       width: 130/640 * SizeConfig.screenHeight,
-      child: Wrap(
-        direction: Axis.vertical,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
           IconButton(
             padding: EdgeInsets.all(0),
@@ -126,7 +131,9 @@ class HomePage extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            onPressed: (){},
+            onPressed: (){
+              print("Select song $title");
+            },
           ),
           SizedBox(height: 5),
           text(title, Colors.white, 20, FontWeight.w700),
@@ -151,7 +158,9 @@ class HomePage extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            onPressed: (){},
+            onPressed: (){
+              print("Select song $title");
+            },
           ),
           SizedBox(height: 5),
           Row(

@@ -100,9 +100,9 @@ class Login extends StatelessWidget {
         hintText: hint,
         hintStyle: TextStyle(
         fontFamily: 'Lato',
-        fontWeight: FontWeight.w300,
-          fontSize: 18.0,
-          color: Colors.black,
+        fontWeight: FontWeight.w400,
+          fontSize: 20.0,
+          color: Colors.black.withOpacity(0.3),
         ),
         contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
         filled: true,
@@ -129,7 +129,7 @@ class Login extends StatelessWidget {
         iconSize: 35,
         icon: Icon(
           Icons.mic,
-          color: Colors.green.withBlue(135).withOpacity(0.9),
+          color: Colors.yellow,
         ),
       );
   }
@@ -141,35 +141,32 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          // createAlertDialog("Sign In Successfully",context)
+          createAlertDialog("Sign In Successfully",context)
+            .then((value) => Navigator.pushNamed(context, "homepage"));
+          // final username = usernameInput.text;
+          // final password = passwordInput.text;
+
+          // final int isSuccess = await verifyUser(username, password);
+
+          // if (isSuccess == 1)
+          //   createAlertDialog("Check your info",context);
+          // else if (isSuccess == 0) {
+          //   createAlertDialog("Sign In Successfully",context)
           //   .then((value) => Navigator.pushNamed(context, "/homepage"));
-          final username = usernameInput.text;
-          final password = passwordInput.text;
-
-          final int isSuccess = await verifyUser(username, password);
-
-          if (isSuccess == 1)
-            createAlertDialog("Check your info",context);
-          else if (isSuccess == 0) {
-            createAlertDialog("Sign In Successfully",context)
-            .then((value) => Navigator.pushNamed(context, "/homepage"));
-          }
-          else
-            createAlertDialog("Fail",context);
+          // }
+          // else
+          //   createAlertDialog("Fail",context);
 
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: Text(
+        child: textLato(
           "Sign In",
-          style: TextStyle(
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-            fontSize: 18,
-          ),
+          color: Colors.black, 
+          size: 18.0, 
+          fontweight: FontWeight.w400
         ),
       ),
     );
@@ -177,17 +174,15 @@ class Login extends StatelessWidget {
 
   Widget signUp(BuildContext context){
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
+        SizedBox(width: 82),
+        textLato(
           "Don't Have An Account? ",
-          style: TextStyle(
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-            fontSize: 17,
-          ),
+          color: Colors.white, 
+          size: 18.0, 
+          fontweight: FontWeight.w400
         ),
+        SizedBox(width: 5),
         GestureDetector(
           onTap: () {
               Navigator.push(
@@ -197,14 +192,11 @@ class Login extends StatelessWidget {
                 )
               );
             },
-          child: Text(
-            "Sign Up",
-            style: TextStyle(
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w400,
-              color: ColorCustom.orange,
-              fontSize: 17,
-            ),
+          child: textLato(
+            "Sign Up", 
+            color: ColorCustom.orange, 
+            size: 18.0, 
+            fontweight: FontWeight.w400
           ),
         ),
       ],
@@ -230,15 +222,25 @@ class Login extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: Text(
-          "Offline",
-          style: TextStyle(
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-            fontSize: 18,
-          ),
+        child: textLato(
+          "Offline", 
+          color: Colors.black, 
+          size: 18.0, 
+          fontweight: FontWeight.w400
         ),
+        ),
+    );
+  }
+
+  Widget textLato(String str, {Color color = Colors.white, double size = 20.0, FontWeight fontweight = FontWeight.normal}){
+    return Text(
+      str,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        color: color,
+        fontSize: size,
+        fontFamily: 'Lato',
+        fontWeight: fontweight,
       ),
     );
   }
