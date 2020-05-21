@@ -127,16 +127,16 @@ class SignUp extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async {
-          final email = emailInput.text;
-          final username = usernameInput.text;
-          final password = passwordInput.text;
-          if (password != passwordInput2.text)
+          final email = emailInput.text.trimRight();
+          final username = usernameInput.text.trimRight();
+          final password = passwordInput.text.trimRight();
+          if (password != passwordInput2.text.trimRight())
             createAlertDialog("Check confirm password again",context);
           else {
-            final int isSuccess = await createUser(email, username, password);
-            if (isSuccess == 1)
-              createAlertDialog("Check your info",context);
-            else if (isSuccess == 0) {
+            final int reponse = await createUser(email, username, password);
+            if (reponse == 1)
+              createAlertDialog("Username exists",context);
+            else if (reponse == 0) {
               createAlertDialog("Sign Up Successfully",context)
               .then((value) => Navigator.pop(context));
             }

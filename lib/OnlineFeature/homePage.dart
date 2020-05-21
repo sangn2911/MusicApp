@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.0),
+        preferredSize: Size.fromHeight(50.0/640 * SizeConfig.screenHeight),
         child: appBar(context)
       ),
       backgroundColor: Colors.black,
@@ -35,13 +35,13 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 31),
+            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
             child: text("Recently Play", Colors.white, 20, FontWeight.w700),
           ),
           SizedBox(height: 10/640 * SizeConfig.screenHeight),
           Container(
-            padding: EdgeInsets.only(left: 31),
-            height: 170,
+            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+            height: 170/640 * SizeConfig.screenHeight,
             color: Colors.black,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -52,13 +52,13 @@ class HomePage extends StatelessWidget {
             )
           ),
           Container(
-            padding: EdgeInsets.only(left: 31),
+            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
             child: text("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
           ),
           SizedBox(height: 10/640 * SizeConfig.screenHeight),
           Container(
-            padding: EdgeInsets.only(left: 31),
-            height: 170,
+            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+            height: 170/640 * SizeConfig.screenHeight,
             color: Colors.black,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -115,15 +115,22 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // Widget musicButton(){
+  //   return 
+  // }
+
   Widget musicPresentation(IconData icon, String title){
     return Container(
-      width: 130/640 * SizeConfig.screenHeight,
+      width: 150/360 * SizeConfig.screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
           IconButton(
             padding: EdgeInsets.all(0),
-            iconSize: 110,
+            // constraints: BoxConstraints(
+            //   maxHeight: 150/640 * SizeConfig.screenHeight,
+            // ),
+            iconSize: 110/640 * SizeConfig.screenHeight,
             icon: Container(
               color: ColorCustom.orange,
               child: Icon(
@@ -150,7 +157,7 @@ class HomePage extends StatelessWidget {
         children: <Widget> [
           IconButton(
             padding: EdgeInsets.all(0),
-            iconSize: 110,
+            iconSize: 110/640 * SizeConfig.screenHeight,
             icon: Container(
               color: ColorCustom.orange,
               child: Icon(
@@ -167,7 +174,6 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget> [
               Container(
-                width: 86,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
@@ -176,15 +182,16 @@ class HomePage extends StatelessWidget {
                   ]
                 ),
               ),
+              SizedBox(width: 55/360 * SizeConfig.screenWidth),
               SizedBox(
-                  height: 25,
-                  width: 25,
+                  height: 25/640 * SizeConfig.screenHeight,
+                  width: 25/360 * SizeConfig.screenWidth,
                   child: IconButton(
                   padding: EdgeInsets.all(0),
                   icon: Icon(
                     Icons.shopping_cart,
                     color: Colors.white,
-                    size: 25,
+                    size: 25/360 * SizeConfig.screenWidth,
                     ), 
                   onPressed: (){
                     print("Buy $title");

@@ -141,21 +141,21 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          createAlertDialog("Sign In Successfully",context)
+          // createAlertDialog("Sign In Successfully",context)
+          //   .then((value) => Navigator.pushNamed(context, "homepage"));
+          final username = usernameInput.text.trimRight();
+          final password = passwordInput.text.trimRight();
+
+          final int isSuccess = await verifyUser(username, password);
+
+          if (isSuccess == 1)
+            createAlertDialog("Check your info",context);
+          else if (isSuccess == 0) {
+            createAlertDialog("Sign In Successfully",context)
             .then((value) => Navigator.pushNamed(context, "homepage"));
-          // final username = usernameInput.text;
-          // final password = passwordInput.text;
-
-          // final int isSuccess = await verifyUser(username, password);
-
-          // if (isSuccess == 1)
-          //   createAlertDialog("Check your info",context);
-          // else if (isSuccess == 0) {
-          //   createAlertDialog("Sign In Successfully",context)
-          //   .then((value) => Navigator.pushNamed(context, "/homepage"));
-          // }
-          // else
-          //   createAlertDialog("Fail",context);
+          }
+          else
+            createAlertDialog("Fail",context);
 
         }),
         shape: RoundedRectangleBorder(
