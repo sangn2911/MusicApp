@@ -1,4 +1,4 @@
-import 'package:MusicApp/OfflineFeature/mp3Access.dart';
+import 'package:MusicApp/Feature/mp3Access.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/ParentWidget.dart';

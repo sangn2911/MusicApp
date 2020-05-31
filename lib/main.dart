@@ -1,14 +1,15 @@
+import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:MusicApp/musicApp.dart';
+//import 'package:MusicApp/musicApp.dart';
 // import 'package:MusicApp/OnlineFeature/signUp.dart';
 // import 'musicPlayer.dart';
 // import 'package:MusicApp/OfflineFeature/downloadlist.dart';
 import 'package:MusicApp/OnlineFeature/login.dart';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
-import 'package:MusicApp/OnlineFeature/homePage.dart';
-import 'package:MusicApp/OnlineFeature/userProfile.dart';
+// import 'package:MusicApp/OnlineFeature/homePage.dart';
+// import 'package:MusicApp/OnlineFeature/userProfile.dart';
 
 class Music {
   static String song;
@@ -17,7 +18,7 @@ class Music {
 
 void main() {
   //WidgetsFlutterBinding.ensureInitialized();
-  debugPaintSizeEnabled = false;
+  debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 
@@ -30,14 +31,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => MusicApp(),
+        //'/': (context) => MusicApp(),
+        '/': (context) => MyMusic(false),
         // 'downloadlist': (context) => Downloadlist(),
         // 'musicplayer': (context) => MusicPlayer(),
         'login': (context) => Login(),
         // 'signup': (context) => SignUp(),
         // 'testhttp':  (context) => MyAppTest(),
-        'homepage':  (context) => HomePage(),
-        'userprofile': (context) => UserProfile(),
+        // 'homepage':  (context) => HomePage(),
+        // 'userprofile': (context) => UserProfile(),
       },
     );
   }

@@ -1,17 +1,15 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/OfflineFeature/currentPlaying.dart';
-import 'package:MusicApp/musicPlayer.dart';
+import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Feature/currentPlaying.dart';
+import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
+import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
-import 'package:MusicApp/OfflineFeature/mp3Access.dart';
-import 'package:MusicApp/ParentWidget.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:provider/provider.dart';
 
 class Downloadlist extends StatefulWidget {
-
-  final Mp3Access fileData;
-  final ParentdWidget rootIW;
-  Downloadlist(this.fileData, this.rootIW);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -19,44 +17,49 @@ class Downloadlist extends StatefulWidget {
 
 class _DownloadlistState extends State<Downloadlist> {
 
-  List<dynamic> filterList = List();
-  List<dynamic> songList = List();
+  PanelController _panelController;
 
-  bool isUsed;
+  List<dynamic> _filterList = List();
+  List<dynamic> _songList = List();
 
-  bool isEmpty() {
-    if (widget.fileData.songs.length <= 0)
-      return true;
-    return false;
-  }
+  bool isUsed = false;
 
   @override
   void initState() {
+    _panelController = PanelController();
     super.initState();
-    setState(() {
-      songList = widget.fileData.songs;
-      filterList = songList;
-      isUsed = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    final MpControllerBloC _mp = Provider.of<MpControllerBloC>(context);
+    return SafeArea(
+      child: Scaffold(
+        body: SlidingUpPanel(
+          minHeight: 70,
+          maxHeight: SizeConfig.screenHeight,
+          controller: _panelController,
 
-    return Scaffold(
-      appBar: appBar(),
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            searchBar(),
-            SizedBox(height: SizeConfig.screenHeight*7/640),
-            shuffleButton(),
-            SizedBox(height: SizeConfig.screenHeight*7/640),
-            isEmpty() ? empTylist() : musicList(widget.fileData, SizeConfig.screenHeight*437/640),
-            (isEmpty() || !isUsed) ? Container() : CurrentPlayBar(widget.rootIW),
-          ],
+          panel: MusicPlayer(),
+          collapsed: CurrentPlayBar(),
+
+          body: Scaffold(
+            appBar: appBar(),
+            backgroundColor: Colors.black,
+            body: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  searchBar(),
+                  SizedBox(height: SizeConfig.screenHeight*7/640),
+                  shuffleButton(),
+                  SizedBox(height: SizeConfig.screenHeight*7/640),
+                  musicList(),
+                  Container(height: 95,)
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -156,7 +159,7 @@ class _DownloadlistState extends State<Downloadlist> {
 //Function for textfield
               onChanged: (string){
                 setState(() {
-                  filterList = songList.where((element) => 
+                  _filterList = _songList.where((element) => 
                   (element.title.toLowerCase().contains(string.toLowerCase()) || 
                   element.artist.toLowerCase().contains(string.toLowerCase())))
                   .toList();
@@ -175,78 +178,89 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget empTylist(){
-    return Expanded(
+    return Center(
       child: Container(
         child: Column(
           children: <Widget>[
             SizedBox(height: 85,),
             Text(
-                  //"Song $index",
-                  "Song Not Found",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 30.0,
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
+              "Song Is Not Found",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 30.0,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w200,
+              ),
+            ),
           ],
         ),
       )
       );
   }
 
-  Widget musicList(Mp3Access fileData, double _height){
-    return Expanded(
-      child: Container(
-        height: _height,
-        child: ListView.builder(
-          itemCount: filterList.length,
-          itemBuilder: (BuildContext context, int index){   
-            var song = filterList[index];
-            return ListTile(
-                leading: musicIcon(),
-                title: Text(
-                  //"Song $index",
-                  song.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                subtitle: Text(
-                  //"Singer $index",
-                  song.artist,
-                  style: TextStyle(
-                    color: ColorCustom.grey1,
-                    fontSize: 14.0,
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                trailing: moreSetting(),
-                onTap: () {                                                         //Function for song cards
-                  fileData.setCurrentIndex(index);
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(
-                      builder: (context) => MusicPlayer(fileData, song, nowPlaying: false,)
-                    )
-                  );
-                  setState(() {
-                    isUsed = true;
-                  });
-                },
-              );
-            },                                     
-        ),
-      ),
+  Widget musicList(){
+    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    return StreamBuilder<List<Song>>(
+      stream: mp.songList,
+      builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        _songList = snapshot.data;
+        _filterList = _songList;
+        if (_songList.length == 0) {
+          return empTylist();
+        }
+        return Expanded(
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: _filterList.length,
+            itemBuilder: (BuildContext context, int index){   
+              Song _song = _filterList[index];
+              return songTile(mp, _song);
+              },                                     
+            ),
+        );
+      },
+
     );
   }
 
-
+  Widget songTile(MpControllerBloC mp, Song song){
+    return ListTile(
+      leading: musicIcon(),
+      title: Text(
+        //"Song $index",
+        song.title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+          fontFamily: 'Lato',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      subtitle: Text(
+        //"Singer $index",
+        song.artist,
+        style: TextStyle(
+          color: ColorCustom.grey1,
+          fontSize: 14.0,
+          fontFamily: 'Lato',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      trailing: moreSetting(),
+      onTap: () {                                                         //Function for song cards
+        setState(() {
+          isPlay = true;
+        });
+        mp.stop();
+        mp.play(song);
+      },
+    );
+  }
 
   Widget musicIcon(){
     return Container(

@@ -121,7 +121,7 @@ class HomePage extends StatelessWidget {
 
   Widget musicPresentation(IconData icon, String title){
     return Container(
-      width: 150/360 * SizeConfig.screenWidth,
+      width: 130/360 * SizeConfig.screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
@@ -151,7 +151,7 @@ class HomePage extends StatelessWidget {
 
   Widget musicPresentation2(IconData icon, String title, String artist){
     return Container(
-      width: 130/640 * SizeConfig.screenHeight,
+      width: 130/360 * SizeConfig.screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
@@ -182,10 +182,10 @@ class HomePage extends StatelessWidget {
                   ]
                 ),
               ),
-              SizedBox(width: 55/360 * SizeConfig.screenWidth),
+              SizedBox(width: 30/110 * (110/640 * SizeConfig.screenHeight)),
               SizedBox(
                   height: 25/640 * SizeConfig.screenHeight,
-                  width: 25/360 * SizeConfig.screenWidth,
+                  width: 25/640 * SizeConfig.screenHeight,
                   child: IconButton(
                   padding: EdgeInsets.all(0),
                   icon: Icon(

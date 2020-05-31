@@ -1,11 +1,13 @@
-import 'package:MusicApp/OfflineFeature/downloadlist.dart';
-import 'package:MusicApp/ParentWidget.dart';
+import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Feature/downloadlist.dart';
+import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/OnlineFeature/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatelessWidget {
 
@@ -15,8 +17,6 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    //SizeConfig().printAllDetail();
-    final rootIW = ParentdWidget.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
@@ -40,7 +40,7 @@ class Login extends StatelessWidget {
             SizedBox(height: SizeConfig.screenHeight*8/640,),
             signUp(context),
             SizedBox(height: SizeConfig.screenHeight*8/640,),
-            offlineButton(context,rootIW),
+            offlineButton(context),
           ],
         ),
       ),
@@ -204,7 +204,7 @@ class Login extends StatelessWidget {
   }
 
   
-  Widget offlineButton(BuildContext context,ParentdWidget rootIW){
+  Widget offlineButton(BuildContext context){
     return ButtonTheme(
       height: 35,
       minWidth: 165,
@@ -214,21 +214,17 @@ class Login extends StatelessWidget {
           Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Downloadlist(rootIW.fileData, rootIW)
+            builder: (context) => MyMusic(false)
             )
           );
         }),
+        
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: textLato(
-          "Offline", 
-          color: Colors.black, 
-          size: 18.0, 
-          fontweight: FontWeight.w400
-        ),
-        ),
+        child: textLato("Offline", color: Colors.black, size: 18.0, fontweight: FontWeight.w400 ),
+      ),
     );
   }
 
