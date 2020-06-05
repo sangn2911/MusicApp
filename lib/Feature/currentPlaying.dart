@@ -1,12 +1,9 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:flutter/material.dart';
-import 'package:MusicApp/Feature/musicPlayer.dart';
-import 'package:MusicApp/ParentWidget.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
-
-bool isPlay = false;
+import 'package:rxdart/rxdart.dart';
 
 class CurrentPlayBar extends StatefulWidget {
 
@@ -16,25 +13,24 @@ class CurrentPlayBar extends StatefulWidget {
 
 class CurrentPlayBarState extends State<CurrentPlayBar> {
 
-  
-
   @override
   Widget build(BuildContext context) {
     final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return Container(
       color: ColorCustom.orange,
       height: 70,
-      child: StreamBuilder<Song>(
-        stream: mp.currentSong,
-        builder: (BuildContext context, AsyncSnapshot<Song> snapshot){
+      child: StreamBuilder<MapEntry<PlayerState,Song>>(
+        stream: CombineLatestStream.combine2(mp.playerState, mp.currentSong, (a, b) => MapEntry(a,b)),
+        builder: (BuildContext context, AsyncSnapshot<MapEntry<PlayerState,Song>> snapshot){
           if (!snapshot.hasData) {
             return Container();
           }
-          Song currentSong = snapshot.data;
+          Song currentSong = snapshot.data.value;
+          PlayerState playerState = snapshot.data.key;
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(width: 5),
+              SizedBox(width: 10,),
               Container(
                 height: 65,
                 width: 65,
@@ -51,16 +47,17 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                 ),
               ),
               SizedBox(width: 10),
-              Container(
-                height: 65,
-                width: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    text(currentSong.title, Colors.black, 22, FontWeight.w700),
-                    text(currentSong.artist, Colors.black.withOpacity(0.75), 18, FontWeight.w400),
-                  ]
+              Expanded(
+                child: Container(
+                  height: 65,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      text(currentSong.title, Colors.black, 22, FontWeight.w700),
+                      text(currentSong.artist, Colors.black.withOpacity(0.75), 18, FontWeight.w400),
+                    ]
+                  ),
                 ),
               ),
               SizedBox(width: 10),
@@ -68,16 +65,13 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                 padding: EdgeInsets.all(0),
                 iconSize: 50,
                 icon: Icon(
-                  !isPlay ? Icons.play_arrow : Icons.pause,
+                  playerState == PlayerState.paused ? Icons.play_arrow : Icons.pause,
                   color: Colors.black,
                   size: 50,
                 ), 
                 onPressed: (){
                   if(currentSong.title != " "){
-                    setState(() {
-                      isPlay ? isPlay = false : isPlay = true;
-                    });
-                    !isPlay ? mp.pause() : mp.play(currentSong);
+                    playerState != PlayerState.paused ? mp.pause() : mp.play(currentSong);
                   }
                 }
               ),
@@ -91,18 +85,19 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                   size: 50,
                 ), 
                 onPressed: () {
-                  setState(() {
-                    isPlay = true;
-                  });
                   mp.next();
                 }
                ),
+              SizedBox(width: 10),
             ],
           );
         },
       ),
     );
   }
+
+
+
 
   Widget text(String str, Color color , double size, FontWeight fontweight){
     return Text(

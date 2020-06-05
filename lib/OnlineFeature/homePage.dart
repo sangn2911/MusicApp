@@ -1,11 +1,24 @@
+import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Feature/currentPlaying.dart';
+import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/userProfile.dart';
+import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/sizeConfig.dart';
+import 'package:provider/provider.dart';
+import 'package:MusicApp/OnlineFeature/purchase.dart';
 
+class HomePage extends StatefulWidget {
 
-class HomePage extends StatelessWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  bool isUsed = false;
 
   Widget text(String str, Color color , double size, FontWeight fontweight){
     return Text(
@@ -23,7 +36,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
+    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: PreferredSize(
@@ -34,47 +47,108 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-            child: text("Recently Play", Colors.white, 20, FontWeight.w700),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+              child: Container(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        child: text("Recently Play", Colors.white, 20, FontWeight.w700),
+                      ),
+                      SizedBox(height: 10/640 * SizeConfig.screenHeight),
+                      Container(
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        height: 170/640 * SizeConfig.screenHeight,
+                        color: Colors.black,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 6,
+                          itemBuilder: (BuildContext context, int index){
+                            return musicPresentation(IconCustom.album_1, "Song $index");
+                          },
+                        )
+                      ),
+                      Container(
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        child: text("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
+                      ),
+                      SizedBox(height: 10/640 * SizeConfig.screenHeight),
+                      Container(
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        height: 170/640 * SizeConfig.screenHeight,
+                        color: Colors.black,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 6,
+                          itemBuilder: (BuildContext context, int index){
+                            return musicPresentation2(IconCustom.album_1, "Song $index", "Artist $index");
+                          },
+                        )
+                      ),
+                      Container(
+                        //color: Colors.grey,
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        child: text("Your songs", Colors.white, 20, FontWeight.w700),
+                      ),
+                      SizedBox(height: 10/640 * SizeConfig.screenHeight),
+                      Container(
+                        //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+                        height: 170/640 * SizeConfig.screenHeight,
+                        color: Colors.black,
+                        child: StreamBuilder<List<Song>>(
+                          stream: mp.songList,
+                          builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
+                            if (mp.isDispose) return Container();
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            List<Song> _songList = snapshot.data;
+                            // _filterList = _songList;
+                            if (_songList.length == 0) {
+                              return Container();
+                            }
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _songList.length,
+                              itemBuilder: (BuildContext context, int index){
+                                Song _song = _songList[index];
+                                return musicPresentation3(mp, IconCustom.album_1, _song);
+                              },
+                            );
+                          },
+                        )
+                      ),
+                    ]
+                  ),
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: 10/640 * SizeConfig.screenHeight),
-          Container(
-            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-            height: 170/640 * SizeConfig.screenHeight,
-            color: Colors.black,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 6,
-              itemBuilder: (BuildContext context, int index){
-                return musicPresentation(IconCustom.album_1, "Song $index");
-              },
-            )
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-            child: text("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
-          ),
-          SizedBox(height: 10/640 * SizeConfig.screenHeight),
-          Container(
-            padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-            height: 170/640 * SizeConfig.screenHeight,
-            color: Colors.black,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 6,
-              itemBuilder: (BuildContext context, int index){
-                return musicPresentation2(IconCustom.album_1, "Song $index", "Artist $index");
-              },
-            )
-          ),
-          Expanded(child: Container()),
-          Container(
-            color: ColorCustom.orange,
-            height: 70,
-            child: Center(child: text("---Upcoming---", Colors.white, 20, FontWeight.w700)),
-          ),
-          buttonSet(),          
+          !isUsed
+          ? Container() 
+          : Container(
+              color: ColorCustom.orange,
+              height: 70,
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MusicPlayer(mp),
+                    )
+                  );
+                },
+                child: CurrentPlayBar()
+                )
+            ),
+          buttonSet(context),          
         ],
       ),
     );
@@ -115,13 +189,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Widget musicButton(){
-  //   return 
-  // }
-
   Widget musicPresentation(IconData icon, String title){
     return Container(
-      width: 130/360 * SizeConfig.screenWidth,
+      width: 150/360 * SizeConfig.screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
@@ -151,7 +221,7 @@ class HomePage extends StatelessWidget {
 
   Widget musicPresentation2(IconData icon, String title, String artist){
     return Container(
-      width: 130/360 * SizeConfig.screenWidth,
+      width: 150/360 * SizeConfig.screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
@@ -204,10 +274,54 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  
+  Widget musicPresentation3(MpControllerBloC mp, IconData icon, Song song){
+    return Container(
+      width: 150/360 * SizeConfig.screenWidth,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget> [
+          IconButton(
+            padding: EdgeInsets.all(0),
+            iconSize: 110/640 * SizeConfig.screenHeight,
+            icon: Container(
+              color: ColorCustom.orange,
+              child: Icon(
+                Icons.music_note,
+                color: Colors.black,
+              ),
+            ),
+            onPressed: (){
+              setState(() {
+                isUsed = true;
+              });
+              mp.stop();
+              mp.play(song);
+            },
+          ),
+          SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget> [
+              Container(
+                width: 120,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    text(song.title, Colors.white, 20, FontWeight.w700),
+                    text(song.artist, ColorCustom.grey1, 14, FontWeight.w400),
+                  ]
+                ),
+              ),
+            ]
+          )
+        ]
+      ),
+    );
+  }
 
 
-  Widget buttonSet(){
+
+  Widget buttonSet(BuildContext context){
     return Container(
       height: 85/640 * SizeConfig.screenHeight,
       child: Center(
@@ -228,7 +342,14 @@ class HomePage extends StatelessWidget {
             SizedBox(width: 40),
             buttonWidget(Icons.shopping_cart, "VIP",
               function: (){
-                print("VIPBUTTON");
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      child: Purchase(),
+                    );
+                  }
+                );
               }
             ),
           ],
@@ -263,7 +384,5 @@ class HomePage extends StatelessWidget {
     );
   }
 
-
 }
-
 

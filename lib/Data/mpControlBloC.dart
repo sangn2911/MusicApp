@@ -12,6 +12,7 @@ class MpControllerBloC{
 //List management
 
   BehaviorSubject<List<Song>> _songs;
+  bool isDispose = false;
   List<Album> _albums;
   List<Song> _favorites;
   List<Song> _recently;
@@ -22,13 +23,13 @@ class MpControllerBloC{
   MusicFinder _audioPlayer;
   Duration _duration;
   BehaviorSubject<Duration> _position;
+
   BehaviorSubject<PlayerState> _playerState;
   BehaviorSubject<PlayerMode> _playerMode; 
+
   BehaviorSubject<Song> _currentSong;
-  BehaviorSubject<bool> _isAudioSeeking;
 
   BehaviorSubject<List<Song>> get songList => _songs;
-
   BehaviorSubject<Song> get currentSong => _currentSong;
 
   bool get isPlaying => _playerState.value == PlayerState.playing;
@@ -38,18 +39,10 @@ class MpControllerBloC{
   bool get isRepeat => _playerMode.value == PlayerMode.repeat;
 
   Duration get duration => _duration;
-
   BehaviorSubject<Duration> get position => _position;
+
   BehaviorSubject<PlayerState> get playerState => _playerState;
   BehaviorSubject<PlayerMode> get playerMode => _playerMode;
-
-  Future<void> fetchSongs() async {
-    print("Fectch Songs");
-    await MusicFinder.allSongs()
-      .then(
-        (songs) => _songs.add(songs)
-      );
-  }
 
   MpControllerBloC(){
     _initStreams();
@@ -58,12 +51,18 @@ class MpControllerBloC{
   }
 
   void dispose(){
-    stop();
+    isDispose = true;
+    _audioPlayer.stop();
+    playerState.close();
+    playerMode.close();
+    position.close();
+    songList.close();
+    currentSong.close();
     _songs.close();
-    _favorites.clear();
     _playerState.close();
     _playerMode.close();
-    _audioPlayer.stop();
+    _position.close();
+    _currentSong.close();
   }
 
   void _initStreams(){
@@ -117,6 +116,14 @@ class MpControllerBloC{
     });
   }
 
+  Future<void> fetchSongs() async {
+    print("Fectch Songs");
+    await MusicFinder.allSongs()
+      .then(
+        (songs) => _songs.add(songs)
+      );
+  }
+
   void playMode(int mode){
     if (mode == 0)
       _playerMode.add(PlayerMode.normal);
@@ -136,15 +143,11 @@ class MpControllerBloC{
     _position.add(position);
   }
 
-  void invertSeekingState() {
-    final _value = _isAudioSeeking.value;
-    _isAudioSeeking.add(!_value);
-  }
-
   void audioSeek(double seconds) {
     _audioPlayer.seek(seconds);
   }
 
+//Basic Function
   play(Song song) {
     _currentSong.add(song);
 
@@ -168,10 +171,8 @@ class MpControllerBloC{
 
   Future<void> next() async {
     stop();
-
     List<Song> songs = _songs.value;
     int index = songs.indexOf(_currentSong.value);
-
     if (index + 1 == songs.length)
       _currentSong.add(songs[0]);
     else
@@ -190,9 +191,18 @@ class MpControllerBloC{
     play(_currentSong.value);
   }
 
+  void playRandomSong(){
+    Random r = new Random();
+    List<Song> songs = _songs.value;
+    int nextIndex = r.nextInt(songs.length);
+    while (_currentSong.value == songs[nextIndex])
+      nextIndex = r.nextInt(songs.length);
+    _currentSong.add(songs[nextIndex]);
+    play(_currentSong.value);
+  }
+
   void onComplete() {
     stop();
-    
     if (isRepeat)
       play(_currentSong.value);
     else if (isShuffle) {
@@ -200,14 +210,6 @@ class MpControllerBloC{
     }
     else
       next();
-  }
-
-  void playRandomSong(){
-    Random r = new Random();
-    List<Song> songs = _songs.value;
-    int nextIndex = r.nextInt(songs.length);
-    _currentSong.add(songs[nextIndex]);
-    play(_currentSong.value);
   }
 
 

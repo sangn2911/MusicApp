@@ -1,13 +1,16 @@
 import 'package:MusicApp/Custom/color.dart';
+import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:MusicApp/sizeConfig.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MusicPlayer extends StatefulWidget {
+  final MpControllerBloC _mp;
+  MusicPlayer(this._mp);
 
   @override
   MusicPlayerState createState() => MusicPlayerState();
@@ -29,6 +32,21 @@ class MusicPlayerState extends State<MusicPlayer> {
     color: Colors.white,
   );
 
+  Widget dropDownButton (){
+    return Container(
+      height: 40,
+      width: 40,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.arrow_drop_down,
+        size: 35,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +66,12 @@ class MusicPlayerState extends State<MusicPlayer> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
+        leading: IconButton(
+          icon: dropDownButton(),
+          onPressed: (){
+            Navigator.pop(context);
+          }
+        ),
         title: Text(
           "Music Player",
           style: TextStyle(
@@ -63,49 +87,62 @@ class MusicPlayerState extends State<MusicPlayer> {
   }
 
   Widget body(){
-    //final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MpControllerBloC mp = widget._mp;
     return Center(
       child: Column(
           children: <Widget>[
             SizedBox(height: SizeConfig.screenHeight*28/640),
-            imageDecoration(),
+            albumArtCover(mp),
             SizedBox(height: SizeConfig.screenHeight*28/640),
-            songInfo(),
+            songInfo(mp),
             SizedBox(height: SizeConfig.screenHeight*20/640),
-            Row(                                                              //Playlist and RateButton
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.star_border,
-                    color: Colors.white,
-                    size: 28,
-                  ), 
-                  onPressed: (){
-                    print("Favorite Button");
-                    }
-                  ),
-                SizedBox(width: SizeConfig.screenWidth*200/360),
-                IconButton(
-                  icon: Icon(
-                    IconCustom.playlist,
-                    color: Colors.white,
-                    size: 25,
-                  ), 
-                  onPressed: (){
-                    print("Playlist button");
-                  }
-                  ),
-              ]
-            ),
-            musicControl(),
+            favoritePlayListButton(),
+            musicControl(mp),
           ],
         ),
     );
   }
 
-  Widget songInfo(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+  Widget imageDecoration(){
+    return Icon(
+      IconCustom.album_1,
+      size: 200,
+      color: ColorCustom.orange,
+    );
+  }
+
+  Widget albumArtCover(MpControllerBloC mp){
+    // final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    // final MpControllerBloC mp = widget._mp;
+    return Container(
+      child: StreamBuilder<Song>(
+        stream: mp.currentSong,
+        builder: (BuildContext context, AsyncSnapshot<Song> snapshot){
+          if (!snapshot.hasData){
+            return  CircularProgressIndicator();
+          }
+          if (snapshot.data.albumArt == null){
+            return  imageDecoration();
+          }
+          final currSong = snapshot.data;
+          return Container(
+            height: 200,
+            width: 200,
+            child: Image(
+              fit: BoxFit.fill,
+              image: AssetImage(
+                currSong.albumArt,
+              )
+            ),
+          );
+        }
+      )
+    );
+  }
+
+  Widget songInfo(MpControllerBloC mp){
+    //final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    // final MpControllerBloC mp = widget._mp;
     return Container(
       padding: EdgeInsets.only(left: 50, right: 50),
       child: StreamBuilder<Song>(
@@ -127,25 +164,47 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget imageDecoration(){
-    return Icon(
-      IconCustom.album_1,
-      size: 185,
-      color: ColorCustom.orange,
+  Widget favoritePlayListButton(){
+    return Row(                                                              //Playlist and RateButton
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.star_border,
+            color: Colors.white,
+            size: 28,
+          ), 
+          onPressed: (){
+            print("Favorite Button");
+          }
+        ),
+        SizedBox(width: SizeConfig.screenWidth*200/360),
+        IconButton(
+          icon: Icon(
+            IconCustom.playlist,
+            color: Colors.white,
+            size: 25,
+          ), 
+          onPressed: (){
+            print("Playlist button");
+          }
+        ),
+      ]
     );
   }
 
-  Widget musicControl(){
+  Widget musicControl(MpControllerBloC mp){
     return Column(
       children: <Widget>[
-        musicSlider(),
-        controlButton(),
+        musicSlider(mp),
+        controlButton(mp),
       ],
     );
   }
 
-  Widget musicSlider(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+  Widget musicSlider(MpControllerBloC mp){
+    // final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    // final MpControllerBloC mp = widget._mp;
     return Container(
       width: 360,
       child: StreamBuilder<MapEntry<Duration,Song>>(
@@ -189,15 +248,16 @@ class MusicPlayerState extends State<MusicPlayer> {
                   text(mp.duration.toString().split('.').first,false ,Colors.white, 15, FontWeight.w200),
                 ]
               )
-
             ],
           );
         },
       ),
     );
   }
-  Widget controlButton(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+
+  Widget controlButton(MpControllerBloC mp){
+    //final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    //final MpControllerBloC mp = widget._mp;
     return Container(
       child: StreamBuilder<MapEntry<MapEntry<PlayerState,PlayerMode>,Song>>(
         stream: CombineLatestStream.combine3(mp.playerState, mp.playerMode,mp.currentSong, (a,b, c) => MapEntry(MapEntry(a,b),c)),
@@ -205,6 +265,7 @@ class MusicPlayerState extends State<MusicPlayer> {
           if (!snapshot.hasData){
             return Container();
           }
+
           final Song currentSong = snapshot.data.value;
           final PlayerState playerState = snapshot.data.key.key;
           final PlayerMode playerMode = snapshot.data.key.value;
@@ -215,7 +276,9 @@ class MusicPlayerState extends State<MusicPlayer> {
                 iconSize: 28,
                 icon: Icon(
                   IconCustom.shuffle,
-                  color: (playerMode == PlayerMode.shuffle) ? ColorCustom.orange : Colors.white,
+                  color: (playerMode == PlayerMode.shuffle) 
+                    ? ColorCustom.orange 
+                    : Colors.white,
                 ), 
                 onPressed: (){
                   mp.playMode(2);
@@ -234,8 +297,16 @@ class MusicPlayerState extends State<MusicPlayer> {
   // Button "Pause/Play"
               IconButton(
                 iconSize: 68.0,
-                icon: (playerState != PlayerState.paused) ? iconPause : iconPlay,
-                onPressed: (playerState != PlayerState.paused) ? () => mp.pause() : () => mp.play(currentSong)
+                icon: (playerState != PlayerState.paused) 
+                  ? iconPause 
+                  : iconPlay,
+                onPressed: (playerState != PlayerState.paused) 
+                  ? () {
+                    mp.pause();
+                  }
+                  : () {
+                    mp.play(currentSong);
+                    }
                 ),
   // Button "Next Music"
               IconButton(
@@ -252,7 +323,9 @@ class MusicPlayerState extends State<MusicPlayer> {
                 iconSize: 28,
                 icon: Icon(
                   IconCustom.repeat,
-                  color: (playerMode == PlayerMode.repeat) ? ColorCustom.orange : Colors.white,
+                  color: (playerMode == PlayerMode.repeat) 
+                    ? ColorCustom.orange 
+                    : Colors.white,
                 ), 
                 onPressed: (){
                   setState(() {

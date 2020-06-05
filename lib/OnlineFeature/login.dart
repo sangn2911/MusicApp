@@ -67,10 +67,10 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Username or Email:"),
-            textField(input: usernameInput,hint: "example@example.com"),
+            textField(false, input: usernameInput,hint: "example@example.com"),
             SizedBox(height: SizeConfig.screenHeight*38/640,),
             text("Password:"),
-            textField(input: passwordInput),
+            textField(true, input: passwordInput),
           ],
         ),
       ),
@@ -87,8 +87,9 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget textField({TextEditingController input, String hint = ""}){
+  Widget textField(bool isPass, {TextEditingController input, String hint = ""}){
     return TextField(
+      obscureText: isPass,
       controller: input,
       style: TextStyle(
         fontSize: 20.0,
@@ -141,22 +142,28 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          // createAlertDialog("Sign In Successfully",context)
+          createAlertDialog("Sign In Successfully",context)
+            .then((value) 
+            => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GoOnline(),
+                  )
+                )
+              );
+          // final username = usernameInput.text.trimRight();
+          // final password = passwordInput.text.trimRight();
+
+          // final int isSuccess = await verifyUser(username, password);
+
+          // if (isSuccess == 1)
+          //   createAlertDialog("Check your info",context);
+          // else if (isSuccess == 0) {
+          //   createAlertDialog("Sign In Successfully",context)
           //   .then((value) => Navigator.pushNamed(context, "homepage"));
-          final username = usernameInput.text.trimRight();
-          final password = passwordInput.text.trimRight();
-
-          final int isSuccess = await verifyUser(username, password);
-
-          if (isSuccess == 1)
-            createAlertDialog("Check your info",context);
-          else if (isSuccess == 0) {
-            createAlertDialog("Sign In Successfully",context)
-            .then((value) => Navigator.pushNamed(context, "homepage"));
-          }
-          else
-            createAlertDialog("Fail",context);
-
+          // }
+          // else
+          //   createAlertDialog("Fail",context);
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -214,11 +221,10 @@ class Login extends StatelessWidget {
           Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyMusic(false)
+            builder: (context) => GoOffline()
             )
           );
         }),
-        
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)

@@ -34,7 +34,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  assets_audio_player: ^1.2.3
+  # assets_audio_player: ^1.2.3
 
 
 # For information on the generic Dart part of this file, see the
@@ -56,6 +56,9 @@ flutter:
     - images/b.png
     - images/MyMusic.svg
     - images/album_1.svg
+    - images/momo.png
+    - images/visa.png
+    - images/ocb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

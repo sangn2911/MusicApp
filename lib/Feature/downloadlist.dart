@@ -17,48 +17,50 @@ class Downloadlist extends StatefulWidget {
 
 class _DownloadlistState extends State<Downloadlist> {
 
-  PanelController _panelController;
+  //PanelController _panelController;
 
   List<dynamic> _filterList = List();
   List<dynamic> _songList = List();
+  String _filterkey = "";
 
   bool isUsed = false;
 
   @override
   void initState() {
-    _panelController = PanelController();
+    //_panelController = PanelController();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final MpControllerBloC _mp = Provider.of<MpControllerBloC>(context);
+    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return SafeArea(
       child: Scaffold(
-        body: SlidingUpPanel(
-          minHeight: 70,
-          maxHeight: SizeConfig.screenHeight,
-          controller: _panelController,
-
-          panel: MusicPlayer(),
-          collapsed: CurrentPlayBar(),
-
-          body: Scaffold(
-            appBar: appBar(),
-            backgroundColor: Colors.black,
-            body: SafeArea(
-              child: Column(
-                children: <Widget>[
-                  searchBar(),
-                  SizedBox(height: SizeConfig.screenHeight*7/640),
-                  shuffleButton(),
-                  SizedBox(height: SizeConfig.screenHeight*7/640),
-                  musicList(),
-                  Container(height: 95,)
-                ],
-              ),
-            ),
+        appBar: appBar(),
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              searchBar(),
+              SizedBox(height: SizeConfig.screenHeight*7/640),
+              shuffleButton(),
+              SizedBox(height: SizeConfig.screenHeight*7/640),
+              musicList(),
+              isUsed 
+                ? GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MusicPlayer(mp)
+                          )
+                      );
+                    },
+                    child: CurrentPlayBar()
+                  ) 
+                : Container(),
+            ],
           ),
         ),
       ),
@@ -66,6 +68,7 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget appBar(){
+    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return AppBar(
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -91,13 +94,15 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget shuffleButton(){
+    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return ButtonTheme(
       height: 31,
       minWidth: 158,
       buttonColor: ColorCustom.orange,
       child: RaisedButton(
         onPressed: ((){
-          print("Shuffle Butoon");
+          mp.stop();
+          mp.playRandomSong();
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -159,10 +164,7 @@ class _DownloadlistState extends State<Downloadlist> {
 //Function for textfield
               onChanged: (string){
                 setState(() {
-                  _filterList = _songList.where((element) => 
-                  (element.title.toLowerCase().contains(string.toLowerCase()) || 
-                  element.artist.toLowerCase().contains(string.toLowerCase())))
-                  .toList();
+                  _filterkey = string;
                 });
               },
               showCursor: true,
@@ -203,13 +205,18 @@ class _DownloadlistState extends State<Downloadlist> {
     return StreamBuilder<List<Song>>(
       stream: mp.songList,
       builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
+        if (mp.isDispose) return Container();
         if (!snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(),
           );
         }
         _songList = snapshot.data;
-        _filterList = _songList;
+        // _filterList = _songList;
+        _filterList = _songList.where((element) => 
+          (element.title.toLowerCase().contains(_filterkey.toLowerCase()) || 
+          element.artist.toLowerCase().contains(_filterkey.toLowerCase())))
+          .toList();
         if (_songList.length == 0) {
           return empTylist();
         }
@@ -228,44 +235,10 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget songTile(MpControllerBloC mp, Song song){
-    return ListTile(
-      leading: musicIcon(),
-      title: Text(
-        //"Song $index",
-        song.title,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-          fontFamily: 'Lato',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      subtitle: Text(
-        //"Singer $index",
-        song.artist,
-        style: TextStyle(
-          color: ColorCustom.grey1,
-          fontSize: 14.0,
-          fontFamily: 'Lato',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      trailing: moreSetting(),
-      onTap: () {                                                         //Function for song cards
-        setState(() {
-          isPlay = true;
-        });
-        mp.stop();
-        mp.play(song);
-      },
-    );
-  }
-
   Widget musicIcon(){
     return Container(
-      height: 45,
-      width: 45,
+      height: 50,
+      width: 50,
       decoration: BoxDecoration(
         color: ColorCustom.orange,
         border: Border.all(
@@ -278,6 +251,53 @@ class _DownloadlistState extends State<Downloadlist> {
       color: Colors.black,
       size: 40,
         ),
+    );
+  }
+
+  Widget musicArt(Song song){
+    return Container(
+      height: 50,
+      width: 50,
+      child: Image(
+        fit: BoxFit.fill,
+        image: AssetImage(
+          song.albumArt,
+        )
+      ),
+    );
+  }
+
+  Widget songTile(MpControllerBloC mp, Song song){
+    return ListTile(
+      leading: musicIcon(),
+      title: Text(
+        song.title,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+          fontFamily: 'Lato',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      subtitle: Text(
+        song.artist,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: ColorCustom.grey1,
+          fontSize: 14.0,
+          fontFamily: 'Lato',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      trailing: moreSetting(),
+      onTap: () {                                                         //Function for song cards
+        setState(() {
+          isUsed = true;
+        });
+        mp.stop();
+        mp.play(song);
+      },
     );
   }
 
