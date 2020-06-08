@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
-import 'package:MusicApp/Custom/customIcons.dart';
 
 class Purchase extends StatelessWidget {
 

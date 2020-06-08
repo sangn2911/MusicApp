@@ -1,5 +1,4 @@
 import 'package:MusicApp/Custom/color.dart';
-import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flute_music_player/flute_music_player.dart';
@@ -7,6 +6,8 @@ import 'package:MusicApp/sizeConfig.dart';
 //import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:MusicApp/Custom/custemText.dart';
+
 
 class MusicPlayer extends StatefulWidget {
   final MpControllerBloC _mp;
@@ -37,11 +38,12 @@ class MusicPlayerState extends State<MusicPlayer> {
       height: 40,
       width: 40,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: Colors.black),
         shape: BoxShape.circle,
       ),
       child: Icon(
-        Icons.arrow_drop_down,
+        Icons.keyboard_arrow_down,
+        color: Colors.black,
         size: 35,
       ),
     );
@@ -60,29 +62,28 @@ class MusicPlayerState extends State<MusicPlayer> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.black,
-      appBar: AppBar(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.black,
-        centerTitle: true,
-        leading: IconButton(
-          icon: dropDownButton(),
-          onPressed: (){
-            Navigator.pop(context);
-          }
-        ),
-        title: Text(
-          "Music Player",
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w700,
-            fontSize: 25,
+        appBar: AppBar(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
           ),
+          backgroundColor: ColorCustom.orange,
+          centerTitle: true,
+          leading: IconButton(
+            icon: dropDownButton(),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+          ),
+          title: TextLato("Music Player", Colors.black, 25, FontWeight.w700),
         ),
+        body: body()
       ),
-      body: body()
     );
   }
 
@@ -107,7 +108,7 @@ class MusicPlayerState extends State<MusicPlayer> {
     return Icon(
       IconCustom.album_1,
       size: 200,
-      color: ColorCustom.orange,
+      color: ColorCustom.deepOrange,
     );
   }
 
@@ -169,10 +170,11 @@ class MusicPlayerState extends State<MusicPlayer> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         IconButton(
+          iconSize: 30,
           icon: Icon(
             Icons.star_border,
             color: Colors.white,
-            size: 28,
+            size: 32,
           ), 
           onPressed: (){
             print("Favorite Button");

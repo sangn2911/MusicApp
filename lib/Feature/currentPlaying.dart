@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Custom/custemText.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CurrentPlayBar extends StatefulWidget {
@@ -17,7 +18,14 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
   Widget build(BuildContext context) {
     final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return Container(
-      color: ColorCustom.orange,
+      decoration: BoxDecoration(
+        color: ColorCustom.orange,
+        border: Border.all(color: ColorCustom.orange),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(40),
+          bottom: Radius.circular(40),
+        )
+      ),
       height: 70,
       child: StreamBuilder<MapEntry<PlayerState,Song>>(
         stream: CombineLatestStream.combine2(mp.playerState, mp.currentSong, (a, b) => MapEntry(a,b)),
@@ -31,21 +39,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(width: 10,),
-              Container(
-                height: 65,
-                width: 65,
-                decoration: BoxDecoration(
-                  color: ColorCustom.orange,
-                  border: Border.all(
-                  color: Colors.black,
-                  ),
-                ),
-                child: Icon(
-                  Icons.music_note,
-                  color: Colors.black,
-                  size: 50,
-                ),
-              ),
+              playIconButton(currentSong, mp, playerState),
               SizedBox(width: 10),
               Expanded(
                 child: Container(
@@ -54,8 +48,8 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      text(currentSong.title, Colors.black, 22, FontWeight.w700),
-                      text(currentSong.artist, Colors.black.withOpacity(0.75), 18, FontWeight.w400),
+                      TextLato(currentSong.title, Colors.black, 22, FontWeight.w700),
+                      TextLato(currentSong.artist, Colors.black.withOpacity(0.75), 18, FontWeight.w400),
                     ]
                   ),
                 ),
@@ -63,19 +57,17 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
               SizedBox(width: 10),
               IconButton(
                 padding: EdgeInsets.all(0),
-                iconSize: 50,
+                iconSize: 33,
                 icon: Icon(
-                  playerState == PlayerState.paused ? Icons.play_arrow : Icons.pause,
+                  Icons.star_border,
                   color: Colors.black,
-                  size: 50,
+                  size: 35,
                 ), 
-                onPressed: (){
-                  if(currentSong.title != " "){
-                    playerState != PlayerState.paused ? mp.pause() : mp.play(currentSong);
-                  }
+                onPressed: () {
+                  //mp.prev();
                 }
-              ),
-              SizedBox(width: 15),
+               ),
+              SizedBox(width: 7),
               IconButton(
                 padding: EdgeInsets.all(0),
                 iconSize: 50,
@@ -96,7 +88,20 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
     );
   }
 
-
+  Widget playIconButton(Song currentSong, MpControllerBloC mp,PlayerState playerState){
+    return IconButton(
+      padding: EdgeInsets.all(0),
+      iconSize: 60,
+      icon: Icon(
+        playerState == PlayerState.paused ? Icons.play_circle_outline : Icons.pause_circle_outline,
+        color: Colors.black,
+        size: 60,
+      ), 
+      onPressed: (){
+        playerState != PlayerState.paused ? mp.pause() : mp.play(currentSong);
+      }
+    );
+  }
 
 
   Widget text(String str, Color color , double size, FontWeight fontweight){

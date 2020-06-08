@@ -6,7 +6,6 @@ import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:provider/provider.dart';
 
 class Downloadlist extends StatefulWidget {
@@ -68,7 +67,6 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget appBar(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return AppBar(
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -208,9 +206,13 @@ class _DownloadlistState extends State<Downloadlist> {
         if (mp.isDispose) return Container();
         if (!snapshot.hasData) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
           );
         }
+
         _songList = snapshot.data;
         // _filterList = _songList;
         _filterList = _songList.where((element) => 

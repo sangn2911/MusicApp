@@ -1,5 +1,3 @@
-import 'package:MusicApp/Data/mpControlBloC.dart';
-import 'package:MusicApp/Feature/downloadlist.dart';
 import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
@@ -7,7 +5,7 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/OnlineFeature/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
-import 'package:provider/provider.dart';
+
 
 class Login extends StatelessWidget {
 

@@ -1,6 +1,5 @@
 import 'dart:math';
-import 'package:MusicApp/OnlineFeature/httpTest.dart';
-import 'package:MusicApp/mpController.dart';
+// import 'package:MusicApp/OnlineFeature/httpTest.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,10 +12,10 @@ class MpControllerBloC{
 
   BehaviorSubject<List<Song>> _songs;
   bool isDispose = false;
-  List<Album> _albums;
-  List<Song> _favorites;
-  List<Song> _recently;
-  List<Song> _currentPlayList;
+  // List<Album> _albums;
+  // List<Song> _favorites;
+  // List<Song> _recently;
+  // List<Song> _currentPlayList;
   
 //Music Player Controller
 
@@ -67,9 +66,9 @@ class MpControllerBloC{
 
   void _initStreams(){
     _songs = BehaviorSubject<List<Song>>();
-    _albums = List<Album>();
+    //_albums = List<Album>();
     _position = BehaviorSubject<Duration>();
-    _favorites = [];
+    //_favorites = [];
     _playerState = BehaviorSubject<PlayerState>.seeded(PlayerState.stopped);
     _playerMode = BehaviorSubject<PlayerMode>.seeded(PlayerMode.normal);
   }
@@ -173,11 +172,13 @@ class MpControllerBloC{
     stop();
     List<Song> songs = _songs.value;
     int index = songs.indexOf(_currentSong.value);
+    //print(index);
+    if (index == -1) index = 0;
     if (index + 1 == songs.length)
       _currentSong.add(songs[0]);
     else
       _currentSong.add(songs[index + 1]);
-    play(_currentSong.value);
+    play(songs[index + 1]);
   }
 
   Future prev() async {
