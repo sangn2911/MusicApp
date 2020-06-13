@@ -1,8 +1,8 @@
 # MusicApp
 
 - Application Name: MusicG3  
-- Application Icon Launcher:
-<img src="https://github.com/sangn2911/MusicApp/blob/dev/android/app/src/main/res/drawable-mdpi/ic_launcher_background.png" width="100">
+- Application Icon Launcher:  
+&nbsp;&nbsp;&nbsp;<img src="https://github.com/sangn2911/MusicApp/blob/dev/android/app/src/main/res/drawable-mdpi/ic_launcher_background.png" width="100">
 
 # Current Features
 ### Common Features
