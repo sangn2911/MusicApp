@@ -12,14 +12,20 @@ Application Icon Launcher:
 - Search Offline
 
 ### Online Features
-- Login
-- Sign Up
+- Login  
+- Sign Up  
 
-# 
+# TODO
+- Play song from database  
+- Send recorder for voice authentication  
+- Receive user profile  
+
 
 ## What's New
 
-Add animation transition when changing page.
+- Animation transition when changing page  
+- Bottom navigation bar  
+- 
 
 
 ## Screenshot
