@@ -1,16 +1,26 @@
 # MusicApp
 
-A new Flutter project.
+Application Name: MusicG3  
+Application Icon Launcher:  
+![alt text](https://github.com/sangn2911/MusicApp/blob/dev/android/app/src/main/res/drawable-mdpi/ic_launcher_background.png)
 
-## Getting Started
+# Current Features
+### Common Features
+- Play/Pause  
+- Repeat/Shuffle
+- Seek  
+- Search Offline
 
-This project is a starting point for a Flutter application.
+### Online Features
+- Login
+- Sign Up
 
-A few resources to get you started if this is your first Flutter project:
+# 
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## What's New
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Add animation transition when changing page.
+
+
+## Screenshot
+<img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_01.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_02.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_03.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_04.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_05.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_07.png" width="250"> 
