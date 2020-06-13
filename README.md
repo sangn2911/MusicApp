@@ -25,7 +25,7 @@ Application Icon Launcher:
 
 - Animation transition when changing page  
 - Bottom navigation bar  
-- 
+- Suitable position for navigation Bar and currentplay Bar
 
 
 ## Screenshot
