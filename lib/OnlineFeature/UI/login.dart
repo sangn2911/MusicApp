@@ -1,11 +1,11 @@
-import 'package:MusicApp/OfflineFeature/downloadlist.dart';
-import 'package:MusicApp/ParentWidget.dart';
+import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/OnlineFeature/signUp.dart';
+import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
+
 
 class Login extends StatelessWidget {
 
@@ -15,8 +15,6 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    //SizeConfig().printAllDetail();
-    final rootIW = ParentdWidget.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
@@ -40,7 +38,7 @@ class Login extends StatelessWidget {
             SizedBox(height: SizeConfig.screenHeight*8/640,),
             signUp(context),
             SizedBox(height: SizeConfig.screenHeight*8/640,),
-            offlineButton(context,rootIW),
+            offlineButton(context),
           ],
         ),
       ),
@@ -67,10 +65,10 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Username or Email:"),
-            textField(input: usernameInput,hint: "example@example.com"),
+            textField(false, input: usernameInput,hint: "example@example.com"),
             SizedBox(height: SizeConfig.screenHeight*38/640,),
             text("Password:"),
-            textField(input: passwordInput),
+            textField(true, input: passwordInput),
           ],
         ),
       ),
@@ -87,8 +85,9 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget textField({TextEditingController input, String hint = ""}){
+  Widget textField(bool isPass, {TextEditingController input, String hint = ""}){
     return TextField(
+      obscureText: isPass,
       controller: input,
       style: TextStyle(
         fontSize: 20.0,
@@ -141,22 +140,44 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          // createAlertDialog("Sign In Successfully",context)
+          createAlertDialog("Sign In Successfully",context)
+            .then((value) 
+            => Navigator.push(
+                context,
+                // MaterialPageRoute(
+                //   builder: (context) => GoOnline(),
+                //   )
+                PageRouteBuilder(
+                  transitionDuration: Duration(milliseconds: 550),
+                  transitionsBuilder: (BuildContext context, 
+                    Animation<double> animation, 
+                    Animation<double> secAnimation,
+                    Widget child){
+                      return ScaleTransition(
+                        alignment: Alignment.center,
+                        scale: animation,
+                        child: child,
+                      );
+                  },
+                  pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secAnimation,){
+                    return GoOnline();
+                  }
+                )
+              )
+            );
+          // final username = usernameInput.text.trimRight();
+          // final password = passwordInput.text.trimRight();
+
+          // final int isSuccess = await verifyUser(username, password);
+
+          // if (isSuccess == 1)
+          //   createAlertDialog("Check your info",context);
+          // else if (isSuccess == 0) {
+          //   createAlertDialog("Sign In Successfully",context)
           //   .then((value) => Navigator.pushNamed(context, "homepage"));
-          final username = usernameInput.text.trimRight();
-          final password = passwordInput.text.trimRight();
-
-          final int isSuccess = await verifyUser(username, password);
-
-          if (isSuccess == 1)
-            createAlertDialog("Check your info",context);
-          else if (isSuccess == 0) {
-            createAlertDialog("Sign In Successfully",context)
-            .then((value) => Navigator.pushNamed(context, "homepage"));
-          }
-          else
-            createAlertDialog("Fail",context);
-
+          // }
+          // else
+          //   createAlertDialog("Fail",context);
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -204,7 +225,7 @@ class Login extends StatelessWidget {
   }
 
   
-  Widget offlineButton(BuildContext context,ParentdWidget rootIW){
+  Widget offlineButton(BuildContext context){
     return ButtonTheme(
       height: 35,
       minWidth: 165,
@@ -214,7 +235,7 @@ class Login extends StatelessWidget {
           Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Downloadlist(rootIW.fileData, rootIW)
+            builder: (context) => GoOffline()
             )
           );
         }),
@@ -222,13 +243,8 @@ class Login extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: textLato(
-          "Offline", 
-          color: Colors.black, 
-          size: 18.0, 
-          fontweight: FontWeight.w400
-        ),
-        ),
+        child: textLato("Offline", color: Colors.black, size: 18.0, fontweight: FontWeight.w400 ),
+      ),
     );
   }
 

@@ -1,5 +1,5 @@
 
-import 'package:MusicApp/OfflineFeature/mp3Access.dart';
+import 'package:MusicApp/Feature/mp3Access.dart';
 import 'package:flutter/material.dart';
 
 class ParentdWidget extends InheritedWidget {

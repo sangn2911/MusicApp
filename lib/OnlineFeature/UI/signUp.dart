@@ -60,16 +60,16 @@ class SignUp extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             text("Email:"),
-            textField(hint: "example@example.com", input: emailInput),
+            textField(false, hint: "example@example.com", input: emailInput),
             SizedBox(height: SizeConfig.screenHeight*15/640,),
             text("Username:"),
-            textField(hint: "", input: usernameInput),
+            textField(false, hint: "", input: usernameInput),
             SizedBox(height: SizeConfig.screenHeight*15/640,),
             text("Password:"),
-            textField(input: passwordInput),
+            textField(true, input: passwordInput),
             SizedBox(height: SizeConfig.screenHeight*15/640,),
             text("Confirm password:"),
-            textField(input: passwordInput2),
+            textField(true, input: passwordInput2),
           ],
         ),
       ),
@@ -86,8 +86,9 @@ class SignUp extends StatelessWidget {
     );
   }
 
-  Widget textField({String hint = "",TextEditingController input}){
+  Widget textField(bool isPassword, {String hint = "",TextEditingController input}){
     return TextField(
+      obscureText: isPassword,
       controller: input,
       style: TextStyle(
         fontSize: 20.0,

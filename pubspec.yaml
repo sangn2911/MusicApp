@@ -27,12 +27,23 @@ dependencies:
   keyboard_avoider: ^0.1.2
   flute_music_player: ^0.0.6
   http: ^0.12.1
+  provider: ^4.1.2
+  sliding_up_panel: 0.3.4
+  rxdart: ^0.24.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  assets_audio_player: ^1.2.3
+  # assets_audio_player: ^1.2.3
+  flutter_launcher_icons: "^0.7.0"
 
+flutter_icons:
+  ios: false
+  android: true
+  image_path_ios: "assets/launcher/icon.png"
+  image_path_android: "assets/launcher/icon.png"
+  adaptive_icon_foreground: "assets/launcher/foreground.png"
+  adaptive_icon_background: "assets/launcher/background.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -53,6 +64,9 @@ flutter:
     - images/b.png
     - images/MyMusic.svg
     - images/album_1.svg
+    - images/momo.png
+    - images/visa.png
+    - images/ocb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
