@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/OnlineFeature/signUp.dart';
+import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
 
 
@@ -144,11 +144,27 @@ class Login extends StatelessWidget {
             .then((value) 
             => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => GoOnline(),
-                  )
+                // MaterialPageRoute(
+                //   builder: (context) => GoOnline(),
+                //   )
+                PageRouteBuilder(
+                  transitionDuration: Duration(milliseconds: 550),
+                  transitionsBuilder: (BuildContext context, 
+                    Animation<double> animation, 
+                    Animation<double> secAnimation,
+                    Widget child){
+                      return ScaleTransition(
+                        alignment: Alignment.center,
+                        scale: animation,
+                        child: child,
+                      );
+                  },
+                  pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secAnimation,){
+                    return GoOnline();
+                  }
                 )
-              );
+              )
+            );
           // final username = usernameInput.text.trimRight();
           // final password = passwordInput.text.trimRight();
 

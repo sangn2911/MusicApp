@@ -1,4 +1,5 @@
-import 'package:MusicApp/OnlineFeature/homePage.dart';
+//import 'package:MusicApp/OnlineFeature/UI/homePage.dart';
+import 'package:MusicApp/root.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class GoOffline extends StatelessWidget {
         return mpBloC;
       },
       dispose: (BuildContext context, MpControllerBloC mp) => mp.dispose(),
-      child: Downloadlist(),
+      child: Downloadlist(false),
     );
     //return Downloadlist();
   }
@@ -34,7 +35,7 @@ class GoOnline extends StatelessWidget {
         return mpBloC;
       },
       dispose: (BuildContext context, MpControllerBloC mp) => mp.dispose(),
-      child: HomePage(),
+      child: RootWidget(),
     );
     //return HomePage();
   }

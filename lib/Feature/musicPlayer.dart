@@ -35,16 +35,14 @@ class MusicPlayerState extends State<MusicPlayer> {
 
   Widget dropDownButton (){
     return Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        shape: BoxShape.circle,
-      ),
+      // decoration: BoxDecoration(
+      //   border: Border.all(color: Colors.black),
+      //   shape: BoxShape.circle,
+      // ),
       child: Icon(
         Icons.keyboard_arrow_down,
-        color: Colors.black,
-        size: 35,
+        color: Colors.white,
+        size: 40,
       ),
     );
   }
@@ -69,10 +67,10 @@ class MusicPlayerState extends State<MusicPlayer> {
         appBar: AppBar(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(30),
+              bottom: Radius.circular(0),
             ),
           ),
-          backgroundColor: ColorCustom.orange,
+          backgroundColor: Colors.black,
           centerTitle: true,
           leading: IconButton(
             icon: dropDownButton(),
@@ -80,7 +78,15 @@ class MusicPlayerState extends State<MusicPlayer> {
               Navigator.pop(context);
             }
           ),
-          title: TextLato("Music Player", Colors.black, 25, FontWeight.w700),
+          title: TextLato("Music Player", Colors.white, 25, FontWeight.w700),
+          actions: <Widget>[
+            Icon(
+              Icons.more_vert,
+              color: Colors.white,
+              size: 30.0,
+            ),
+            SizedBox(width: 10),
+          ],
         ),
         body: body()
       ),

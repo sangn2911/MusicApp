@@ -19,8 +19,8 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
     final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return Container(
       decoration: BoxDecoration(
-        color: ColorCustom.orange,
-        border: Border.all(color: ColorCustom.orange),
+        color: ColorCustom.grey,
+        border: Border.all(color: ColorCustom.grey),
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(40),
           bottom: Radius.circular(40),
@@ -48,8 +48,8 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      TextLato(currentSong.title, Colors.black, 22, FontWeight.w700),
-                      TextLato(currentSong.artist, Colors.black.withOpacity(0.75), 18, FontWeight.w400),
+                      TextLato(currentSong.title, ColorCustom.orange, 22, FontWeight.w700),
+                      TextLato(currentSong.artist, ColorCustom.orange.withOpacity(0.75), 18, FontWeight.w400),
                     ]
                   ),
                 ),
@@ -60,7 +60,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                 iconSize: 33,
                 icon: Icon(
                   Icons.star_border,
-                  color: Colors.black,
+                  color: ColorCustom.orange,
                   size: 35,
                 ), 
                 onPressed: () {
@@ -73,7 +73,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
                 iconSize: 50,
                 icon: Icon(
                   Icons.skip_next,
-                  color: Colors.black,
+                  color: ColorCustom.orange,
                   size: 50,
                 ), 
                 onPressed: () {
@@ -94,7 +94,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
       iconSize: 60,
       icon: Icon(
         playerState == PlayerState.paused ? Icons.play_circle_outline : Icons.pause_circle_outline,
-        color: Colors.black,
+        color: ColorCustom.orange,
         size: 60,
       ), 
       onPressed: (){

@@ -9,7 +9,7 @@ enum PlayerMode { shuffle, repeat, normal }
 class MpControllerBloC{
 
 //List management
-
+  BehaviorSubject<bool> isUsed;
   BehaviorSubject<List<Song>> _songs;
   bool isDispose = false;
   // List<Album> _albums;
@@ -50,6 +50,7 @@ class MpControllerBloC{
   }
 
   void dispose(){
+    isUsed.close();
     isDispose = true;
     _audioPlayer.stop();
     playerState.close();
@@ -65,6 +66,7 @@ class MpControllerBloC{
   }
 
   void _initStreams(){
+    isUsed = BehaviorSubject<bool>.seeded(false);
     _songs = BehaviorSubject<List<Song>>();
     //_albums = List<Album>();
     _position = BehaviorSubject<Duration>();

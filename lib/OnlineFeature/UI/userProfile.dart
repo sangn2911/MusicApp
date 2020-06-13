@@ -1,3 +1,4 @@
+import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/sizeConfig.dart';
@@ -19,7 +20,7 @@ class UserProfile extends StatelessWidget {
               Expanded(
                 child: Container(
                   padding: EdgeInsets.only(left: 38, right: 38),
-                  child: childList(),
+                  child: childList(context),
                 ),
               )
             ]
@@ -103,12 +104,23 @@ class UserProfile extends StatelessWidget {
   }
 
 
-  Widget childList(){
+  Widget childList(BuildContext context){
     return ListView(
         children: <Widget>[
           infoListTitle(Icons.mail , "edgar@gmail.com", onPressed: (){}),
           infoListTitle(Icons.phone, "0919246969", onPressed: (){}),
           infoListTitle(Icons.attach_money,"999.9", onPressed: (){}),
+          infoListTitle(Icons.shopping_cart,"Premium User", 
+            onPressed: (){
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: Purchase(),
+                  );
+                }
+                );
+            }),
           infoListTitle(Icons.exit_to_app,"Log out", onPressed: (){}),
         ],
     );

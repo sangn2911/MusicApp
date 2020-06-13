@@ -3,12 +3,15 @@ import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/Data/mpControlBloC.dart';
 import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/musicPlayer.dart';
+import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Downloadlist extends StatefulWidget {
+  final bool _isOnline;
+  Downloadlist(this._isOnline);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -36,7 +39,7 @@ class _DownloadlistState extends State<Downloadlist> {
     final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
     return SafeArea(
       child: Scaffold(
-        appBar: appBar(),
+        appBar: appBar(context),
         backgroundColor: Colors.black,
         body: SafeArea(
           child: Column(
@@ -66,16 +69,41 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget appBar(){
+  Widget userButton(BuildContext context){
+    return IconButton(
+      iconSize: 30,
+      icon: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          border: Border.all(
+            color: Colors.black
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20))
+        ),
+        child: Icon(
+          Icons.person,
+          color: Colors.black,
+        ),
+      ),
+      onPressed: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserProfile())
+        );
+      }
+    );
+  }
+
+  Widget appBar(BuildContext context){
     return AppBar(
       backgroundColor: Colors.black,
       centerTitle: true,
-      leading: BackButton(
+      leading: !widget._isOnline ? BackButton(
         color: Colors.white,
         onPressed: () {
           Navigator.pop(context);
         },
-      ),
+      ) : userButton(context),
       title: Text(
         "Downloaded Songs",
         style: TextStyle(
@@ -225,8 +253,10 @@ class _DownloadlistState extends State<Downloadlist> {
         return Expanded(
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: _filterList.length,
-            itemBuilder: (BuildContext context, int index){   
+            itemCount: _filterList.length + 1,
+            itemBuilder: (BuildContext context, int index){
+              if (index == _filterList.length) 
+                return widget._isOnline ? Container(height: 60) : Container();
               Song _song = _filterList[index];
               return songTile(mp, _song);
               },                                     
@@ -297,6 +327,7 @@ class _DownloadlistState extends State<Downloadlist> {
         setState(() {
           isUsed = true;
         });
+        mp.isUsed.add(true);
         mp.stop();
         mp.play(song);
       },

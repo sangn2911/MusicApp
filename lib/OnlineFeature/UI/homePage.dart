@@ -1,16 +1,17 @@
 import 'package:MusicApp/Data/mpControlBloC.dart';
-import 'package:MusicApp/Feature/currentPlaying.dart';
-import 'package:MusicApp/Feature/musicPlayer.dart';
-import 'package:MusicApp/OnlineFeature/userProfile.dart';
+// import 'package:MusicApp/Feature/currentPlaying.dart';
+// import 'package:MusicApp/Feature/musicPlayer.dart';
+import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/sizeConfig.dart';
 import 'package:provider/provider.dart';
-import 'package:MusicApp/OnlineFeature/purchase.dart';
+import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/Custom/custemText.dart';
 
+bool isUsed = false;
 
 class HomePage extends StatefulWidget {
 
@@ -19,9 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  bool isUsed = false;
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +40,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
               child: Container(
                 child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,16 +48,16 @@ class _HomePageState extends State<HomePage> {
                       recentlyList(mp),
                       favouriteList(mp),
                       yourSongList(mp),
+                      !isUsed ? Container(height: 60) : Container(height: 130),
                     ]
                   ),
                 ),
               ),
             ),
           ),
-          currentPlaying(mp),        
+          //currentPlaying(mp),        
         ],
       ),
-      bottomNavigationBar: buttonSet(context),
     );
   }
 
@@ -72,6 +71,7 @@ class _HomePageState extends State<HomePage> {
           decoration: BoxDecoration(
             color: Colors.grey,
             border: Border.all(
+              color: Colors.black
             ),
             borderRadius: BorderRadius.all(Radius.circular(20))
           ),
@@ -97,21 +97,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget currentPlaying(MpControllerBloC mp){
-    return !isUsed
-      ? Container()
-      : GestureDetector(
-        onTap: (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MusicPlayer(mp),
-            )
-          );
-        },
-        child: CurrentPlayBar()
-      );
-  }
+  // Widget currentPlaying(MpControllerBloC mp){
+  //   return !isUsed
+  //     ? Container()
+  //     : GestureDetector(
+  //       onTap: (){
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => MusicPlayer(mp),
+  //           )
+  //         );
+  //       },
+  //       child: CurrentPlayBar()
+  //     );
+  // }
 
   Widget recentlyList(MpControllerBloC mp){
     return Column(
@@ -288,6 +288,7 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 isUsed = true;
               });
+              mp.isUsed.add(true);
               mp.stop();
               mp.play(song);
             },
@@ -313,38 +314,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget navigationBar(){
-  //   return Container(
-  //     decoration: BoxDecoration(
-
-  //     ),
-  //     child: BottomNavigationBar(
-  //       currentIndex: _selectedIndex,
-  //       items: <BottomNavigationBarItem>[
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.home),
-  //           title: TextLato("Home", Colors.black, 12, FontWeight.w700),
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.search),
-  //           title: TextLato("Search", Colors.black, 12, FontWeight.w700),
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.library_music),
-  //           title: TextLato("Library", Colors.black, 12, FontWeight.w700),
-  //         ),
-  //       ],
-  //       onTap: (index){
-  //         setState(() {
-  //           _selectedIndex = index;
-  //         });
-  //       },
-
-  //     ),
-  //   );
-  // }
-
-
   Widget buttonSet(BuildContext context){
     return Container(
       decoration: BoxDecoration(
@@ -354,7 +323,7 @@ class _HomePageState extends State<HomePage> {
         ),
         color: Colors.white,
       ),
-      height: 55/640 * SizeConfig.screenHeight,
+      height: 65/640 * SizeConfig.screenHeight,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -362,15 +331,15 @@ class _HomePageState extends State<HomePage> {
             buttonWidget(Icons.home, "Home",
               function: (){}
             ),
-            SizedBox(width: 55),
+            SizedBox(width: 50),
             buttonWidget(Icons.search, "Search",
               function: (){}
             ),
-            SizedBox(width: 55),
+            SizedBox(width: 50),
             buttonWidget(Icons.library_music, "Library",
               function: (){}
             ),
-            SizedBox(width: 55),
+            SizedBox(width: 50),
             buttonWidget(Icons.shopping_cart, "VIP",
               function: (){
                 showDialog(
@@ -393,7 +362,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        SizedBox(height: 5),
+        SizedBox(height: 2),
         IconButton(
           padding: EdgeInsets.only(bottom: 0),
           iconSize: 40,
