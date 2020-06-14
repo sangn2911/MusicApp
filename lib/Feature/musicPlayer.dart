@@ -2,15 +2,15 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flute_music_player/flute_music_player.dart';
-import 'package:MusicApp/sizeConfig.dart';
+import 'package:MusicApp/Custom/sizeConfig.dart';
 //import 'package:provider/provider.dart';
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:MusicApp/Custom/custemText.dart';
 
 
 class MusicPlayer extends StatefulWidget {
-  final MpControllerBloC _mp;
+  final MainControllerBloC _mp;
   MusicPlayer(this._mp);
 
   @override
@@ -94,12 +94,13 @@ class MusicPlayerState extends State<MusicPlayer> {
   }
 
   Widget body(){
-    final MpControllerBloC mp = widget._mp;
+    final MainControllerBloC mp = widget._mp;
     return Center(
       child: Column(
           children: <Widget>[
             SizedBox(height: SizeConfig.screenHeight*28/640),
-            albumArtCover(mp),
+            imageDecoration(),
+            //albumArtCover(mp),
             SizedBox(height: SizeConfig.screenHeight*28/640),
             songInfo(mp),
             SizedBox(height: SizeConfig.screenHeight*20/640),
@@ -118,9 +119,9 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget albumArtCover(MpControllerBloC mp){
-    // final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
-    // final MpControllerBloC mp = widget._mp;
+  Widget albumArtCover(MainControllerBloC mp){
+    // final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+    // final MainControllerBloC mp = widget._mp;
     return Container(
       child: StreamBuilder<Song>(
         stream: mp.currentSong,
@@ -147,9 +148,9 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget songInfo(MpControllerBloC mp){
-    //final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
-    // final MpControllerBloC mp = widget._mp;
+  Widget songInfo(MainControllerBloC mp){
+    //final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+    // final MainControllerBloC mp = widget._mp;
     return Container(
       padding: EdgeInsets.only(left: 50, right: 50),
       child: StreamBuilder<Song>(
@@ -201,7 +202,7 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget musicControl(MpControllerBloC mp){
+  Widget musicControl(MainControllerBloC mp){
     return Column(
       children: <Widget>[
         musicSlider(mp),
@@ -210,9 +211,9 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget musicSlider(MpControllerBloC mp){
-    // final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
-    // final MpControllerBloC mp = widget._mp;
+  Widget musicSlider(MainControllerBloC mp){
+    // final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+    // final MainControllerBloC mp = widget._mp;
     return Container(
       width: 360,
       child: StreamBuilder<MapEntry<Duration,Song>>(
@@ -263,9 +264,9 @@ class MusicPlayerState extends State<MusicPlayer> {
     );
   }
 
-  Widget controlButton(MpControllerBloC mp){
-    //final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
-    //final MpControllerBloC mp = widget._mp;
+  Widget controlButton(MainControllerBloC mp){
+    //final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+    //final MainControllerBloC mp = widget._mp;
     return Container(
       child: StreamBuilder<MapEntry<MapEntry<PlayerState,PlayerMode>,Song>>(
         stream: CombineLatestStream.combine3(mp.playerState, mp.playerMode,mp.currentSong, (a,b, c) => MapEntry(MapEntry(a,b),c)),

@@ -1,23 +1,30 @@
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/Data/userModel.dart';
 
 import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/downloadlist.dart';
 
 import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/UI/homePage.dart';
+import 'package:MusicApp/OnlineFeature/UI/library.dart';
 import 'package:MusicApp/OnlineFeature/UI/searchPage.dart';
 // import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 // import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 // import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/sizeConfig.dart';
 import 'package:provider/provider.dart';
 // import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/Custom/custemText.dart';
 
+import 'Custom/sizeConfig.dart';
+
 
 class RootWidget extends StatefulWidget {
+
+  final UserModel userInfo;
+  RootWidget(this.userInfo);
+
   @override
   _RootWidgetState createState() => _RootWidgetState();
 }
@@ -28,12 +35,22 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
   // Animation<double> _animation;
   int _currentIndex = 0;
 
-  List<Widget> _children =[
-    HomePage(),
-    SearchPage(),
-    SafeArea(child: Scaffold(body: Container(child: Center(child: Text("UpcomingPage")),))),
-    Downloadlist(true),
-  ];  
+
+
+  List<Widget> _children;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _children = [
+      HomePage(widget.userInfo),
+      SearchPage(),
+      Library(),
+      Downloadlist(true, widget.userInfo),
+    ];
+  }
+
 
   void onNavigationBar(int index){
     setState(() {
@@ -44,7 +61,7 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -75,7 +92,7 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
     );
   }
 
-  Widget currentPlaying(MpControllerBloC mp){
+  Widget currentPlaying(MainControllerBloC mp){
     return StreamBuilder<bool>(
       stream: mp.isUsed,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot){

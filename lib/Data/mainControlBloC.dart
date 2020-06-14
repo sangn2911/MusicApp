@@ -1,15 +1,21 @@
 import 'dart:math';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
+import 'package:music_player/music_player.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:rxdart/rxdart.dart';
+import 'onlineBloC.dart';
 
 enum PlayerState { stopped, playing, paused }
 enum PlayerMode { shuffle, repeat, normal }
 
-class MpControllerBloC{
+class MainControllerBloC{
+
+//OtherBloC
+  OnlineBloC mpOnline;
 
 //List management
   BehaviorSubject<bool> isUsed;
+  BehaviorSubject<bool> fromDB; 
   BehaviorSubject<List<Song>> _songs;
   bool isDispose = false;
   // List<Album> _albums;
@@ -17,7 +23,7 @@ class MpControllerBloC{
   // List<Song> _recently;
   // List<Song> _currentPlayList;
   
-//Music Player Controller
+//Music Player Controller (Offline)
 
   MusicFinder _audioPlayer;
   Duration _duration;
@@ -43,7 +49,8 @@ class MpControllerBloC{
   BehaviorSubject<PlayerState> get playerState => _playerState;
   BehaviorSubject<PlayerMode> get playerMode => _playerMode;
 
-  MpControllerBloC(){
+  MainControllerBloC(){
+    mpOnline = OnlineBloC();
     _initStreams();
     _initAudioPlayer();
     _initCurrentSong();
@@ -151,9 +158,7 @@ class MpControllerBloC{
 //Basic Function
   play(Song song) {
     _currentSong.add(song);
-
     _audioPlayer.play(_currentSong.value.uri);
-
     _playerState.add(PlayerState.playing);
   }
 

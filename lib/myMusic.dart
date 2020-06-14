@@ -1,23 +1,24 @@
 //import 'package:MusicApp/OnlineFeature/UI/homePage.dart';
+import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/root.dart';
 import 'package:flutter/material.dart';
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:provider/provider.dart';
 import 'package:MusicApp/Feature/downloadlist.dart';
 
 class GoOffline extends StatelessWidget {
 
-  final MpControllerBloC mpBloC = MpControllerBloC();
+  final MainControllerBloC mpBloC = MainControllerBloC();
 
   @override
   Widget build(BuildContext context) {
-    return Provider<MpControllerBloC>(
+    return Provider<MainControllerBloC>(
       create: (BuildContext context){
         mpBloC.fetchSongs();
         return mpBloC;
       },
-      dispose: (BuildContext context, MpControllerBloC mp) => mp.dispose(),
-      child: Downloadlist(false),
+      dispose: (BuildContext context, MainControllerBloC mp) => mp.dispose(),
+      child: Downloadlist(false, null),
     );
     //return Downloadlist();
   }
@@ -25,17 +26,20 @@ class GoOffline extends StatelessWidget {
 
 class GoOnline extends StatelessWidget {
 
-  final MpControllerBloC mpBloC = MpControllerBloC();
+  final UserModel userInfo;
+  GoOnline(this.userInfo);
+  
+  final MainControllerBloC mpBloC = MainControllerBloC();
 
   @override
   Widget build(BuildContext context) {
-    return Provider<MpControllerBloC>(
+    return Provider<MainControllerBloC>(
       create: (BuildContext context){
         mpBloC.fetchSongs();
         return mpBloC;
       },
-      dispose: (BuildContext context, MpControllerBloC mp) => mp.dispose(),
-      child: RootWidget(),
+      dispose: (BuildContext context, MainControllerBloC mp) => mp.dispose(),
+      child: RootWidget(userInfo),
     );
     //return HomePage();
   }

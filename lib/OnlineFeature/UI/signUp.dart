@@ -1,5 +1,5 @@
+import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:flutter/material.dart';
-import 'package:MusicApp/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';

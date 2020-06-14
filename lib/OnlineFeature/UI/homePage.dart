@@ -1,4 +1,5 @@
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/Data/userModel.dart';
 // import 'package:MusicApp/Feature/currentPlaying.dart';
 // import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
@@ -6,14 +7,18 @@ import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/sizeConfig.dart';
+import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:provider/provider.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/Custom/custemText.dart';
 
+
 bool isUsed = false;
 
 class HomePage extends StatefulWidget {
+
+  final UserModel userInfo;
+  HomePage(this.userInfo);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -24,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: PreferredSize(
@@ -80,14 +85,14 @@ class _HomePageState extends State<HomePage> {
             color: Colors.black,
           ),
         ),
-        onPressed: (){
+        onPressed: () async{
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => UserProfile())
+            MaterialPageRoute(builder: (context) => UserProfile(widget.userInfo))
           );
         }
       ),
-      title: TextLato("Home", Colors.white ,20, FontWeight.w700),
+      title: TextLato("Home", Colors.white , 25, FontWeight.w700),
       actions: <Widget>[
         IconButton(
           icon: Icon(IconCustom.settings_1), 
@@ -97,7 +102,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget currentPlaying(MpControllerBloC mp){
+  // Widget currentPlaying(MainControllerBloC mp){
   //   return !isUsed
   //     ? Container()
   //     : GestureDetector(
@@ -113,7 +118,7 @@ class _HomePageState extends State<HomePage> {
   //     );
   // }
 
-  Widget recentlyList(MpControllerBloC mp){
+  Widget recentlyList(MainControllerBloC mp){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -138,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget favouriteList(MpControllerBloC mp){
+  Widget favouriteList(MainControllerBloC mp){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -153,7 +158,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.black,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 6,
+            itemCount: 1,
             itemBuilder: (BuildContext context, int index){
               return songTile(IconCustom.album_1, "Song $index", "Artist $index", false);
             },
@@ -163,7 +168,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget yourSongList(MpControllerBloC mp){
+  Widget yourSongList(MainControllerBloC mp){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -266,7 +271,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget songDownloaded(MpControllerBloC mp, IconData icon, Song song){
+  Widget songDownloaded(MainControllerBloC mp, IconData icon, Song song){
     String title = song.title;
     String artist = song.artist;
     return Container(
