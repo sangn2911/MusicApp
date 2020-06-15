@@ -2,7 +2,7 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:provider/provider.dart';
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:MusicApp/Custom/custemText.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -16,7 +16,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
 
   @override
   Widget build(BuildContext context) {
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return Container(
       decoration: BoxDecoration(
         color: ColorCustom.grey,
@@ -88,7 +88,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
     );
   }
 
-  Widget playIconButton(Song currentSong, MpControllerBloC mp,PlayerState playerState){
+  Widget playIconButton(Song currentSong, MainControllerBloC mp,PlayerState playerState){
     return IconButton(
       padding: EdgeInsets.all(0),
       iconSize: 60,

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flute_music_player/flute_music_player.dart';
 
+import 'Custom/sizeConfig.dart';
+
 // import 'package:flutter_svg/flutter_svg.dart';
-import 'sizeConfig.dart';
+
 //import 'main.dart';
 
 enum PlayerState { stopped, playing, paused }

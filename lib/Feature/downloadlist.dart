@@ -1,17 +1,20 @@
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/Data/mpControlBloC.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
-import 'package:MusicApp/sizeConfig.dart';
+import 'package:MusicApp/Custom/sizeConfig.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Downloadlist extends StatefulWidget {
   final bool _isOnline;
-  Downloadlist(this._isOnline);
+  final UserModel userInfo;
+  Downloadlist(this._isOnline, this.userInfo);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -36,7 +39,7 @@ class _DownloadlistState extends State<Downloadlist> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return SafeArea(
       child: Scaffold(
         appBar: appBar(context),
@@ -85,10 +88,11 @@ class _DownloadlistState extends State<Downloadlist> {
           color: Colors.black,
         ),
       ),
-      onPressed: (){
+      onPressed: () async {
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => UserProfile())
+          MaterialPageRoute(builder: (context) => UserProfile(widget.userInfo))
         );
       }
     );
@@ -120,7 +124,7 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget shuffleButton(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return ButtonTheme(
       height: 31,
       minWidth: 158,
@@ -227,7 +231,7 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget musicList(){
-    final MpControllerBloC mp = Provider.of<MpControllerBloC>(context);
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return StreamBuilder<List<Song>>(
       stream: mp.songList,
       builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
@@ -299,7 +303,7 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget songTile(MpControllerBloC mp, Song song){
+  Widget songTile(MainControllerBloC mp, Song song){
     return ListTile(
       leading: musicIcon(),
       title: Text(

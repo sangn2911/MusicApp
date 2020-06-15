@@ -1,13 +1,13 @@
 // import 'package:MusicApp/Data/mpControlBloC.dart';
 // import 'package:MusicApp/Feature/currentPlaying.dart';
 // import 'package:MusicApp/Feature/musicPlayer.dart';
+import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/OnlineFeature/UI/homePage.dart';
 // import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 // import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 // import 'package:MusicApp/Custom/customIcons.dart';
-import 'package:MusicApp/sizeConfig.dart';
 // import 'package:provider/provider.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/Custom/custemText.dart';

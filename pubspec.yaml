@@ -25,7 +25,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_svg: ^0.17.4
   keyboard_avoider: ^0.1.2
-  flute_music_player: ^0.0.6
+  # Music Player package
+  flute_music_player: ^0.0.6 #Offline
+  music_player: ^0.1.5 #Online
   http: ^0.12.1
   provider: ^4.1.2
   sliding_up_panel: 0.3.4
