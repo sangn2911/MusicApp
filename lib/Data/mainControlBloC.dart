@@ -1,17 +1,17 @@
 import 'dart:math';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
-import 'package:music_player/music_player.dart';
+import 'package:MusicApp/Data/songModel.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:rxdart/rxdart.dart';
-import 'onlineBloC.dart';
 
 enum PlayerState { stopped, playing, paused }
 enum PlayerMode { shuffle, repeat, normal }
 
 class MainControllerBloC{
 
-//OtherBloC
-  OnlineBloC mpOnline;
+//List
+  BehaviorSubject<List<SongItem>> favourite;
 
 //List management
   BehaviorSubject<bool> isUsed;
@@ -50,7 +50,6 @@ class MainControllerBloC{
   BehaviorSubject<PlayerMode> get playerMode => _playerMode;
 
   MainControllerBloC(){
-    mpOnline = OnlineBloC();
     _initStreams();
     _initAudioPlayer();
     _initCurrentSong();
@@ -58,6 +57,7 @@ class MainControllerBloC{
 
   void dispose(){
     isUsed.close();
+    fromDB.close();
     isDispose = true;
     _audioPlayer.stop();
     playerState.close();
@@ -66,6 +66,7 @@ class MainControllerBloC{
     songList.close();
     currentSong.close();
     _songs.close();
+    favourite.close();
     _playerState.close();
     _playerMode.close();
     _position.close();
@@ -74,7 +75,9 @@ class MainControllerBloC{
 
   void _initStreams(){
     isUsed = BehaviorSubject<bool>.seeded(false);
+    fromDB = BehaviorSubject<bool>.seeded(false);
     _songs = BehaviorSubject<List<Song>>();
+    favourite = BehaviorSubject<List<SongItem>>();
     //_albums = List<Album>();
     _position = BehaviorSubject<Duration>();
     //_favorites = [];
@@ -124,6 +127,12 @@ class MainControllerBloC{
     });
   }
 
+  Future<void> fetchFavourite() async {
+    List<SongItem> fav = await getfavourite();
+    print(fav);
+    favourite.add(fav);
+  }
+
   Future<void> fetchSongs() async {
     print("Fectch Songs");
     await MusicFinder.allSongs()
@@ -158,7 +167,7 @@ class MainControllerBloC{
 //Basic Function
   play(Song song) {
     _currentSong.add(song);
-    _audioPlayer.play(_currentSong.value.uri);
+    _audioPlayer.play(song.uri, isLocal: false);
     _playerState.add(PlayerState.playing);
   }
 
@@ -217,6 +226,8 @@ class MainControllerBloC{
       playRandomSong();   
     }
     else
+      //if (fromDB.value == true) playOnline(_currentSongOnline.value);
+      //else
       next();
   }
 

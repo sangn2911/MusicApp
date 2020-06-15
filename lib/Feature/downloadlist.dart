@@ -332,6 +332,7 @@ class _DownloadlistState extends State<Downloadlist> {
           isUsed = true;
         });
         mp.isUsed.add(true);
+        mp.fromDB.add(false);
         mp.stop();
         mp.play(song);
       },

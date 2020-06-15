@@ -1,8 +1,10 @@
 import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/Data/userModel.dart';
 // import 'package:MusicApp/Feature/currentPlaying.dart';
 // import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
@@ -60,7 +62,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          //currentPlaying(mp),        
         ],
       ),
     );
@@ -102,22 +103,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget currentPlaying(MainControllerBloC mp){
-  //   return !isUsed
-  //     ? Container()
-  //     : GestureDetector(
-  //       onTap: (){
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => MusicPlayer(mp),
-  //           )
-  //         );
-  //       },
-  //       child: CurrentPlayBar()
-  //     );
-  // }
-
   Widget recentlyList(MainControllerBloC mp){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +120,7 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.horizontal,
             itemCount: 6,
             itemBuilder: (BuildContext context, int index){
-              return songTile(IconCustom.album_1, "Song $index", "Artist $index", true);
+              return songTile(IconCustom.album_1, "", "Song $index", "Artist $index", true);
             },
           )
         ),
@@ -152,18 +137,52 @@ class _HomePageState extends State<HomePage> {
           child: TextLato("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
         ),
         SizedBox(height: 10/640 * SizeConfig.screenHeight),
-        Container(
-          //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-          height: 170/640 * SizeConfig.screenHeight,
-          color: Colors.black,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index){
-              return songTile(IconCustom.album_1, "Song $index", "Artist $index", false);
-            },
-          )
+        
+        StreamBuilder(
+          stream: mp.favourite,
+          builder: (BuildContext context, AsyncSnapshot<List<SongItem>> snapshot){
+            if (mp.isDispose) return Container();
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                ),
+              );
+            }
+            List<SongItem> _songList = snapshot.data;
+            if (_songList.length == 0) {
+              return Container();
+            }
+            return Container(
+              //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+              height: 170/640 * SizeConfig.screenHeight,
+              color: Colors.black,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _songList.length,
+                itemBuilder: (BuildContext context, int index){
+                  String id = _songList[index].id;
+                  String title = _songList[index].title;
+                  String artist = _songList[index].artist;
+                  return songTile(IconCustom.album_1, id, title, artist, false);
+                },
+              )
+            );
+          }
         ),
+        // Container(
+        //   //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
+        //   height: 170/640 * SizeConfig.screenHeight,
+        //   color: Colors.black,
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.horizontal,
+        //     itemCount: 1,
+        //     itemBuilder: (BuildContext context, int index){
+        //       return songTile(IconCustom.album_1, "", "Song $index", "Artist $index", false);
+        //     },
+        //   )
+        // ),
       ],
     );
   }
@@ -212,7 +231,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget songTile(IconData icon, String title, String artist, bool inPhone){
+  Widget songTile(IconData icon, String id, String title, String artist, bool inPhone){
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return Container(
       width: 150/360 * SizeConfig.screenWidth,
       child: Column(
@@ -228,7 +248,15 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black,
               ),
             ),
-            onPressed: (){
+            onPressed: () async {
+              setState(() {
+                isUsed = true;
+              });
+              Song songTest = await getSong(id);
+              mp.isUsed.add(true);
+              mp.fromDB.add(true);
+              mp.stop();
+              mp.play(songTest);
               print("Select song $title");
             },
           ),
