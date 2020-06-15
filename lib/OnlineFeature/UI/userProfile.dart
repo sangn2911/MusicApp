@@ -147,7 +147,7 @@ class _UserProfileState extends State<UserProfile> {
           infoListTitle(Icons.mail , "${userInfo.email}", onPressed: (){}),
           infoListTitle(Icons.phone, "${userInfo.phone}", onPressed: (){}),
           infoListTitle(Icons.attach_money,"${userInfo.coin}", onPressed: (){}),
-          infoListTitle(Icons.exit_to_app,"Log out", onPressed: () async {
+          infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
             final bool response = await logOut(userInfo.name);
             if (response){
               int count = 0;

@@ -15,6 +15,7 @@ class GoOffline extends StatelessWidget {
     return Provider<MainControllerBloC>(
       create: (BuildContext context){
         mpBloC.fetchSongs();
+        mpBloC.fetchFavourite();
         return mpBloC;
       },
       dispose: (BuildContext context, MainControllerBloC mp) => mp.dispose(),
