@@ -141,49 +141,49 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          // createAlertDialog("Sign In Successfully",context)
-          //   .then((value) 
-          //   => Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => GoOnline(),
-          //         )
-          //       // PageRouteBuilder(
-          //       //   transitionDuration: Duration(milliseconds: 550),
-          //       //   transitionsBuilder: (BuildContext context, 
-          //       //     Animation<double> animation, 
-          //       //     Animation<double> secAnimation,
-          //       //     Widget child){
-          //       //       return ScaleTransition(
-          //       //         alignment: Alignment.center,
-          //       //         scale: animation,
-          //       //         child: child,
-          //       //       );
-          //       //   },
-          //       //   pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secAnimation,){
-          //       //     return GoOnline();
-          //       //   }
-          //       // )
-          //     )
-          //   );
-          final username = usernameInput.text.trimRight();
-          final password = passwordInput.text.trimRight();
-
-          final UserModel userInfo = await verifyUser(username, password);
-
-          if (userInfo == null)
-            createAlertDialog("Check your info",context);
-          else {
-            createAlertDialog("Sign In Successfully",context)
-              .then((value) =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GoOnline(userInfo),
+          createAlertDialog("Sign In Successfully",context)
+            .then((value) 
+            => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GoOnline(null),
                   )
-                )
-              );
-          }
+                // PageRouteBuilder(
+                //   transitionDuration: Duration(milliseconds: 550),
+                //   transitionsBuilder: (BuildContext context, 
+                //     Animation<double> animation, 
+                //     Animation<double> secAnimation,
+                //     Widget child){
+                //       return ScaleTransition(
+                //         alignment: Alignment.center,
+                //         scale: animation,
+                //         child: child,
+                //       );
+                //   },
+                //   pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secAnimation,){
+                //     return GoOnline();
+                //   }
+                // )
+              )
+            );
+          // final username = usernameInput.text.trimRight();
+          // final password = passwordInput.text.trimRight();
+
+          // final UserModel userInfo = await verifyUser(username, password);
+
+          // if (userInfo == null)
+          //   createAlertDialog("Check your info",context);
+          // else {
+          //   createAlertDialog("Sign In Successfully",context)
+          //     .then((value) =>
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => GoOnline(userInfo),
+          //         )
+          //       )
+          //     );
+          // }
         }),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),

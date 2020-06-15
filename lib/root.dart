@@ -5,8 +5,10 @@ import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/downloadlist.dart';
 
 import 'package:MusicApp/Feature/musicPlayer.dart';
+
 import 'package:MusicApp/OnlineFeature/UI/homePage.dart';
 import 'package:MusicApp/OnlineFeature/UI/library.dart';
+
 import 'package:MusicApp/OnlineFeature/UI/searchPage.dart';
 // import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 // import 'package:flute_music_player/flute_music_player.dart';
@@ -16,6 +18,7 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:provider/provider.dart';
 // import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/Custom/custemText.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'Custom/sizeConfig.dart';
 
@@ -100,18 +103,18 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
           return Container();
         }
         return !snapshot.data
-        ? Container()
-        : GestureDetector(
-          onTap: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MusicPlayer(mp),
-              )
-            );
-          },
-          child: CurrentPlayBar()
-        );
+          ? Container()
+          : GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MusicPlayer(mp),
+                )
+              );
+            },
+            child: CurrentPlayBar()
+          );
       },
     );
   }

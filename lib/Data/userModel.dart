@@ -22,8 +22,8 @@ class UserModel {
     factory UserModel.fromJson(Map<String,dynamic> json) => UserModel(
         name: json["username"],
         email: json["email"],
-        phone: json["phone"],
-        coin: json["coin"],
+        phone: json["phone"] == null ? "Add phone" : json["phone"],
+        coin: json["coin"] == null ? "Add coin" : json["title"],
         isVip: json["status"],
     );
 

@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/Data/userModel.dart';
+import 'package:flute_music_player/flute_music_player.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-String url = 'http://25.40.136.16:5000/'; //localhost
+String url = 'http://25.19.229.40:5000/'; //localhost
 
 Future<int> createUser(String email, String name, String password) async{
 
@@ -21,7 +23,7 @@ Future<int> createUser(String email, String name, String password) async{
     body: body,
   );
 
-
+  print("Status Code: ${response.statusCode}");
   
   if (response.statusCode == 200){
     print("Response body: ${response.body}");
@@ -91,26 +93,65 @@ Future<bool> logOut(String name) async{
 
 }
 
-// Future<UserModel> getUserInfo() async {
+Future<List<SongItem>> getfavourite() async{
 
-//   final response = await http.get(url + "/userInfo");
-//   print("Status Code: ${response.statusCode}");
-//   print("Body: ${response.body}");
-//   if (response.statusCode == 200) 
-//     return userModelFromJson(response.body);
-//   else if (response.statusCode == 400)
-//     return null;
-//   return null;
-// }
+  Map data = {
+    "service": "favouriteLst",
+  };
 
-// Future<MusicItem> getSongfromDB(String title) async{
-//     final response = await http.post(url,
-//     body: {
-//       "service": "getsong",
-//       "title": title,
-//     }
-//   );
-// }
+  String body = json.encode(data);
+
+  final response = await http.post(url,
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    Favourite favouriteList = favouriteFromJson(response.body);
+    return favouriteList.favourite;
+  }
+  else {
+    return null;
+  }
+
+}
+
+Future<Song> getSong(String id) async{
+
+  Map data = {
+    "service": "songLink",
+    "id": id,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url,
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+  if (response.statusCode == 200){
+    var jsondecode = json.decode(response.body);
+    Song song = Song(
+      null, 
+      jsondecode["artist"] == null ? "Unknown" : jsondecode["artist"], 
+      jsondecode["title"] == null ? "Unknown" : jsondecode["title"], 
+      "Unknown",
+      null, 
+      jsondecode["duration"], 
+      jsondecode["link"], 
+      null
+      );
+    return song;
+  }
+  else {
+    return null;
+  }
+
+}
 
 createAlertDialog(String str, BuildContext context){
   return showDialog(context: context, builder: (context){
