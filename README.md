@@ -21,17 +21,14 @@
 - Display User Profile
 
 # TODO
-- Play song from database  
+- Play song from database (current working)
 - Send recorder for voice authentication
 - Change User Profile
 
 
-## What's New
+## New Update
 
-- Animation transition when changing page  
-- Bottom navigation bar  
-- Suitable position for navigation Bar and currentplay Bar
-
+- Display User Profile
 
 ## Screenshot
 <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_01.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_02.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_03.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_04.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_05.png" width="250"> <img src="https://github.com/sangn2911/MusicApp/blob/musicappFunction/flutter_07.png" width="250"> 
