@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 
 class Downloadlist extends StatefulWidget {
   final bool _isOnline;
-  final UserModel userInfo;
-  Downloadlist(this._isOnline, this.userInfo);
+  //final UserModel userInfo;
+  Downloadlist(this._isOnline);
 
   @override
   _DownloadlistState createState() => _DownloadlistState();
@@ -62,7 +62,7 @@ class _DownloadlistState extends State<Downloadlist> {
                           )
                       );
                     },
-                    child: CurrentPlayBar()
+                    child: CurrentPlayBar(mp)
                   ) 
                 : Container(),
             ],
@@ -73,6 +73,7 @@ class _DownloadlistState extends State<Downloadlist> {
   }
 
   Widget userButton(BuildContext context){
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return IconButton(
       iconSize: 30,
       icon: Container(
@@ -89,10 +90,11 @@ class _DownloadlistState extends State<Downloadlist> {
         ),
       ),
       onPressed: () async {
-
+        
+        UserModel userInfo = mp.infoBloC.userInfo.value;
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => UserProfile(widget.userInfo))
+          MaterialPageRoute(builder: (context) => UserProfile(userInfo))
         );
       }
     );
@@ -273,8 +275,8 @@ class _DownloadlistState extends State<Downloadlist> {
 
   Widget musicIcon(){
     return Container(
-      height: 50,
-      width: 50,
+      height: 51,
+      width: 47,
       decoration: BoxDecoration(
         color: ColorCustom.orange,
         border: Border.all(
@@ -283,10 +285,10 @@ class _DownloadlistState extends State<Downloadlist> {
         borderRadius: BorderRadius.all(Radius.circular(15))
       ),
       child: Icon(
-      Icons.music_note,
-      color: Colors.black,
-      size: 40,
-        ),
+        Icons.music_note,
+        color: Colors.black,
+        size: 45,
+      ),
     );
   }
 

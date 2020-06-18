@@ -7,6 +7,10 @@ import 'package:MusicApp/Custom/custemText.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CurrentPlayBar extends StatefulWidget {
+  
+  final MainControllerBloC _mp;
+  CurrentPlayBar(this._mp);
+
 
   @override
   CurrentPlayBarState createState() => CurrentPlayBarState();
@@ -16,7 +20,9 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
 
   @override
   Widget build(BuildContext context) {
-    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+
+    //final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
+    final MainControllerBloC mp = widget._mp;
     return Container(
       decoration: BoxDecoration(
         color: ColorCustom.grey,

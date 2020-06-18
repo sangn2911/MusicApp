@@ -19,8 +19,8 @@ bool isUsed = false;
 
 class HomePage extends StatefulWidget {
 
-  final UserModel userInfo;
-  HomePage(this.userInfo);
+  // final UserModel userInfo;
+  // HomePage(this.userInfo);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget appBar(BuildContext context){
+    final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return AppBar(
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -87,9 +88,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         onPressed: () async{
+          
+          UserModel userInfo = mp.infoBloC.userInfo.value;
+          
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => UserProfile(widget.userInfo))
+            MaterialPageRoute(builder: (context) => UserProfile(userInfo))
           );
         }
       ),
@@ -137,16 +141,18 @@ class _HomePageState extends State<HomePage> {
           child: TextLato("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
         ),
         SizedBox(height: 10/640 * SizeConfig.screenHeight),
-        
         StreamBuilder(
           stream: mp.favourite,
           builder: (BuildContext context, AsyncSnapshot<List<SongItem>> snapshot){
             if (mp.isDispose) return Container();
             if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.black,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
+              return Container(
+                height: 170/640 * SizeConfig.screenHeight,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.black,
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  ),
                 ),
               );
             }
@@ -171,18 +177,6 @@ class _HomePageState extends State<HomePage> {
             );
           }
         ),
-        // Container(
-        //   //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
-        //   height: 170/640 * SizeConfig.screenHeight,
-        //   color: Colors.black,
-        //   child: ListView.builder(
-        //     scrollDirection: Axis.horizontal,
-        //     itemCount: 1,
-        //     itemBuilder: (BuildContext context, int index){
-        //       return songTile(IconCustom.album_1, "", "Song $index", "Artist $index", false);
-        //     },
-        //   )
-        // ),
       ],
     );
   }

@@ -9,25 +9,8 @@
     <list default="true" id="8d8fd71f-6f54-4e3e-9404-d937fd61b744" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/a.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/b.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable/b.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Custom/color.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Custom/color.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Data/mpControlBloC.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Data/mpControlBloC.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Feature/currentPlaying.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Feature/currentPlaying.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Feature/downloadlist.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Feature/downloadlist.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Feature/musicPlayer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Feature/musicPlayer.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/OnlineFeature/homePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/OnlineFeature/homePage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/OnlineFeature/login.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/OnlineFeature/login.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/OnlineFeature/purchase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/OnlineFeature/purchase.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/OnlineFeature/httpService.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/OnlineFeature/httpService.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/root.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/root.dart" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

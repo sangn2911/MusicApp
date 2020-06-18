@@ -28,6 +28,7 @@ class TextLato extends StatelessWidget {
       str,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
+        wordSpacing: 1.15,
         color: color,
         fontSize: size,
         fontFamily: 'Lato',

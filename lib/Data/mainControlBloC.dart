@@ -1,16 +1,22 @@
 import 'dart:math';
 // import 'package:MusicApp/OnlineFeature/httpTest.dart';
+import 'package:MusicApp/Data/playlistModel.dart';
 import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:rxdart/rxdart.dart';
+
+import 'infoControllerBloC.dart';
 
 enum PlayerState { stopped, playing, paused }
 enum PlayerMode { shuffle, repeat, normal }
 
 class MainControllerBloC{
 
+  InfoControllerBloC infoBloC;
+
 //List
+  
   BehaviorSubject<List<SongItem>> favourite;
 
 //List management
@@ -50,6 +56,7 @@ class MainControllerBloC{
   BehaviorSubject<PlayerMode> get playerMode => _playerMode;
 
   MainControllerBloC(){
+    infoBloC = InfoControllerBloC();
     _initStreams();
     _initAudioPlayer();
     _initCurrentSong();
@@ -133,6 +140,9 @@ class MainControllerBloC{
     favourite.add(fav);
   }
 
+
+
+
   Future<void> fetchSongs() async {
     print("Fectch Songs");
     await MusicFinder.allSongs()
@@ -165,7 +175,7 @@ class MainControllerBloC{
   }
 
 //Basic Function
-  play(Song song) {
+  play(Song song, {Playlist playlist}) {
     _currentSong.add(song);
     _audioPlayer.play(song.uri, isLocal: false);
     _playerState.add(PlayerState.playing);
@@ -226,8 +236,6 @@ class MainControllerBloC{
       playRandomSong();   
     }
     else
-      //if (fromDB.value == true) playOnline(_currentSongOnline.value);
-      //else
       next();
   }
 

@@ -147,7 +147,7 @@ class Login extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => GoOnline(null),
-                  )
+                )
                 // PageRouteBuilder(
                 //   transitionDuration: Duration(milliseconds: 550),
                 //   transitionsBuilder: (BuildContext context, 

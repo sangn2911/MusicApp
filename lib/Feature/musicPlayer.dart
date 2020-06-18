@@ -81,8 +81,8 @@ class MusicPlayerState extends State<MusicPlayer> {
           title: TextLato("Music Player", Colors.white, 25, FontWeight.w700),
           actions: <Widget>[
             Icon(
-              Icons.more_vert,
-              color: Colors.white,
+              Icons.playlist_add,
+              color: ColorCustom.orange,
               size: 30.0,
             ),
             SizedBox(width: 10),
@@ -359,6 +359,19 @@ class MusicPlayerState extends State<MusicPlayer> {
         fontFamily: 'Lato',
         fontWeight: fontweight,
       ),
+    );
+  }
+
+  Future<String> createPlayList(BuildContext context, MainControllerBloC mp){
+    return showDialog(
+      context: context, 
+      builder: (context){
+        return ListView(
+          children: <Widget>[
+
+          ],
+        );
+      }
     );
   }
 

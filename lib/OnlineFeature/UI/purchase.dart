@@ -109,7 +109,7 @@ class Purchase extends StatelessWidget {
         leading: image,
         title: text(bankName, color: Colors.amber),
         onTap: (){
-          createAlert(context, bankName).then((onValue) => print(onValue));// send to database
+          createAlert(context, bankName).then((onValue) => print(onValue)); // send to database
         },
       ),
     );
