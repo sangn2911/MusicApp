@@ -10,7 +10,7 @@ import 'package:MusicApp/Custom/color.dart';
 // import 'package:MusicApp/Custom/customIcons.dart';
 // import 'package:provider/provider.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
-import 'package:MusicApp/Custom/custemText.dart';
+import 'package:MusicApp/Custom/customText.dart';
 
 class SearchPage extends StatefulWidget {
   @override

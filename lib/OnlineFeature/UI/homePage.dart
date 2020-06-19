@@ -12,7 +12,7 @@ import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:provider/provider.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
-import 'package:MusicApp/Custom/custemText.dart';
+import 'package:MusicApp/Custom/customText.dart';
 
 
 bool isUsed = false;

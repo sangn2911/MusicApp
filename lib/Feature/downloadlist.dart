@@ -6,7 +6,7 @@ import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
-import 'package:MusicApp/OnlineFeature/httpService.dart';
+// import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

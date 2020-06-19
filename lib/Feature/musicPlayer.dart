@@ -6,7 +6,7 @@ import 'package:MusicApp/Custom/sizeConfig.dart';
 //import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:MusicApp/Custom/custemText.dart';
+import 'package:MusicApp/Custom/customText.dart';
 
 
 class MusicPlayer extends StatefulWidget {
