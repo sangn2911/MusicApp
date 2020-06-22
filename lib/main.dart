@@ -18,14 +18,9 @@ import 'package:MusicApp/OnlineFeature/UI/login.dart';
 //import 'package:MusicApp/Data/mainControlBloC.dart';
 //import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 
-class Music {
-  static String song;
-  static String singer;
-}
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  debugPaintSizeEnabled = false;
+  debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 

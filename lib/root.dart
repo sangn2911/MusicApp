@@ -1,5 +1,4 @@
 import 'package:MusicApp/Data/mainControlBloC.dart';
-import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/Feature/currentPlaying.dart';
 import 'package:MusicApp/Feature/downloadlist.dart';
 import 'package:MusicApp/Feature/musicPlayer.dart';

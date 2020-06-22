@@ -104,7 +104,7 @@ class CurrentPlayBarState extends State<CurrentPlayBar> {
         size: 60,
       ), 
       onPressed: (){
-        playerState != PlayerState.paused ? mp.pause() : mp.play(currentSong);
+        playerState != PlayerState.paused ? mp.pause() : mp.playSong(currentSong);
       }
     );
   }

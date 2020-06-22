@@ -2,7 +2,6 @@
 // import 'package:MusicApp/Feature/currentPlaying.dart';
 // import 'package:MusicApp/Feature/musicPlayer.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
-import 'package:MusicApp/Data/playlistModel.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/OnlineFeature/UI/playlist.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/Custom/customText.dart';
-import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:provider/provider.dart';
 
 

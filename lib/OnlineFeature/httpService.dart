@@ -6,8 +6,11 @@ import 'package:MusicApp/Data/userModel.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 String url = 'http://25.19.229.40:5000/'; //localhost
+
+//User Information
 
 Future<int> createUser(String email, String name, String password) async{
 
@@ -94,11 +97,12 @@ Future<bool> logOut(String name) async{
 
 }
 
-Future<bool> transactionForCoin(String name) async{
+Future<bool> transactionForCoin(String name, int coin) async{
 
   Map data = {
     "service": "bank",
     "username": name,
+    "coin": coin,
   };
 
   String body = json.encode(data);
@@ -117,6 +121,50 @@ Future<bool> transactionForCoin(String name) async{
   }
 
 }
+
+Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, String username, String service) async{
+  
+  Map data = {};
+  UserModel initUser;
+
+  if (service == "updateEmail"){
+    data = {
+      "service": service,
+      "username": username,
+      "email": value,
+    };
+  }
+  else if (service == "updatePhone"){
+    data = {
+      "service": service,
+      "username": username,
+      "email": value,
+    };
+  } 
+
+  String body = json.encode(data);
+
+  final response = await http.post(url,
+    body: body,
+  );
+
+  UserModel userInfo = _userInfo.value;
+  if (response.statusCode == 200){
+    String value = json.decode(response.body);
+    if (service == "updateEmail")
+      initUser = UserModel(name: userInfo.name, email: value, phone: userInfo.phone, coin: userInfo.coin, isVip: userInfo.isVip); 
+    else if (service == "updatePhone")
+      initUser = UserModel(name: userInfo.name, email: userInfo.email, phone: value, coin: userInfo.coin, isVip: userInfo.isVip);
+    _userInfo.add(initUser);
+    return 1;
+  }
+  else {
+    return 0;
+  }
+
+}
+
+//Activity with song database
 
 Future<List<SongItem>> getfavourite() async{
 
@@ -266,7 +314,6 @@ Future<void> playlistAdd(String name, String username, String id) async{
   }
 
 }
-
 
 
 createAlertDialog(String str, BuildContext context){
