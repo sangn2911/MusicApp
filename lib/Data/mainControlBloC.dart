@@ -15,7 +15,7 @@ class MainControllerBloC{
 
 //List
   
-  BehaviorSubject<List<SongItem>> favourite;
+  BehaviorSubject<List<Song>> favourite;
 
 //List management
   BehaviorSubject<bool> isUsed;
@@ -90,7 +90,7 @@ class MainControllerBloC{
     _currPlaylist = BehaviorSubject<MapEntry<List<Song>, List<Song>>>();
     _currPlaylistOnline = BehaviorSubject<MapEntry<List<SongItem>, List<SongItem>>>();
     _songs = BehaviorSubject<List<Song>>();
-    favourite = BehaviorSubject<List<SongItem>>();
+    favourite = BehaviorSubject<List<Song>>();
     //_albums = List<Album>();
     _position = BehaviorSubject<Duration>();
     //_favorites = [];
@@ -104,6 +104,7 @@ class MainControllerBloC{
       " ",
       " ",
       " ",
+      null,
       null,
       null,
       null,
@@ -141,9 +142,9 @@ class MainControllerBloC{
   }
 
   Future<void> fetchFavourite() async {
-    List<SongItem> fav = await getfavourite();
-    print(fav);
-    favourite.add(fav);
+    List<Song> _favourite = await getfavourite();
+    print(_favourite);
+    favourite.add(_favourite);
   }
 
   Future<void> fetchSongs() async {
@@ -155,16 +156,24 @@ class MainControllerBloC{
   }
 
   void updatePlaylist(List<Song> normalPlaylist) {
+    int count = 0;
+    List<String> _print = [];
+    while (count < 6){
+      _print = _print + [normalPlaylist[count].title];
+      count++;
+    }
+    print("Songs : $_print");
+
     List<Song> _shufflePlaylist = []..addAll(normalPlaylist);
     _shufflePlaylist.shuffle();
     _currPlaylist.add(MapEntry(normalPlaylist, _shufflePlaylist));
   }
 
-  void updatePlaylistOnline(List<SongItem> normalPlaylist) {
-    List<SongItem> _shufflePlaylist = []..addAll(normalPlaylist);
-    _shufflePlaylist.shuffle();
-    _currPlaylistOnline.add(MapEntry(normalPlaylist, _shufflePlaylist));
-  }
+  // void updatePlaylistOnline(List<SongItem> normalPlaylist) {
+  //   List<SongItem> _shufflePlaylist = []..addAll(normalPlaylist);
+  //   _shufflePlaylist.shuffle();
+  //   _currPlaylistOnline.add(MapEntry(normalPlaylist, _shufflePlaylist));
+  // }
 
   void playMode(int mode){
     if (mode == 0)
@@ -190,9 +199,14 @@ class MainControllerBloC{
   }
 
 //Basic Function
-  playSong(Song song) {
-    _currentSong.add(song);
-    _audioPlayer.play(song.uri, isLocal: false);
+  playSong(Song song) async{
+    Song songPlay = song;
+    if (song.uri == null) {
+      Song songDB = await getSong(song.iD);
+      songPlay = songDB;
+    }
+    _currentSong.add(songPlay);
+    _audioPlayer.play(songPlay.uri, isLocal: false);
     _playerState.add(PlayerState.playing);
   }
 
@@ -212,10 +226,18 @@ class MainControllerBloC{
   Future<void> next() async {
     stop();
 
-    final List<Song> _playlist =
-            !isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
+    final List<Song> _playlist = isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
+    
+    int index = 0;
+    while (index < _playlist.length){
+      if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
+        break;
+      }
+      index++;
+    }
 
-    int index = _playlist.indexOf(_currentSong.value);
+    // int index = _playlist.indexOf(_currentSong.value);
+    print("Index: $index");
 
     if (index == -1) index = 0; //Song not in current playlist
     
@@ -223,6 +245,19 @@ class MainControllerBloC{
       index = 0;
     else
       index += 1;
+
+    //print("Shuffle: ${_currPlaylist.value.value}");
+
+    // int count = 0;
+    // List<String> _print = [];
+    // while (count < 6){
+    //   _print = _print + [_playlist[count].title];
+    //   count++;
+    // }
+
+    // print(_print);
+
+    print(_playlist[index].title);
     playSong(_playlist[index]);
   }
 
@@ -230,8 +265,17 @@ class MainControllerBloC{
     stop();
 
     final List<Song> _playlist =
-            !isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
-    int index = _playlist.indexOf(_currentSong.value);
+            isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
+
+    int index = 0;
+    while (index < _playlist.length){
+      if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
+        break;
+      }
+      index++;
+    }
+
+    //int index = _playlist.indexOf(_currentSong.value);
     if (index == 0)
       index = _playlist.length - 1;
     else

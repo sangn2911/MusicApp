@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-String url = 'http://25.40.136.16:5000/'; //localhost
+String url = 'http://25.19.229.40:5000/'; //localhost
 
 //User Information
 
@@ -173,7 +173,7 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
 
 //Activity with song database
 
-Future<List<SongItem>> getfavourite() async{
+Future<List<Song>> getfavourite() async{
 
   //return [];
 
@@ -187,13 +187,14 @@ Future<List<SongItem>> getfavourite() async{
     body: body,
   );
 
-  //print("Status Code: ${response.statusCode}");
-  var jsondecode = json.decode(response.body);
-  List<Song> songs = List<Song>.from(jsondecode.map((x) => Song.fromMap(x)));
-
+  // print("Status Code: ${response.statusCode}");
+  // print("Body Code: ${response.body}");
+  
   if (response.statusCode == 200){
-    Favourite favouriteList = favouriteFromJson(response.body);
-    return favouriteList.favourite;
+    var jsondecode = json.decode(response.body);
+    List<Song> songs = List<Song>.from(jsondecode["favourite"].map((x) => Song.fromJson(x)));
+    print("Song List: $songs");
+    return songs;
   }
   else {
     return [];
@@ -228,7 +229,8 @@ Future<Song> getSong(String id) async{
       null, 
       jsondecode["duration"], 
       jsondecode["link"],
-      null
+      null,
+      id,
       );
 
     return song;

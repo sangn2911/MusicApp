@@ -290,4 +290,81 @@ class _PlaylistsState extends State<Playlists> {
   }
 
 
+  Future<String> addPlayList(BuildContext context, MainControllerBloC mp){
+    return showDialog(
+      context: context, 
+      builder: (context){
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: Dialog(
+            insetPadding: EdgeInsets.only(left: 50, right: 50, top: 100, bottom: 100),
+            backgroundColor: ColorCustom.grey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextLato("Choose playlist", ColorCustom.orange, 25, FontWeight.w500),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: widget.mp.infoBloC.playlists,
+                    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
+                      if (!snapshot.hasData){
+                        return Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.black,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        );
+                      }
+                      List<String> playlists = snapshot.data;
+                      //print(playlists);
+                      if (playlists.length == 0){
+                        return noPlaylist();
+                      }
+                      else
+                        return listPlaylist(context, playlists);
+                    }
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget listSong(BuildContext context, List<String> playlists){
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: playlists.length,
+      itemBuilder: (BuildContext context, int index){
+        String playlist = playlists[index];
+        return songCard(playlist);
+        },                                     
+    );
+  }
+
+  Widget songCard(String playlist){
+    return ListTile(
+      contentPadding: EdgeInsets.only(left: 30),
+      leading: Icon(
+        Icons.library_music,
+        color: ColorCustom.orange,
+        size: 50,
+      ),
+      title: TextLato(playlist, Colors.white, 22, FontWeight.w700),
+      onTap: (){
+        print("Add to $playlist");
+      },
+    );
+  }
+
 }

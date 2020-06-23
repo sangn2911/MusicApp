@@ -251,7 +251,7 @@ class MusicPlayerState extends State<MusicPlayer> {
           final Duration dataPos = snapshot.data.key;
           final int positioninMilliseconds = dataPos.inMilliseconds;
           final Song currentSong = snapshot.data.value;
-          final int durationinMilliseconds = currentSong.duration;
+          final int durationinMilliseconds = mp.duration.inMilliseconds;
           return Column(
             children: <Widget>[
               Slider(

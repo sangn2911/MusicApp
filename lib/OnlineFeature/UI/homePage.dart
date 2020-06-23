@@ -119,7 +119,8 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.horizontal,
             itemCount: 6,
             itemBuilder: (BuildContext context, int index){
-              return songTile(IconCustom.album_1, "", "Song $index", "Artist $index", true);
+              Song songTemp = Song(0, "Artist $index", "Song $index", null, null, null, null, null, null);
+              return songTile(IconCustom.album_1, songTemp, true);
             },
           )
         ),
@@ -139,8 +140,9 @@ class _HomePageState extends State<HomePage> {
         SizedBox(height: 10/640 * SizeConfig.screenHeight),
         StreamBuilder(
           stream: mp.favourite,
-          builder: (BuildContext context, AsyncSnapshot<List<SongItem>> snapshot){
+          builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
             if (mp.isDispose) return Container();
+
             if (!snapshot.hasData) {
               return Container(
                 height: 170/640 * SizeConfig.screenHeight,
@@ -152,7 +154,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-            List<SongItem> _songList = snapshot.data;
+
+            List<Song> _songList = snapshot.data;
             if (_songList.length == 0) {
               return Container();
             }
@@ -164,10 +167,7 @@ class _HomePageState extends State<HomePage> {
                 scrollDirection: Axis.horizontal,
                 itemCount: _songList.length,
                 itemBuilder: (BuildContext context, int index){
-                  String id = _songList[index].id;
-                  String title = _songList[index].title;
-                  String artist = _songList[index].artist;
-                  return songTile(IconCustom.album_1, id, title, artist, false);
+                  return songTile(IconCustom.album_1, _songList[index], false);
                 },
               )
             );
@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget songTile(IconData icon, String id, String title, String artist, bool inPhone){
+  Widget songTile(IconData icon, Song _song, bool inPhone){
     final MainControllerBloC mp = Provider.of<MainControllerBloC>(context);
     return Container(
       width: 150/360 * SizeConfig.screenWidth,
@@ -243,12 +243,13 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 isUsed = true;
               });
-              Song songTest = await getSong(id);
-              mp.infoBloC.currentId.add(id);
+              
+              //mp.infoBloC.currentId.add(_song/id);
               mp.isUsed.add(true);
               mp.fromDB.add(true);
+              mp.updatePlaylist(mp.favourite.value);
               mp.stop();
-              mp.playSong(songTest);
+              mp.playSong(_song);
               //print("Select song $title");
             },
           ),
@@ -260,13 +261,19 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
-                    TextLato(title, Colors.white, 20, FontWeight.w700),
-                    TextLato(artist, ColorCustom.grey1, 14, FontWeight.w400),
+                    Container(
+                      width: 100,
+                      child: TextLato(_song.title, Colors.white, 20, FontWeight.w700)
+                    ),
+                    Container(
+                      width: 100,
+                      child: TextLato(_song.artist, ColorCustom.grey1, 14, FontWeight.w400)
+                      ),
                   ]
                 ),
               ),
-              SizedBox(width: 30/110 * (110/640 * SizeConfig.screenHeight)),
-              inPhone ? Container() : purchaseButton(title),
+              SizedBox(width: 30),
+              inPhone ? Container() : purchaseButton(_song.title),
             ]
           )
         ]
@@ -292,29 +299,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget songDecoration(Song song){
-    // return Container(
-    //     color: ColorCustom.orange,
-    //     child: Icon(
-    //       Icons.music_note,
-    //       color: Colors.black,
-    //     ),
-    //   ); 
-    return song.albumArt == null
-      ? Container(
+    return Container(
         color: ColorCustom.orange,
         child: Icon(
           Icons.music_note,
           color: Colors.black,
         ),
-      ) 
-      : Container(
-          child: Image(
-            fit: BoxFit.fill,
-            image: AssetImage(
-              song.albumArt,
-            )
-          ),
-        );
+      ); 
+    // return song.albumArt == null
+    //   ? Container(
+    //     color: ColorCustom.orange,
+    //     child: Icon(
+    //       Icons.music_note,
+    //       color: Colors.black,
+    //     ),
+    //   ) 
+    //   : Container(
+    //     child: FadeInImage(
+    //       placeholder: NetworkImage(url), 
+    //       image: null
+    //     ),
+    //   );
+      // : Container(
+      //     child: Image(
+      //       fit: BoxFit.fill,
+      //       image: AssetImage(
+      //         song.albumArt,
+      //       )
+      //     ),
+      //   );
   }
 
 
