@@ -20,7 +20,7 @@ import 'package:MusicApp/OnlineFeature/UI/login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = false;
   runApp(MyApp());
 }
 

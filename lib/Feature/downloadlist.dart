@@ -336,7 +336,7 @@ class _DownloadlistState extends State<Downloadlist> {
           fontWeight: FontWeight.w400,
         ),
       ),
-      trailing: moreSetting(),
+      //trailing: moreSetting(),
       onTap: () {                                                         //Function for song cards
         setState(() {
           isUsed = true;
@@ -350,49 +350,7 @@ class _DownloadlistState extends State<Downloadlist> {
     );
   }
 
-  Widget moreSetting(){
-    return PopupMenuButton<int>(
-      color: ColorCustom.grey,
-      icon: Icon(
-        Icons.more_vert,
-        color: Colors.white,
-        size: 30.0,
-      ),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-          value: 1,
-          child: Text(
-            "Upload",
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-            ),
-          ),
-        ),
-        const PopupMenuItem<int>(
-          value: 2,
-          child: Text(
-            "Add to playlist",
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-            )
-          ),
-        )
-      ],
-//Function for Upload and Add to playlist
-      onSelected: (val){
-        if (val == 1)
-          print("Upload");
-        else print("Add to playlist");
-      },
-//-----------------------------------------------------------
-    );
-  }
+
 
 
 }

@@ -292,29 +292,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget songDecoration(Song song){
-    return Container(
-        color: ColorCustom.orange,
-        child: Icon(
-          Icons.music_note,
-          color: Colors.black,
-        ),
-      ); 
-    // return song.albumArt == null
-    //   ? Container(
+    // return Container(
     //     color: ColorCustom.orange,
     //     child: Icon(
     //       Icons.music_note,
     //       color: Colors.black,
     //     ),
-    //   ) 
-    //   : Container(
-    //       child: Image(
-    //         fit: BoxFit.fill,
-    //         image: AssetImage(
-    //           song.albumArt,
-    //         )
-    //       ),
-    //     );
+    //   ); 
+    return song.albumArt == null
+      ? Container(
+        color: ColorCustom.orange,
+        child: Icon(
+          Icons.music_note,
+          color: Colors.black,
+        ),
+      ) 
+      : Container(
+          child: Image(
+            fit: BoxFit.fill,
+            image: AssetImage(
+              song.albumArt,
+            )
+          ),
+        );
   }
 
 

@@ -38,6 +38,7 @@ class MainControllerBloC{
 
   BehaviorSubject<Song> _currentSong;
   BehaviorSubject<MapEntry<List<Song>, List<Song>>> _currPlaylist;
+  BehaviorSubject<MapEntry<List<SongItem>, List<SongItem>>> _currPlaylistOnline;
   
   BehaviorSubject<List<Song>> get songList => _songs;
   BehaviorSubject<Song> get currentSong => _currentSong;
@@ -65,6 +66,8 @@ class MainControllerBloC{
     isDispose = true;
 
     _currPlaylist.close();
+    _currPlaylistOnline.close();
+
     isUsed.close();
     fromDB.close();
     _audioPlayer.stop();
@@ -85,6 +88,7 @@ class MainControllerBloC{
     isUsed = BehaviorSubject<bool>.seeded(false);
     fromDB = BehaviorSubject<bool>.seeded(false);
     _currPlaylist = BehaviorSubject<MapEntry<List<Song>, List<Song>>>();
+    _currPlaylistOnline = BehaviorSubject<MapEntry<List<SongItem>, List<SongItem>>>();
     _songs = BehaviorSubject<List<Song>>();
     favourite = BehaviorSubject<List<SongItem>>();
     //_albums = List<Album>();
@@ -154,6 +158,12 @@ class MainControllerBloC{
     List<Song> _shufflePlaylist = []..addAll(normalPlaylist);
     _shufflePlaylist.shuffle();
     _currPlaylist.add(MapEntry(normalPlaylist, _shufflePlaylist));
+  }
+
+  void updatePlaylistOnline(List<SongItem> normalPlaylist) {
+    List<SongItem> _shufflePlaylist = []..addAll(normalPlaylist);
+    _shufflePlaylist.shuffle();
+    _currPlaylistOnline.add(MapEntry(normalPlaylist, _shufflePlaylist));
   }
 
   void playMode(int mode){

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-String url = 'http://25.19.229.40:5000/'; //localhost
+String url = 'http://25.40.136.16:5000/'; //localhost
 
 //User Information
 
@@ -100,14 +100,13 @@ Future<bool> logOut(String name) async{
 Future<bool> transactionForCoin(String name, int coin) async{
 
   Map data = {
-    "service": "bank",
     "username": name,
     "coin": coin,
   };
 
   String body = json.encode(data);
 
-  final response = await http.post(url, 
+  final response = await http.post(url + "bank", 
     body: body,
   );
 
@@ -127,7 +126,7 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
   Map data = {};
   UserModel initUser;
 
-  if (service == "updateEmail"){
+  if (service == "updateEmail") {
     data = {
       "service": service,
       "username": username,
@@ -138,23 +137,31 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
     data = {
       "service": service,
       "username": username,
-      "email": value,
+      "phone": value,
     };
   } 
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "update",
     body: body,
   );
 
+  print("Status Code: ${response.statusCode}");
+  print("Update Body: ${response.body}");
+
   UserModel userInfo = _userInfo.value;
   if (response.statusCode == 200){
-    String value = json.decode(response.body);
-    if (service == "updateEmail")
+    
+    if (service == "updateEmail"){
+      String value = json.decode(response.body)["email"];
       initUser = UserModel(name: userInfo.name, email: value, phone: userInfo.phone, coin: userInfo.coin, isVip: userInfo.isVip); 
-    else if (service == "updatePhone")
+    }
+    else if (service == "updatePhone"){
+      String value = json.decode(response.body)["phone"];
       initUser = UserModel(name: userInfo.name, email: userInfo.email, phone: value, coin: userInfo.coin, isVip: userInfo.isVip);
+    }
+
     _userInfo.add(initUser);
     return 1;
   }
@@ -181,6 +188,8 @@ Future<List<SongItem>> getfavourite() async{
   );
 
   //print("Status Code: ${response.statusCode}");
+  var jsondecode = json.decode(response.body);
+  List<Song> songs = List<Song>.from(jsondecode.map((x) => Song.fromMap(x)));
 
   if (response.statusCode == 200){
     Favourite favouriteList = favouriteFromJson(response.body);
@@ -210,6 +219,7 @@ Future<Song> getSong(String id) async{
   if (response.statusCode == 200){
     print("Body Song: ${response.body}");
     var jsondecode = json.decode(response.body);
+
     Song song = Song(
       null, 
       jsondecode["artist"] == null ? "Unknown" : jsondecode["artist"], 
@@ -217,9 +227,10 @@ Future<Song> getSong(String id) async{
       "Unknown",
       null, 
       jsondecode["duration"], 
-      jsondecode["link"], 
+      jsondecode["link"],
       null
       );
+
     return song;
   }
   else {

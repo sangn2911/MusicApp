@@ -25,7 +25,7 @@ class InfoControllerBloC {
   void _initStreams(){
     UserModel initUser = UserModel(name: "Sang", email: "sangn2911@gmail.com", phone: "0935594725", coin: 0, isVip: 0); 
     _userInfo = BehaviorSubject<UserModel>.seeded(initUser);
-    playlists = BehaviorSubject<List<String>>.seeded([]);
+    playlists = BehaviorSubject<List<String>>.seeded(["Playlist 1"]);
 
     SongItem initSong = SongItem(id: "", title: "Song Sample", artist: "Unknown");
     Playlist playlist = Playlist(name: "Playlist 1", songlist: [initSong, initSong]);

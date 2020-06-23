@@ -119,14 +119,7 @@ class _PlaylistsState extends State<Playlists> {
         size: 45,
       ),
       title: TextLato(playlist, Colors.white, 22, FontWeight.w700),
-      trailing: IconButton(
-        icon: Icon(
-          Icons.more_vert,
-          color: Colors.white,
-          size: 33,
-        ), 
-        onPressed: (){}
-      ),
+      trailing: moreSetting(),
     );
   }
 
@@ -250,5 +243,51 @@ class _PlaylistsState extends State<Playlists> {
       }
     );
   }
+
+  Widget moreSetting(){
+    return PopupMenuButton<int>(
+      color: ColorCustom.grey,
+      icon: Icon(
+        Icons.more_vert,
+        color: Colors.white,
+        size: 30.0,
+      ),
+      itemBuilder: (BuildContext context) 
+        => <PopupMenuEntry<int>>[
+            PopupMenuItem<int>(
+              value: 1,
+              child: Text(
+                "Play",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 2,
+              child: Text(
+                "Delete",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                )
+              ),
+            )
+      ],
+//Function for Upload and Add to playlist
+      onSelected: (val){
+        if (val == 1)
+          print("Play this playlist");
+        else print("Delete this playlist");
+      },
+//-----------------------------------------------------------
+    );
+  }
+
 
 }

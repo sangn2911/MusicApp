@@ -145,36 +145,54 @@ class _UserProfileState extends State<UserProfile> {
 
 
   Widget childList(BuildContext context){
-    return ListView(
-        children: <Widget>[
-          infoListTitle(Icons.mail , "${userInfo.email}", onPressed: (){
-            createPopUp(context, "Enter new email", () { 
-              print("email");
-              //updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), userInfo.name, "updateEmail");
-            });
-          }),
-          infoListTitle(Icons.phone, "${userInfo.phone}", onPressed: (){
-            createPopUp(context, "Enter new phone number", () { 
-              //updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), userInfo.name, "updatePhone");
-            });
-          }),
-          infoListTitle(Icons.attach_money,"${userInfo.coin}", onPressed: (){
+    return StreamBuilder(
+      stream: widget.mainBloC.infoBloC.userInfo,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        if (!snapshot.hasData) 
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          );
 
-          }),
-          infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
-            createVoiceRegister(context, "Voice Register", () { });
-          }),
-          infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
-            final bool response = await logOut(userInfo.name);
-            if (response){
-              int count = 0;
-              Navigator.of(context).popUntil((_) => count++ >= 2);
-            }
-            else{
-              createAlertDialog("Fail to log out", context);
-            }
-          }),
-        ],
+        UserModel _userInfo = snapshot.data;
+        return ListView(
+          children: <Widget>[
+            infoListTitle(Icons.mail , "${_userInfo.email}", onPressed: (){
+              createPopUp(context, "Enter new email", () async { 
+                //print("email");
+                int result = await updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), _userInfo.name, "updateEmail");
+                customController.text = "";
+                result == 1 ? createAlertDialog("Update Successfully", context) : createAlertDialog("Check Your Info", context);
+              });
+            }),
+            infoListTitle(Icons.phone, "${_userInfo.phone}", onPressed: (){
+              createPopUp(context, "Enter new phone number", () async { 
+                int result = await updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), _userInfo.name, "updatePhone");
+                customController.text = "";
+                result == 1 ? createAlertDialog("Update Successfully", context) : createAlertDialog("Check Your Info", context);
+              });
+            }),
+            infoListTitle(Icons.attach_money,"${_userInfo.coin}", onPressed: (){
+
+            }),
+            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
+              createVoiceRegister(context, "Voice Register", () { });
+            }),
+            infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
+              final bool response = await logOut(_userInfo.name);
+              if (response){
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              }
+              else{
+                createAlertDialog("Fail to log out", context);
+              }
+            }),
+          ],
+        );
+      },
     );
   }
 
