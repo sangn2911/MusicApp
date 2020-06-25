@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/Data/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
+import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 
 class UserProfile extends StatefulWidget {
 
@@ -24,10 +27,12 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
 
   UserModel userInfo;
+  RecorderBloC recordBloC;
 
   @override
   void initState() {
     super.initState();
+    recordBloC = RecorderBloC();
     userInfo = widget.mainBloC.infoBloC.userInfo.value;
   }
 
@@ -178,7 +183,7 @@ class _UserProfileState extends State<UserProfile> {
 
             }),
             infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
-              createVoiceRegister(context, "Voice Register", () { });
+              createVoiceRegister(context, "Voice Register");
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
               final bool response = await logOut(_userInfo.name);
@@ -271,40 +276,146 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  Future<void> createVoiceRegister(BuildContext context, String title,void Function() function){
+  bool isRecorderDispose = false;
+
+  Future<void> createVoiceRegister(BuildContext context, String title){
     return showDialog(
       context: context, 
       builder: (context){
+
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: Dialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 50,vertical: 190),
-            backgroundColor: ColorCustom.grey,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: 10),
-                  TextLato(title, Colors.white, 25, FontWeight.w700),
-                  SizedBox(height: 50),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    iconSize: 100,
-                    icon: Icon(
-                      Icons.keyboard_voice,
-                      color: Colors.white,
-                    ),
-                    onPressed: (){},
-                  ),
-                  SizedBox(height: 50),
-                  TextLato("Push the button", Colors.white, 25, FontWeight.w700),
-                ],
-              ),
-            ),
+          child: StatefulBuilder(
+            builder: (context, setState){ 
+              return Dialog(
+                insetPadding: EdgeInsets.symmetric(horizontal: 90,vertical: 150),
+                backgroundColor: ColorCustom.grey,
+                child: StreamBuilder(
+                  stream: recordBloC.currentRecord,
+                  builder: (context, snapshot) {
+                    if (isRecorderDispose){
+                      return Container();
+                    }
+                    if (!snapshot.hasData){
+                      return CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      );
+                    }
+
+                    Recording record = snapshot.data;
+                    RecordingStatus status = record.status;
+
+                    return Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: 10),
+                          TextLato(title, ColorCustom.orange, 25, FontWeight.w700),
+                          SizedBox(height: 50),
+                          switchIcon(status, record.duration.inMilliseconds.toDouble()),
+                          Expanded(child: Container(),),
+                          InkWell(
+                            child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
+                            onTap: (){
+                              if (recordBloC.currentFile == null)
+                                Navigator.of(context).pop();
+                              else{
+                                print("File Path: ${recordBloC.currentFile.path}");
+                                File file = recordBloC.currentFile;
+                                print("File bytes: ${file.readAsBytes()}");
+                                Navigator.of(context).pop();
+                              }
+                              
+                            },
+                          ),
+                          SizedBox(height: 15),
+  
+                        ],
+                      ),
+                    );
+                  }
+                ),
+              );
+            }
           ),
         );
       }
     );
+  }
+
+  Widget switchIcon(RecordingStatus status, double value){
+    switch (status) {
+      case RecordingStatus.Initialized:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 100,
+                icon: Icon(
+                  Icons.keyboard_voice,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  recordBloC.start();
+                },
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Start", Colors.white, 25, FontWeight.w700)
+          ],
+        );
+      case RecordingStatus.Stopped:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 100,
+                icon: Icon(
+                  Icons.adjust,
+                  color: Colors.white,
+                ),
+                onPressed: (){
+                  recordBloC.initRecoder();
+                },
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Ready", Colors.white, 25, FontWeight.w700)
+          ],
+        );         
+
+      default:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 15,
+                  value: value/Duration(seconds: 2).inMilliseconds.toDouble(),
+                ),
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Speak Your Name", Colors.white, 25, FontWeight.w700)
+          ],
+        );
+    }
   }
 
   Widget text(String str, {Color color = Colors.white, double size = 20.0, FontWeight fontWeight = FontWeight.w400}){
