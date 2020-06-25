@@ -2,6 +2,7 @@ import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
@@ -147,9 +148,17 @@ class _HomePageState extends State<HomePage> {
               return Container(
                 height: 170/640 * SizeConfig.screenHeight,
                 child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.black,
-                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                      SizedBox(height: 30),
+                      TextLato("Waiting for server", Colors.white, 20, FontWeight.w500)
+                    ],
                   ),
                 ),
               );
@@ -244,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                 isUsed = true;
               });
               
-              //mp.infoBloC.currentId.add(_song/id);
+              //mp.infoBloC.currentId.add(_song.iD);
               mp.isUsed.add(true);
               mp.fromDB.add(true);
               mp.updatePlaylist(mp.favourite.value);
@@ -436,6 +445,8 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
+  await(Future<ConnectivityResult> checkConnectivity) {}
 
 }
 

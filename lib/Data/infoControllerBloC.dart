@@ -13,7 +13,7 @@ class InfoControllerBloC {
 
   BehaviorSubject<UserModel> _userInfo;
   BehaviorSubject<List<String>> playlists;
-  BehaviorSubject<List<SongItem>> currentPlaylists;
+  BehaviorSubject<List<SongItem>> currentPlaylist;
   BehaviorSubject<String> currentId;
 
   BehaviorSubject<UserModel> get userInfo => _userInfo;
@@ -25,24 +25,25 @@ class InfoControllerBloC {
   void _initStreams(){
     UserModel initUser = UserModel(name: "Sang", email: "sangn2911@gmail.com", phone: "0935594725", coin: 0, isVip: 0); 
     _userInfo = BehaviorSubject<UserModel>.seeded(initUser);
-    playlists = BehaviorSubject<List<String>>.seeded(["Playlist 1"]);
+    playlists = BehaviorSubject<List<String>>();
 
     SongItem initSong = SongItem(id: "", title: "Song Sample", artist: "Unknown");
-    Playlist playlist = Playlist(name: "Playlist 1", songlist: [initSong, initSong]);
+    Playlist playlist = Playlist(name: "Playlist 1", songlist: [initSong, initSong, initSong]);
     currentId = BehaviorSubject<String>();
-    currentPlaylists = BehaviorSubject<List<SongItem>>.seeded(playlist.songlist);
+    currentPlaylist = BehaviorSubject<List<SongItem>>.seeded(playlist.songlist);
   }
 
 
   Future<void> fetchPlaylists(String name) async {
     List<String> response = await fetchPlaylist(name);
+    print(response);
     playlists.add(response);
   }
 
   void dispose(){
     currentId.close();
     playlists.close();
-    currentPlaylists.close();
+    currentPlaylist.close();
   }
 
   void saveUserInfo(UserModel userInfo){

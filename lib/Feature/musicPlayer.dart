@@ -10,6 +10,7 @@ import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:MusicApp/Custom/customText.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 
 
 class MusicPlayer extends StatefulWidget {
@@ -215,7 +216,8 @@ class MusicPlayerState extends State<MusicPlayer> {
             size: 25,
           ), 
           onPressed: (){
-            widget._mp.fromDB.value 
+            widget._mp.infoBloC.fetchPlaylists("Tri");
+            widget._mp.fromDB.value
               ? addPlayList(context, widget._mp)
               : createAlertDialog("Offline playlist is not supported", context);
           }
@@ -249,9 +251,16 @@ class MusicPlayerState extends State<MusicPlayer> {
           }
 
           final Duration dataPos = snapshot.data.key;
-          final int positioninMilliseconds = dataPos.inMilliseconds;
-          final Song currentSong = snapshot.data.value;
-          final int durationinMilliseconds = mp.duration.inMilliseconds;
+          final int positioninMilliseconds = dataPos?.inMilliseconds;
+          //final Song currentSong = snapshot.data.value;
+          Duration duration;
+          int durationinMilliseconds = 0;
+          try {
+            durationinMilliseconds = mp.duration.inMilliseconds;
+            duration = mp.duration;
+          } catch(e) {
+            duration = Duration(seconds: 0);
+          }
           return Column(
             children: <Widget>[
               Slider(
@@ -276,7 +285,7 @@ class MusicPlayerState extends State<MusicPlayer> {
                 children: <Widget>[
                   text(dataPos.toString().split('.').first,false ,Colors.white, 15, FontWeight.w200),
                   SizedBox(width: 200),
-                  text(mp.duration.toString().split('.').first,false ,Colors.white, 15, FontWeight.w200),
+                  text(duration.toString().split('.').first,false ,Colors.white, 15, FontWeight.w200),
                 ]
               )
             ],
@@ -455,7 +464,13 @@ class MusicPlayerState extends State<MusicPlayer> {
         size: 50,
       ),
       title: TextLato(playlist, Colors.white, 22, FontWeight.w700),
-      onTap: (){
+      onTap: () async{
+        print( widget._mp.currentSong.value.title);
+        int result = await playlistAdd(playlist,"Tri", widget._mp.currentSong.value.title);
+        if (result == 1){
+          createAlertDialog("Add to $playlist successfully", context);
+        } else
+          createAlertDialog("Failed to add to $playlist", context);
         print("Add to $playlist");
       },
     );

@@ -152,7 +152,7 @@ class Purchase extends StatelessWidget {
               elevation: 5.0,
                 child: text('Confirm buy',size: 20 ,color: Colors.amber),
               onPressed: (){
-                Navigator.of(context).pop(customController.text.toString());
+                Navigator.of(context).pop();
               },
             )
           ],

@@ -1,4 +1,8 @@
 
+import 'dart:ui';
+
+import 'package:MusicApp/Custom/customText.dart';
+import 'package:MusicApp/Data/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +11,16 @@ import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+
 
 
 class Login extends StatelessWidget {
 
   final TextEditingController usernameInput = TextEditingController();
   final TextEditingController passwordInput = TextEditingController();
+  RecorderBloC recordBloC = RecorderBloC();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,7 @@ class Login extends StatelessWidget {
                   padding: EdgeInsets.only(left: SizeConfig.screenWidth / 2 - 82),
                   child: signInButton(context),
                 ),
-                signInWithVoiceButton(),
+                signInWithVoiceButton(context),
               ]
             ),
             SizedBox(height: SizeConfig.screenHeight*8/640,),
@@ -122,10 +130,10 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget signInWithVoiceButton(){
+  Widget signInWithVoiceButton(BuildContext context){
     return IconButton(
         onPressed: (){
-          print("Voice Authentication");
+          createVoiceRegister(context, "Voice Register");
         },
         iconSize: 35,
         icon: Icon(
@@ -142,31 +150,22 @@ class Login extends StatelessWidget {
       buttonColor: Colors.white,
       child: RaisedButton(
         onPressed: (() async{
-          createAlertDialog("Sign In Successfully",context)
-            .then((value) 
-            => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GoOnline(null),
+          var connectivityResult = await (Connectivity().checkConnectivity());
+          if (connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile) {
+            createAlertDialog("Sign In Successfully",context)
+              .then((value) 
+              => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GoOnline(null),
+                  )
                 )
-                // PageRouteBuilder(
-                //   transitionDuration: Duration(milliseconds: 550),
-                //   transitionsBuilder: (BuildContext context, 
-                //     Animation<double> animation, 
-                //     Animation<double> secAnimation,
-                //     Widget child){
-                //       return ScaleTransition(
-                //         alignment: Alignment.center,
-                //         scale: animation,
-                //         child: child,
-                //       );
-                //   },
-                //   pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secAnimation,){
-                //     return GoOnline();
-                //   }
-                // )
-              )
-            );
+              );
+          } else if (connectivityResult == ConnectivityResult.none) {
+            createAlertDialog("No Internet Connection",context);
+          }
+
+
           // final username = usernameInput.text.trimRight();
           // final password = passwordInput.text.trimRight();
 
@@ -212,14 +211,19 @@ class Login extends StatelessWidget {
         ),
         SizedBox(width: 5),
         GestureDetector(
-          onTap: () {
+          onTap: () async{
+            var connectivityResult = await (Connectivity().checkConnectivity());
+            if (connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile) {
               Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SignUp(),
-                )
-              );
-            },
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SignUp(),
+                  )
+                );
+            } else if (connectivityResult == ConnectivityResult.none) {
+              createAlertDialog("No Internet Connection",context);
+            }
+          },
           child: textLato(
             "Sign Up", 
             color: ColorCustom.orange, 
@@ -267,5 +271,141 @@ class Login extends StatelessWidget {
       ),
     );
   }
+
+
+  bool isRecorderDispose = false;
+
+  Future<void> createVoiceRegister(BuildContext context, String title){
+    return showDialog(
+      context: context, 
+      builder: (context){
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: StatefulBuilder(
+            builder: (context, setState){ 
+              return Dialog(
+                insetPadding: EdgeInsets.symmetric(horizontal: 75,vertical: 150),
+                backgroundColor: ColorCustom.grey,
+                child: StreamBuilder(
+                  stream: recordBloC.currentRecord,
+                  builder: (context, snapshot) {
+                    if (isRecorderDispose){
+                      return Container();
+                    }
+                    if (!snapshot.hasData){
+                      return CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      );
+                    }
+
+                    Recording record = snapshot.data;
+                    RecordingStatus status = record.status;
+
+                    return Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: 10),
+                          TextLato(title, ColorCustom.orange, 25, FontWeight.w700),
+                          SizedBox(height: 50),
+                          switchIcon(status, record.duration.inMilliseconds.toDouble()),
+                          Expanded(child: Container(),),
+                          InkWell(
+                            child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
+                            onTap: (){
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          SizedBox(height: 15),
+  
+                        ],
+                      ),
+                    );
+                  }
+                ),
+              );
+            }
+          ),
+        );
+      }
+    );
+  }
+
+  Widget switchIcon(RecordingStatus status, double value){
+    switch (status) {
+      case RecordingStatus.Initialized:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 100,
+                icon: Icon(
+                  Icons.keyboard_voice,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  recordBloC.start();
+                },
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Start", Colors.white, 25, FontWeight.w700)
+          ],
+        );
+      case RecordingStatus.Stopped:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 100,
+                icon: Icon(
+                  Icons.adjust,
+                  color: Colors.white,
+                ),
+                onPressed: (){
+                  recordBloC.initRecoder();
+                },
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Ready", Colors.white, 25, FontWeight.w700)
+          ],
+        );         
+
+      default:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 110,
+              height: 110,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 15,
+                  value: value/Duration(seconds: 2).inMilliseconds.toDouble(),
+                ),
+              ),
+            ),
+            SizedBox(height: 25),
+            TextLato("Speak Your Name", Colors.white, 25, FontWeight.w700)
+          ],
+        );
+    }
+  }
+
 
 }

@@ -254,12 +254,12 @@ Future<List<String>> fetchPlaylist(String username) async{
     body: body,
   );
 
-  // print("Status Code: ${response.statusCode}");
-  // print("Body: ${response.body}");
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
 
   if (response.statusCode == 200) {
     var jsondecode = json.decode(response.body);
-    List<dynamic> playlists = jsondecode["result"];
+    List<dynamic> playlists = jsondecode;
     List<String> result = playlists.cast<String>().toList();
     return result;
   }
@@ -302,13 +302,13 @@ Future<List<String>> createPlaylist(String name, String username) async{
 
 }
 
-Future<void> playlistAdd(String name, String username, String id) async{
+Future<int> playlistAdd(String playlistName, String username, String id) async{
 
   Map data = {
-    "service": "addPlaylist",
-    "playlistname": name,
+    "service": "addSong",
+    "playlistname": playlistName,
     "username": username,
-    "_id": id,
+    "title": id,
   };
 
   String body = json.encode(data);
@@ -319,11 +319,13 @@ Future<void> playlistAdd(String name, String username, String id) async{
 
   print("Status Code: ${response.statusCode}");
   print("Body: ${response.body}");
+
   if (response.statusCode == 200){
     //var jsondecode = json.decode(response.body);
+    return 1;
   }
   else {
-    return null;
+    return 0;
   }
 
 }

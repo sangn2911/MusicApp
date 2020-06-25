@@ -229,15 +229,17 @@ class MainControllerBloC{
     final List<Song> _playlist = isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
     
     int index = 0;
-    while (index < _playlist.length){
-      if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
-        break;
+    if (fromDB.value == true) {
+      while (index < _playlist.length){
+        if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
+          break;
+        }
+        index++;
       }
-      index++;
     }
-
-    // int index = _playlist.indexOf(_currentSong.value);
-    print("Index: $index");
+    else
+      index = _playlist.indexOf(_currentSong.value);
+    //print("Index: $index");
 
     if (index == -1) index = 0; //Song not in current playlist
     
@@ -266,16 +268,18 @@ class MainControllerBloC{
 
     final List<Song> _playlist =
             isShuffle ? _currPlaylist.value.value : _currPlaylist.value.key;
-
+    
     int index = 0;
-    while (index < _playlist.length){
-      if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
-        break;
+    if (fromDB.value == true) {
+      while (index < _playlist.length){
+        if (_currentSong.value.title == _playlist[index].title && _currentSong.value.artist == _playlist[index].artist){
+          break;
+        }
+        index++;
       }
-      index++;
     }
-
-    //int index = _playlist.indexOf(_currentSong.value);
+    else
+      index = _playlist.indexOf(_currentSong.value);
     if (index == 0)
       index = _playlist.length - 1;
     else
