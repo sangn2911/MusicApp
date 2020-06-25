@@ -6,3 +6,6 @@ flutter_audio_recorder=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.da
 path_provider=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider-1.6.11\\
 path_provider_linux=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_linux-0.0.1+1\\
 path_provider_macos=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_macos-0.0.4+3\\
+shared_preferences=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences-0.5.7+3\\
+shared_preferences_macos=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_macos-0.0.1+10\\
+shared_preferences_web=F:\\App\\Environment\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_web-0.1.2+7\\

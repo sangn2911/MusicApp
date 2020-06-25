@@ -13,14 +13,30 @@ import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
 
-
-class Login extends StatelessWidget {
-
+class _LoginState extends State<Login> {
   final TextEditingController usernameInput = TextEditingController();
   final TextEditingController passwordInput = TextEditingController();
   RecorderBloC recordBloC = RecorderBloC();
+  List<String> _userList;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchRecentlyUser();
+  }
+
+  void fetchRecentlyUser() async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _userList = _prefs.getStringList("username") ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +149,7 @@ class Login extends StatelessWidget {
   Widget signInWithVoiceButton(BuildContext context){
     return IconButton(
         onPressed: (){
-          createVoiceRegister(context, "Voice Register");
+          createVoiceRegister(context);
         },
         iconSize: 35,
         icon: Icon(
@@ -151,40 +167,50 @@ class Login extends StatelessWidget {
       child: RaisedButton(
         onPressed: (() async{
           var connectivityResult = await (Connectivity().checkConnectivity());
-          if (connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile) {
-            createAlertDialog("Sign In Successfully",context)
-              .then((value) 
-              => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GoOnline(null),
-                  )
-                )
-              );
-          } else if (connectivityResult == ConnectivityResult.none) {
+          if (connectivityResult == ConnectivityResult.none) {
             createAlertDialog("No Internet Connection",context);
           }
 
 
-          // final username = usernameInput.text.trimRight();
-          // final password = passwordInput.text.trimRight();
+          final username = usernameInput.text.trimRight();
+          final password = passwordInput.text.trimRight();
 
-          // final UserModel userInfo = await verifyUser(username, password);
+          // final UserModel userInfo = UserModel(
+          //   name: "Sang", 
+          //   email: "Sangn@gmail.com", 
+          //   phone: "12345", 
+          //   coin: 10000, 
+          //   isVip: 1);
+          final UserModel userInfo = await verifyUser(username, password);
 
-          // if (userInfo == null)
-          //   createAlertDialog("Check your info",context);
-          // else {
-          //   createAlertDialog("Sign In Successfully",context)
-          //     .then((value) =>
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => GoOnline(userInfo),
-          //         )
-          //       )
-          //     );
-          // }
+          if (userInfo == null)
+            createAlertDialog("Check your info",context);
+          else {
+            SharedPreferences _prefs = await SharedPreferences.getInstance();
+            List<String> _username = _prefs.getStringList("username") ?? [];
+                     
+            if (!_username.contains(username)) {
+              if (_username.length >= 3) _username.removeAt(0); 
+              _username.add(username);
+            }
+
+            print("User Name List: $_username");
+            _prefs.setStringList("username", _username);
+            setState(() {
+              _userList = _username;
+            });
+            createAlertDialog("Sign In Successfully",context)
+              .then((value) =>
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GoOnline(userInfo),
+                  )
+                )
+              );
+          }
         }),
+        
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
@@ -275,17 +301,17 @@ class Login extends StatelessWidget {
 
   bool isRecorderDispose = false;
 
-  Future<void> createVoiceRegister(BuildContext context, String title){
+  Future<void> createVoiceRegister(BuildContext context){
     return showDialog(
       context: context, 
       builder: (context){
-
+        int index = 0;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: StatefulBuilder(
             builder: (context, setState){ 
               return Dialog(
-                insetPadding: EdgeInsets.symmetric(horizontal: 75,vertical: 150),
+                insetPadding: EdgeInsets.symmetric(horizontal: 65,vertical: 150),
                 backgroundColor: ColorCustom.grey,
                 child: StreamBuilder(
                   stream: recordBloC.currentRecord,
@@ -308,7 +334,47 @@ class Login extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(height: 10),
-                          TextLato(title, ColorCustom.orange, 25, FontWeight.w700),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              IconButton(
+                                iconSize: 20,
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white
+                                ),
+                                onPressed: (){
+                                  setState(() {
+                                    if (index == 0){
+                                      index = _userList.length - 1;
+                                    }
+                                    else index--;
+                                  });
+                                },
+                              ),
+                              Container(
+                                width: 180,
+                                child: Center(child: TextLato("${_userList[index]}", ColorCustom.orange, 25, FontWeight.w700))
+                              ),
+                              IconButton(
+                                iconSize: 20,
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white
+                                ),
+                                onPressed: (){
+                                  setState(() {
+                                    if (index == _userList.length - 1){
+                                      index = 0;
+                                    }
+                                    else index++;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                           SizedBox(height: 50),
                           switchIcon(status, record.duration.inMilliseconds.toDouble()),
                           Expanded(child: Container(),),
@@ -387,6 +453,7 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
+              padding: EdgeInsets.zero,
               width: 110,
               height: 110,
               child: SizedBox(
@@ -406,6 +473,4 @@ class Login extends StatelessWidget {
         );
     }
   }
-
-
 }

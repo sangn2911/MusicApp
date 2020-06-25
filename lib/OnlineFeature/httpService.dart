@@ -1,14 +1,18 @@
 import 'dart:convert';
 
 //import 'package:MusicApp/Data/playlistModel.dart';
+import 'package:MusicApp/Data/infoControllerBloC.dart';
 import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/Data/userModel.dart';
+import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-String url = 'http://25.19.229.40:5000/'; //localhost
+String url1 = 'http://25.19.229.40:5000/'; //localhost
+
+String url = 'http://25.40.136.16:5000/';
 
 //User Information
 
@@ -97,10 +101,61 @@ Future<bool> logOut(String name) async{
 
 }
 
-Future<bool> transactionForCoin(String name, int coin) async{
+
+Future<int> buyVipAndSong(InfoControllerBloC userBloC, String password ,String type, int coin, {String songID = ""}) async{
+
+  Map data;
+  if(type == "status"){
+    data = {
+      "service": "purchase",
+      "username": userBloC.userInfo.value.name,
+      "password": password,
+      "type": type,
+      "name": "VIP",
+      "coin": coin,
+    };
+  } else {
+    data = {
+      "service": "purchase",
+      "username": userBloC.userInfo.value.name,
+      "password": password,
+      "type": type,
+      "name": songID,
+      "coin": coin,
+    };
+  }
+
+  String body = json.encode(data);
+
+  final response = await http.post(url, 
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Message: ${response.body}");
+  var jsondecode = json.decode(response.body);
+
+  if (response.statusCode == 200){
+    userBloC.userInfo.value.isVip = 1;
+    userBloC.userInfo.value.coin = jsondecode["coin"];
+    userBloC.userInfo.add(userBloC.userInfo.value);
+    return 0;
+  }
+  else if(jsondecode["message"] == "Not enough coin!"){
+    return 1;
+  }
+  else if(jsondecode["message"] == "Wrong Password"){
+    return 2;
+  }
+  else 
+    return 3;
+
+}
+
+Future<int> transactionForCoin(InfoControllerBloC userBloC, int coin) async{
 
   Map data = {
-    "username": name,
+    "username": userBloC.userInfo.value.name,
     "coin": coin,
   };
 
@@ -111,12 +166,16 @@ Future<bool> transactionForCoin(String name, int coin) async{
   );
 
   print("Status Code: ${response.statusCode}");
+  print("Message: ${response.body}");
+  var jsondecode = json.decode(response.body);
 
   if (response.statusCode == 200){
-    return true;
+    userBloC.userInfo.value.coin = jsondecode["coin"];
+    userBloC.userInfo.add(userBloC.userInfo.value);
+    return 0;
   }
   else {
-    return false;
+    return 1;
   }
 
 }
@@ -329,7 +388,6 @@ Future<int> playlistAdd(String playlistName, String username, String id) async{
   }
 
 }
-
 
 createAlertDialog(String str, BuildContext context){
   return showDialog(context: context, builder: (context){

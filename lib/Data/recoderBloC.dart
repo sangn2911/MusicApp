@@ -34,14 +34,15 @@ class RecorderBloC{
   }
 
   void initStream(){
-    // _currentStatus = BehaviorSubject<RecordingStatus>.seeded(RecordingStatus.Unset);
+
     currentFile = null;
     _currRecord = BehaviorSubject<Recording>();
-    //position = BehaviorSubject<Duration>.seeded(Duration(milliseconds: 0));
+
   }
 
   void initRecoder() async{
     try{
+      print("Prepare Recorder");
       if (await FlutterAudioRecorder.hasPermissions) {
 
         String customPath = '/recorder';
@@ -49,13 +50,7 @@ class RecorderBloC{
         io.Directory appDocDirectory = await getExternalStorageDirectory(); // For android only
         customPath = appDocDirectory.path + customPath + " $count";
         count += 1;
-        // if (await io.Directory(appDocDirectory.path).exists()) {
-        //   print("Delete");
-        //   var dir = io.Directory(appDocDirectory.path);
-        //   dir.delete(recursive: false);
-        // }
 
-        print("Continue");
         _recorder = FlutterAudioRecorder(customPath, audioFormat: AudioFormat.WAV);
 
         await _recorder.initialized;
@@ -63,7 +58,6 @@ class RecorderBloC{
         Recording result = await _recorder.current();
         //_currRecord = result;
         _currRecord.add(result);
-
       }
       print("Init Successfully");
     } catch (e){
@@ -76,7 +70,7 @@ class RecorderBloC{
   void dispose(){
     try{
       isDispose = true;
-      print("Status: ${_currRecord.value.status}");
+      // print("Status: ${_currRecord.value.status}");
       if (_currRecord.value.status == RecordingStatus.Recording){    
         _recorder.stop();
       }
@@ -101,7 +95,7 @@ class RecorderBloC{
     while (count < 100){
       print("Path delete: ${customPath + " $_count" + ".wav"}");
       if (await io.File(customPath + " $_count" + ".wav").exists()) {
-        print("Delete in start");
+        // print("Delete in start");
         var dir = io.File(customPath + " $_count" + ".wav");
         dir.deleteSync(recursive: true);
       }
@@ -116,6 +110,8 @@ class RecorderBloC{
   void start() async {
 
     try {
+      print("Start Recorder");
+
       await _recorder.start();
       
       Recording current1 = await _recorder.current();
@@ -130,7 +126,7 @@ class RecorderBloC{
         _currRecord.add(current2);
         _t = t;
         if (_currRecord.value.duration == Duration(seconds: 3)){
-          print("After 3s");
+          // print("After 3s");
           stop();
         }
 
@@ -141,6 +137,7 @@ class RecorderBloC{
   }
 
   void stop() async {
+    print("Stop Recorder");
     var result = await _recorder.stop();
     _t.cancel();
     //_currRecord = result;

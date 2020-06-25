@@ -83,14 +83,14 @@ class _SearchPageState extends State<SearchPage> {
             SizedBox(width: 50),
             buttonWidget(Icons.shopping_cart, "VIP",
               function: (){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Purchase(),
-                    );
-                  }
-                );
+                // showDialog(
+                //   context: context,
+                //   builder: (context) {
+                //     return Dialog(
+                //       child: Purchase(),
+                //     );
+                //   }
+                // );
               }
             ),
           ],

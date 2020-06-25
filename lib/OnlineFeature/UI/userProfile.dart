@@ -85,7 +85,6 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget profileContainer(bool isVIP){
-    //widget.userInfo.printAll();
     return Container(
       width: 500,
       height: 135,
@@ -119,7 +118,7 @@ class _UserProfileState extends State<UserProfile> {
                         context: context,
                         builder: (context) {
                           return Dialog(
-                            child: Purchase(),
+                            child: Purchase(userBloC: widget.mainBloC.infoBloC, type: "status",),
                           );
                         }
                       );
@@ -180,7 +179,14 @@ class _UserProfileState extends State<UserProfile> {
               });
             }),
             infoListTitle(Icons.attach_money,"${_userInfo.coin}", onPressed: (){
-
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: Purchase(userBloC: widget.mainBloC.infoBloC, type: "buycoin"),
+                  );
+                }
+              );
             }),
             infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
               createVoiceRegister(context, "Voice Register");
