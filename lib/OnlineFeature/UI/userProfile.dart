@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
+import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
@@ -9,8 +13,8 @@ import 'package:MusicApp/Custom/customIcons.dart';
 
 class UserProfile extends StatefulWidget {
 
-  final UserModel userInfo;
-  UserProfile(this.userInfo);
+  final MainControllerBloC mainBloC;
+  UserProfile(this.mainBloC);
 
 
   @override
@@ -23,9 +27,8 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    userInfo = widget.userInfo;
+    userInfo = widget.mainBloC.infoBloC.userInfo.value;
   }
 
   @override
@@ -142,22 +145,54 @@ class _UserProfileState extends State<UserProfile> {
 
 
   Widget childList(BuildContext context){
-    return ListView(
-        children: <Widget>[
-          infoListTitle(Icons.mail , "${userInfo.email}", onPressed: (){}),
-          infoListTitle(Icons.phone, "${userInfo.phone}", onPressed: (){}),
-          infoListTitle(Icons.attach_money,"${userInfo.coin}", onPressed: (){}),
-          infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
-            final bool response = await logOut(userInfo.name);
-            if (response){
-              int count = 0;
-              Navigator.of(context).popUntil((_) => count++ >= 2);
-            }
-            else{
-              createAlertDialog("Fail to log out", context);
-            }
-          }),
-        ],
+    return StreamBuilder(
+      stream: widget.mainBloC.infoBloC.userInfo,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        if (!snapshot.hasData) 
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          );
+
+        UserModel _userInfo = snapshot.data;
+        return ListView(
+          children: <Widget>[
+            infoListTitle(Icons.mail , "${_userInfo.email}", onPressed: (){
+              createPopUp(context, "Enter new email", () async { 
+                //print("email");
+                int result = await updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), _userInfo.name, "updateEmail");
+                customController.text = "";
+                result == 1 ? createAlertDialog("Update Successfully", context) : createAlertDialog("Check Your Info", context);
+              });
+            }),
+            infoListTitle(Icons.phone, "${_userInfo.phone}", onPressed: (){
+              createPopUp(context, "Enter new phone number", () async { 
+                int result = await updateInfo(widget.mainBloC.infoBloC.userInfo , customController.text.toString(), _userInfo.name, "updatePhone");
+                customController.text = "";
+                result == 1 ? createAlertDialog("Update Successfully", context) : createAlertDialog("Check Your Info", context);
+              });
+            }),
+            infoListTitle(Icons.attach_money,"${_userInfo.coin}", onPressed: (){
+
+            }),
+            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
+              createVoiceRegister(context, "Voice Register", () { });
+            }),
+            infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
+              final bool response = await logOut(_userInfo.name);
+              if (response){
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              }
+              else{
+                createAlertDialog("Fail to log out", context);
+              }
+            }),
+          ],
+        );
+      },
     );
   }
 
@@ -180,6 +215,98 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
+  final TextEditingController customController = TextEditingController(text: "");
+
+  Future<void> createPopUp(BuildContext context, String title,void Function() function){
+    return showDialog(
+      context: context, 
+      builder: (context){
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: AlertDialog(
+            backgroundColor: Colors.black,
+            title: TextLato(title,Colors.white, 20, FontWeight.w700),
+            content: TextField(
+              obscureText: false,
+              controller: customController,
+              style: TextStyle(
+                fontSize: 20.0,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+              ),
+              cursorColor: Colors.white,
+              decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white)
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white)
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white)
+                )
+              ),
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                elevation: 5.0,
+                child: TextLato("Confirm",Colors.white, 20, FontWeight.w700),
+                onPressed: () async{
+                  function();
+                  Navigator.pop(context);
+                },
+              ),
+              MaterialButton(
+                elevation: 5.0,
+                  child: TextLato("Cancel",Colors.white, 20, FontWeight.w700),
+                onPressed: (){
+                  Navigator.of(context).pop(customController.text.toString());
+                },
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  Future<void> createVoiceRegister(BuildContext context, String title,void Function() function){
+    return showDialog(
+      context: context, 
+      builder: (context){
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: Dialog(
+            insetPadding: EdgeInsets.symmetric(horizontal: 50,vertical: 190),
+            backgroundColor: ColorCustom.grey,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 10),
+                  TextLato(title, Colors.white, 25, FontWeight.w700),
+                  SizedBox(height: 50),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 100,
+                    icon: Icon(
+                      Icons.keyboard_voice,
+                      color: Colors.white,
+                    ),
+                    onPressed: (){},
+                  ),
+                  SizedBox(height: 50),
+                  TextLato("Push the button", Colors.white, 25, FontWeight.w700),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    );
+  }
+
   Widget text(String str, {Color color = Colors.white, double size = 20.0, FontWeight fontWeight = FontWeight.w400}){
     return Text(
       str,
@@ -191,4 +318,5 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
+
 }

@@ -15,11 +15,10 @@ class GoOffline extends StatelessWidget {
     return Provider<MainControllerBloC>(
       create: (BuildContext context){
         mpBloC.fetchSongs();
-        mpBloC.fetchFavourite();
         return mpBloC;
       },
       dispose: (BuildContext context, MainControllerBloC mp) => mp.dispose(),
-      child: Downloadlist(false, null),
+      child: Downloadlist(false),
     );
     //return Downloadlist();
   }
@@ -38,10 +37,11 @@ class GoOnline extends StatelessWidget {
       create: (BuildContext context){
         mpBloC.fetchSongs();
         mpBloC.fetchFavourite();
+        //mpBloC.infoBloC.saveUserInfo(userInfo);
         return mpBloC;
       },
       dispose: (BuildContext context, MainControllerBloC mp) => mp.dispose(),
-      child: RootWidget(userInfo),
+      child: RootWidget(),
     );
     //return HomePage();
   }

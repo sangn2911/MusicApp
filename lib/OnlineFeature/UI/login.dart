@@ -1,3 +1,4 @@
+
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +148,7 @@ class Login extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => GoOnline(null),
-                  )
+                )
                 // PageRouteBuilder(
                 //   transitionDuration: Duration(milliseconds: 550),
                 //   transitionsBuilder: (BuildContext context, 

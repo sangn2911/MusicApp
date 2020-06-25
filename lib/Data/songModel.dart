@@ -32,12 +32,13 @@ class SongItem {
     String artist;
 
     factory SongItem.fromJson(Map<String, dynamic> json) => SongItem(
-        id: json["id"],      
+        id: json["_id"],    
         title: json["title"] == null ? "Unknown" : json["title"],
         artist: json["artist"] == null ? "Unknown" : json["artist"],
     );
 
     Map<String, dynamic> toJson() => {
+        "id": id,
         "title": title,
         "artist": artist,
     };

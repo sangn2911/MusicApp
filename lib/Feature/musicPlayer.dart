@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:MusicApp/Custom/color.dart';
+import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flute_music_player/flute_music_player.dart';
@@ -6,7 +9,7 @@ import 'package:MusicApp/Custom/sizeConfig.dart';
 //import 'package:provider/provider.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:MusicApp/Custom/custemText.dart';
+import 'package:MusicApp/Custom/customText.dart';
 
 
 class MusicPlayer extends StatefulWidget {
@@ -80,12 +83,31 @@ class MusicPlayerState extends State<MusicPlayer> {
           ),
           title: TextLato("Music Player", Colors.white, 25, FontWeight.w700),
           actions: <Widget>[
-            Icon(
-              Icons.more_vert,
-              color: Colors.white,
-              size: 30.0,
+            StreamBuilder(
+              stream: widget._mp.fromDB,
+              builder: (BuildContext context, AsyncSnapshot snapshot){
+                if (!snapshot.hasData){
+                  return Icon(
+                    Icons.phone_android,
+                    color: Colors.white,
+                    size: 20.0,
+                  );
+                }
+                bool isOnline = snapshot.data;
+                
+                return isOnline ? Icon(
+                  Icons.wifi,
+                  color: Colors.white,
+                  size: 30.0,
+                ) 
+                : Icon(
+                    Icons.phone_android,
+                    color: Colors.white,
+                    size: 27.0,
+                ); 
+              }
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 12),
           ],
         ),
         body: body()
@@ -126,13 +148,10 @@ class MusicPlayerState extends State<MusicPlayer> {
       child: StreamBuilder<Song>(
         stream: mp.currentSong,
         builder: (BuildContext context, AsyncSnapshot<Song> snapshot){
-          if (!snapshot.hasData){
-            return  CircularProgressIndicator();
-          }
-          if (snapshot.data.albumArt == null){
+          if (!snapshot.hasData || snapshot.data.albumArt == null){
             return  imageDecoration();
           }
-          final currSong = snapshot.data;
+          Song currSong = snapshot.data;
           return Container(
             height: 200,
             width: 200,
@@ -143,6 +162,7 @@ class MusicPlayerState extends State<MusicPlayer> {
               )
             ),
           );
+
         }
       )
     );
@@ -158,7 +178,7 @@ class MusicPlayerState extends State<MusicPlayer> {
         builder: (BuildContext context, AsyncSnapshot<Song> snapshot){
           if (!snapshot.hasData){
             return Container();
-          } 
+          }
           Song currentSong = snapshot.data;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,7 +215,9 @@ class MusicPlayerState extends State<MusicPlayer> {
             size: 25,
           ), 
           onPressed: (){
-            print("Playlist button");
+            widget._mp.fromDB.value 
+              ? addPlayList(context, widget._mp)
+              : createAlertDialog("Offline playlist is not supported", context);
           }
         ),
       ]
@@ -229,7 +251,7 @@ class MusicPlayerState extends State<MusicPlayer> {
           final Duration dataPos = snapshot.data.key;
           final int positioninMilliseconds = dataPos.inMilliseconds;
           final Song currentSong = snapshot.data.value;
-          final int durationinMilliseconds = currentSong.duration;
+          final int durationinMilliseconds = mp.duration.inMilliseconds;
           return Column(
             children: <Widget>[
               Slider(
@@ -314,7 +336,7 @@ class MusicPlayerState extends State<MusicPlayer> {
                     mp.pause();
                   }
                   : () {
-                    mp.play(currentSong);
+                    mp.playSong(currentSong);
                     }
                 ),
   // Button "Next Music"
@@ -359,6 +381,89 @@ class MusicPlayerState extends State<MusicPlayer> {
         fontFamily: 'Lato',
         fontWeight: fontweight,
       ),
+    );
+  }
+
+  Future<String> addPlayList(BuildContext context, MainControllerBloC mp){
+    return showDialog(
+      context: context, 
+      builder: (context){
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: Dialog(
+            insetPadding: EdgeInsets.only(left: 50, right: 50, top: 100, bottom: 100),
+            backgroundColor: ColorCustom.grey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextLato("Choose playlist", ColorCustom.orange, 25, FontWeight.w500),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: widget._mp.infoBloC.playlists,
+                    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
+                      if (!snapshot.hasData){
+                        return Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.black,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        );
+                      }
+                      List<String> playlists = snapshot.data;
+                      //print(playlists);
+                      if (playlists.length == 0){
+                        return noPlaylist();
+                      }
+                      else
+                        return listPlaylist(context, playlists);
+                    }
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget listPlaylist(BuildContext context, List<String> playlists){
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: playlists.length,
+      itemBuilder: (BuildContext context, int index){
+        String playlist = playlists[index];
+        return playListCard(playlist);
+        },                                     
+    );
+  }
+
+  Widget playListCard(String playlist){
+    return ListTile(
+      contentPadding: EdgeInsets.only(left: 30),
+      leading: Icon(
+        Icons.library_music,
+        color: ColorCustom.orange,
+        size: 50,
+      ),
+      title: TextLato(playlist, Colors.white, 22, FontWeight.w700),
+      onTap: (){
+        print("Add to $playlist");
+      },
+    );
+  }
+
+  Widget noPlaylist(){
+    return Center(
+      child: TextLato("No playlist found.", Colors.white, 19, FontWeight.w500)
     );
   }
 

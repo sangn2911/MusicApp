@@ -23,7 +23,7 @@ class UserModel {
         name: json["username"],
         email: json["email"],
         phone: json["phone"] == null ? "Add phone" : json["phone"],
-        coin: json["coin"] == null ? "Add coin" : json["title"],
+        coin: json["coin"] == null ? "Add coin" : json["coin"],
         isVip: json["status"],
     );
 
