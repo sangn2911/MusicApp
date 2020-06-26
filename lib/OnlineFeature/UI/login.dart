@@ -1,4 +1,5 @@
 
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:MusicApp/Custom/customText.dart';
@@ -14,6 +15,7 @@ import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:marquee/marquee.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -175,13 +177,13 @@ class _LoginState extends State<Login> {
           final username = usernameInput.text.trimRight();
           final password = passwordInput.text.trimRight();
 
-          // final UserModel userInfo = UserModel(
-          //   name: "Sang", 
-          //   email: "Sangn@gmail.com", 
-          //   phone: "12345", 
-          //   coin: 10000, 
-          //   isVip: 1);
-          final UserModel userInfo = await verifyUser(username, password);
+          final UserModel userInfo = UserModel(
+            name: "Sang", 
+            email: "Sangn@gmail.com", 
+            phone: "12345", 
+            coin: 10000, 
+            isVip: 1);
+          //final UserModel userInfo = await verifyUser(username, password);
 
           if (userInfo == null)
             createAlertDialog("Check your info",context);
@@ -354,8 +356,38 @@ class _LoginState extends State<Login> {
                                 },
                               ),
                               Container(
+                                height: 50,
                                 width: 180,
-                                child: Center(child: TextLato("${_userList[index]}", ColorCustom.orange, 25, FontWeight.w700))
+                                child: 
+                                // _userList[index].length > 10
+                                // ? Center(
+                                //     child: Marquee(
+                                //         text: "${_userList[index]}",
+                                //         scrollAxis: Axis.horizontal,
+                                //         crossAxisAlignment: CrossAxisAlignment.start,
+                                //         //blankSpace: 20.0,
+                                //         velocity: 100.0,
+                                //         pauseAfterRound: Duration(seconds: 1),
+                                //         showFadingOnlyWhenScrolling: true,
+                                //         fadingEdgeStartFraction: 0.1,
+                                //         fadingEdgeEndFraction: 0.1,
+                                //         numberOfRounds: 3,
+                                //         //startPadding: 10.0,
+                                //         accelerationDuration: Duration(seconds: 1),
+                                //         accelerationCurve: Curves.linear,
+                                //         decelerationDuration: Duration(milliseconds: 500),
+                                //         decelerationCurve: Curves.easeOut,
+                                //         style: TextStyle(
+                                //           wordSpacing: 1.15,
+                                //           color: ColorCustom.orange,
+                                //           fontSize: 20,
+                                //           fontFamily: 'Lato',
+                                //           fontWeight: FontWeight.w700,
+                                //         ),
+                                //       ),
+                                // )
+                                // : 
+                                Center(child: TextLato("${_userList[index]}", ColorCustom.orange, 25, FontWeight.w700))
                               ),
                               IconButton(
                                 iconSize: 20,
@@ -381,6 +413,11 @@ class _LoginState extends State<Login> {
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
                             onTap: (){
+                              print("File Path: ${recordBloC.currentFile.path}");
+                              File file = recordBloC.currentFile;
+                              print("File bytes: ${file.readAsBytes()}");
+
+
                               Navigator.of(context).pop();
                             },
                           ),
@@ -421,7 +458,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             SizedBox(height: 25),
-            TextLato("Start", Colors.white, 25, FontWeight.w700)
+            InkWell(child: TextLato("Start", Colors.white, 25, FontWeight.w700))
           ],
         );
       case RecordingStatus.Stopped:

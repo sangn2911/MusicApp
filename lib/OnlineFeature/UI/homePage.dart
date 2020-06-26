@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black,
       centerTitle: true,
       leading: IconButton(
+        padding: EdgeInsets.zero,
         iconSize: 30,
         icon: Container(
           decoration: BoxDecoration(

@@ -18,7 +18,7 @@ class RecorderBloC{
   FlutterAudioRecorder _recorder;
   // BehaviorSubject<Duration> position;
   BehaviorSubject<Recording> _currRecord;
-  RecordingStatus _currentStatus;
+  //RecordingStatus _currentStatus;
   File currentFile;
   
   Timer _t;
@@ -137,12 +137,12 @@ class RecorderBloC{
   }
 
   void stop() async {
-    print("Stop Recorder");
     var result = await _recorder.stop();
     _t.cancel();
     //_currRecord = result;
     _currRecord.add(result);
     currentFile = localFileSystem.file(_currRecord.value.path);
+    print("Stop Recorder");
   }
 
 

@@ -11,8 +11,9 @@ class Purchase extends StatelessWidget {
 
   final InfoControllerBloC userBloC;
   final String type;
+  final BuildContext context;
 
-  Purchase({@required this.userBloC, this.type});
+  Purchase({@required this.userBloC, this.type, this.context});
 
 
   @override

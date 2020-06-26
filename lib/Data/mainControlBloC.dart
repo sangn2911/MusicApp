@@ -203,6 +203,10 @@ class MainControllerBloC{
     Song songPlay = song;
     if (song.uri == null) {
       Song songDB = await getSong(song.iD);
+      if (songDB == null) {
+        print("Cant load song");
+        return;
+      }
       songPlay = songDB;
     }
     _currentSong.add(songPlay);

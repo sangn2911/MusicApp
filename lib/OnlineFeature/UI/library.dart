@@ -55,7 +55,7 @@ class _LibraryState extends State<Library> {
                 UserModel userInfo =  mp.infoBloC.userInfo.value;
                 //String username = userInfo.name;
                 //List<String> playlists = await fetchPlaylist(userInfo.name);
-                mp.infoBloC.fetchPlaylists("Tri");
+                mp.infoBloC.fetchPlaylists(userInfo.name);
                 Navigator.push(context, 
                   MaterialPageRoute(
                     builder: (context) => Playlists(mp, userInfo),

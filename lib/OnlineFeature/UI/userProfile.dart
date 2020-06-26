@@ -188,8 +188,11 @@ class _UserProfileState extends State<UserProfile> {
                 }
               );
             }),
-            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
-              createVoiceRegister(context, "Voice Register");
+            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: () async{
+              int result = await prepareVoice(_userInfo.name, _userInfo.id);
+              if (result == 0)
+                createVoiceRegister(context, "Voice Register");
+              else createAlertDialog("Something's wrong", context);
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
               final bool response = await logOut(_userInfo.name);
@@ -197,7 +200,7 @@ class _UserProfileState extends State<UserProfile> {
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               }
-              else{
+              else {
                 createAlertDialog("Fail to log out", context);
               }
             }),
@@ -272,7 +275,7 @@ class _UserProfileState extends State<UserProfile> {
                 elevation: 5.0,
                   child: TextLato("Cancel",Colors.white, 20, FontWeight.w700),
                 onPressed: (){
-                  Navigator.of(context).pop(customController.text.toString());
+                  Navigator.pop(context);
                 },
               )
             ],
@@ -323,13 +326,14 @@ class _UserProfileState extends State<UserProfile> {
                           Expanded(child: Container(),),
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
-                            onTap: (){
+                            onTap: () async{
                               if (recordBloC.currentFile == null)
                                 Navigator.of(context).pop();
                               else{
                                 print("File Path: ${recordBloC.currentFile.path}");
                                 File file = recordBloC.currentFile;
                                 print("File bytes: ${file.readAsBytes()}");
+                                int result = await registerVoice(userInfo.name, "${file.readAsBytes()}");
                                 Navigator.of(context).pop();
                               }
                               

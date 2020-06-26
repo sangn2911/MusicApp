@@ -31,18 +31,16 @@ Future<int> createUser(String email, String name, String password) async{
     body: body,
   );
 
-  print("Status Code: ${response.statusCode}");
+  // print("Status Code: ${response.statusCode}");
+  // print("Response body in Create User: ${response.body}");
   
   if (response.statusCode == 200){
-    print("Response body: ${response.body}");
     return 0;
   }
   else if (response.statusCode == 400){
-    print("Response body: ${response.body}");
     return 1;
   }
   else{
-    print("Error: ${response.statusCode}");
     return 2;
   }
   
@@ -64,14 +62,13 @@ Future<UserModel> verifyUser(String name, String password) async{
   );
 
   print("Status Code: ${response.statusCode}");
+  print("Response body In Verify User: ${response.body}");
 
   if (response.statusCode == 200){
-    print("Response body: ${response.body}");
     UserModel userInfo = userModelFromJson(response.body);
     return userInfo;
   }
   else {
-    print("Response body: ${response.body}");
     return null;
   }
   
@@ -91,6 +88,7 @@ Future<bool> logOut(String name) async{
   );
 
   print("Status Code: ${response.statusCode}");
+  print("Response body In Log Out: ${response.body}");
 
   if (response.statusCode == 200){
     return true;
@@ -101,6 +99,86 @@ Future<bool> logOut(String name) async{
 
 }
 
+// Voice Authentication
+
+Future<int> prepareVoice(String username, String id) async{
+
+  Map data = {
+    "username": username,
+    "id": id
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "enroll", 
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    return 0;
+  }
+  else {
+    return 1;
+  }
+
+}
+
+Future<int> registerVoice(String username, String bytes) async{
+
+  Map data = {
+    "username": username,
+    "file": bytes,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "enroll", 
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    return 0;
+  }
+  else {
+    return 1;
+  }
+
+}
+
+Future<int> verifyVoice(String username, String bytes) async{
+
+  Map data = {
+    "username": username,
+    "file": bytes,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url, 
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    return 0;
+  }
+  else {
+    return 1;
+  }
+
+}
+
+
+
+// Purchase
 
 Future<int> buyVipAndSong(InfoControllerBloC userBloC, String password ,String type, int coin, {String songID = ""}) async{
 
@@ -242,7 +320,7 @@ Future<List<Song>> getfavourite() async{
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "song",
     body: body,
   );
 
@@ -270,14 +348,15 @@ Future<Song> getSong(String id) async{
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "song",
     body: body,
   );
 
   print("Status Code: ${response.statusCode}");
+  print("Body Song: ${response.body}");
 
   if (response.statusCode == 200){
-    print("Body Song: ${response.body}");
+    
     var jsondecode = json.decode(response.body);
 
     Song song = Song(
@@ -309,7 +388,7 @@ Future<List<String>> fetchPlaylist(String username) async{
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "song",
     body: body,
   );
 
@@ -339,7 +418,7 @@ Future<List<String>> createPlaylist(String name, String username) async{
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "song",
     body: body,
   );
 
@@ -372,7 +451,7 @@ Future<int> playlistAdd(String playlistName, String username, String id) async{
 
   String body = json.encode(data);
 
-  final response = await http.post(url,
+  final response = await http.post(url + "song",
     body: body,
   );
 
@@ -404,3 +483,4 @@ createAlertDialog(String str, BuildContext context){
     );
   });
 }
+
