@@ -131,10 +131,10 @@ class SignUp extends StatelessWidget {
         onPressed: (() async {
           var connectivityResult = await (Connectivity().checkConnectivity());
           if (connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile) {
-            final email = emailInput.text.trimRight();
-            final username = usernameInput.text.trimRight();
-            final password = passwordInput.text.trimRight();
-            if (password != passwordInput2.text.trimRight())
+            final email = emailInput.text.trim();
+            final username = usernameInput.text.trim();
+            final password = passwordInput.text.trim();
+            if (password != passwordInput2.text.trim())
               createAlertDialog("Check confirm password again",context);
             else {
               final int reponse = await createUser(email, username, password);

@@ -11,9 +11,9 @@ class Purchase extends StatelessWidget {
 
   final InfoControllerBloC userBloC;
   final String type;
-  final BuildContext context;
+  final BuildContext parentContext;
 
-  Purchase({@required this.userBloC, this.type, this.context});
+  Purchase({@required this.userBloC, this.type, this.parentContext});
 
 
   @override
@@ -183,17 +183,18 @@ class Purchase extends StatelessWidget {
                 child: text('Confirm buy',size: 20 ,color: Colors.amber),
               onPressed: () async{
                 if (coinController.text.contains(RegExp(r'[a-z]'))){
-                  //print("here");
                   coinController.text = "";
                   createAlertDialog("Input only number", context);
                 } else {
                   int coin = int.parse(coinController.text);
-                  //print("Coin: ${coinController.text}");
                   int result = await transactionForCoin(userBloC, coin);
+
                   if (result == 0){
                     int count = 0;
+                    createAlertDialog("Successful Transaction", parentContext);
                     Navigator.of(context).popUntil((_) => count++ >= 3);
-                  } else createAlertDialog("Fail Transaction", context);
+                  } 
+                  else createAlertDialog("Fail Transaction", context);
                 }
               },
             )

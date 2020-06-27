@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -26,7 +27,7 @@ class _LoginState extends State<Login> {
   final TextEditingController usernameInput = TextEditingController();
   final TextEditingController passwordInput = TextEditingController();
   RecorderBloC recordBloC = RecorderBloC();
-  List<String> _userList;
+  List<Map> _userList = [];
 
   @override
   void initState() {
@@ -37,8 +38,20 @@ class _LoginState extends State<Login> {
 
   void fetchRecentlyUser() async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    _userList = _prefs.getStringList("username") ?? [];
+    List<String> localSave = _prefs.getStringList("username") ?? [];
+    for (var user in localSave){
+      _userList.add(json.decode(user));
+
+    }
   }
+
+  bool isContain(String name, String id){
+    for (var user in _userList){
+      if (name == user["name"] || id == user["id"]) return true;
+    }
+    return false;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +163,9 @@ class _LoginState extends State<Login> {
 
   Widget signInWithVoiceButton(BuildContext context){
     return IconButton(
-        onPressed: (){
+        onPressed: () {
+          // int result = await  prepareVerify("username", "id");
+          // print("$result");
           createVoiceRegister(context);
         },
         iconSize: 35,
@@ -178,7 +193,8 @@ class _LoginState extends State<Login> {
           final password = passwordInput.text.trimRight();
 
           final UserModel userInfo = UserModel(
-            name: "Sang", 
+            id: "12",
+            name: "sangR", 
             email: "Sangn@gmail.com", 
             phone: "12345", 
             coin: 10000, 
@@ -189,18 +205,26 @@ class _LoginState extends State<Login> {
             createAlertDialog("Check your info",context);
           else {
             SharedPreferences _prefs = await SharedPreferences.getInstance();
-            List<String> _username = _prefs.getStringList("username") ?? [];
-                     
-            if (!_username.contains(username)) {
-              if (_username.length >= 3) _username.removeAt(0); 
-              _username.add(username);
+            Map<String,String> user = {
+              "id": userInfo.id,
+              "name": userInfo.name,
+            };
+            var data = json.encode(user);
+            List<String> localSave = _prefs.getStringList("username") ?? [];
+            
+
+            if (!isContain(userInfo.name, userInfo.id)) {
+              if (localSave.length >= 3) localSave.removeAt(0);
+              localSave.add(data);
             }
 
-            print("User Name List: $_username");
-            _prefs.setStringList("username", _username);
             setState(() {
-              _userList = _username;
+              _userList.add(user);
             });
+
+            print("Local save: $localSave");
+            _prefs.setStringList("username", localSave);
+
             createAlertDialog("Sign In Successfully",context)
               .then((value) =>
                 Navigator.push(
@@ -387,7 +411,7 @@ class _LoginState extends State<Login> {
                                 //       ),
                                 // )
                                 // : 
-                                Center(child: TextLato("${_userList[index]}", ColorCustom.orange, 25, FontWeight.w700))
+                                Center(child: TextLato("${_userList[index]["name"]}", ColorCustom.orange, 25, FontWeight.w700))
                               ),
                               IconButton(
                                 iconSize: 20,
@@ -412,12 +436,19 @@ class _LoginState extends State<Login> {
                           Expanded(child: Container(),),
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
-                            onTap: (){
+                            onTap: () async{
                               print("File Path: ${recordBloC.currentFile.path}");
                               File file = recordBloC.currentFile;
-                              print("File bytes: ${file.readAsBytes()}");
 
+                              //print("File bytes: ${file.readAsBytes()}");
+                              int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
 
+                              if (result == 0){
+                                print("Successful");
+                              }
+                              if (result == 2){
+                                print("Fail to recognize");
+                              }
                               Navigator.of(context).pop();
                             },
                           ),
@@ -468,16 +499,18 @@ class _LoginState extends State<Login> {
             Container(
               width: 110,
               height: 110,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                iconSize: 100,
-                icon: Icon(
-                  Icons.adjust,
-                  color: Colors.white,
+              child: Center(
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 100,
+                  icon: Icon(
+                    Icons.adjust,
+                    color: Colors.white,
+                  ),
+                  onPressed: (){
+                    recordBloC.initRecoder();
+                  },
                 ),
-                onPressed: (){
-                  recordBloC.initRecoder();
-                },
               ),
             ),
             SizedBox(height: 25),

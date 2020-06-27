@@ -12,6 +12,7 @@ enum PlayerMode { shuffle, repeat, normal }
 class MainControllerBloC{
 
   InfoControllerBloC infoBloC;
+  BehaviorSubject<List<Song>> songfromDB;
 
 //List
   
@@ -64,38 +65,41 @@ class MainControllerBloC{
 
   void dispose(){
     isDispose = true;
-
-    _currPlaylist.close();
-    _currPlaylistOnline.close();
-
     isUsed.close();
     fromDB.close();
+  //Common stream
+    _currPlaylist.close();
+    _currPlaylistOnline.close();
     _audioPlayer.stop();
-    playerState.close();
-    playerMode.close();
-    position.close();
-    songList.close();
-    currentSong.close();
+    _position.close();
     _songs.close();
-    favourite.close();
+    _currentSong.close();
     _playerState.close();
     _playerMode.close();
-    _position.close();
-    _currentSong.close();
+
+  //Online stream
+    favourite.close();
+    songfromDB.close();
   }
 
   void _initStreams(){
+    
     isUsed = BehaviorSubject<bool>.seeded(false);
     fromDB = BehaviorSubject<bool>.seeded(false);
+    
     _currPlaylist = BehaviorSubject<MapEntry<List<Song>, List<Song>>>();
     _currPlaylistOnline = BehaviorSubject<MapEntry<List<SongItem>, List<SongItem>>>();
     _songs = BehaviorSubject<List<Song>>();
-    favourite = BehaviorSubject<List<Song>>();
-    //_albums = List<Album>();
+    
+
     _position = BehaviorSubject<Duration>();
-    //_favorites = [];
+
     _playerState = BehaviorSubject<PlayerState>.seeded(PlayerState.stopped);
     _playerMode = BehaviorSubject<PlayerMode>.seeded(PlayerMode.normal);
+
+    songfromDB = BehaviorSubject<List<Song>>();
+    favourite = BehaviorSubject<List<Song>>();
+
   }
 
   void _initCurrentSong() {

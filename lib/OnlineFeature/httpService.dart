@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 //import 'package:MusicApp/Data/playlistModel.dart';
+import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Data/infoControllerBloC.dart';
 import 'package:MusicApp/Data/songModel.dart';
 import 'package:MusicApp/Data/userModel.dart';
@@ -10,9 +13,15 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+
+const CODE_DONE = 1000;
+const CODE_FAIL = 1008;
+const CODE_RECORD_SUCCESS = 1020;
+const CODE_REGSITER_VOICE_SUCCESS = 1021;
+
 String url1 = 'http://25.19.229.40:5000/'; //localhost
 
-String url = 'http://25.40.136.16:5000/';
+String url = 'http://25.39.35.22:5000/';
 
 //User Information
 
@@ -104,8 +113,8 @@ Future<bool> logOut(String name) async{
 Future<int> prepareVoice(String username, String id) async{
 
   Map data = {
-    "username": username,
-    "id": id
+    "username": "Martin Scorsese",
+    "user_id": "5eb4048961f2042d286fd175"
   };
 
   String body = json.encode(data);
@@ -115,9 +124,11 @@ Future<int> prepareVoice(String username, String id) async{
   );
 
   print("Status Code: ${response.statusCode}");
-  print("Body: ${response.body}");
+  print("Body PrepareVoice: ${response.body}");
+  var jsondecode = json.decode(response.body);
 
   if (response.statusCode == 200){
+    if(jsondecode["code"] == 1006) return 3;
     return 0;
   }
   else {
@@ -126,23 +137,76 @@ Future<int> prepareVoice(String username, String id) async{
 
 }
 
-Future<int> registerVoice(String username, String bytes) async{
+// Future<int> registerVoice(String username, File file) async{
+
+//   Uint8List bytes = file.readAsBytesSync(); //[00,02,03,82]
+
+//   final response = await http.post(url + "voice", 
+//     body: bytes,
+//   );
+
+//   print("Status Code: ${response.statusCode}");
+//   print("Body registerVoice: ${response.body}");
+
+//   if (response.statusCode == 200){
+//     return 0;
+//   }
+//   else {
+//     return 1;
+//   }
+
+// }
+
+// Future<int> prepareVerify(String username, String id) async{
+
+//   Map data = {
+//     "username": "Martin Scorsese",
+//     "user_id": "5eb4048961f2042d286fd175",
+//   };
+
+//   String body = json.encode(data);
+
+//   final response = await http.get(url + "biometrics?user_id=5eb4048961f2042d286fd175&username=Martin%20Scorsese");
+
+//   print("Status Code: ${response.statusCode}");
+//   print("Body verifyVoice: ${response.body}");
+
+//   if (response.statusCode == 200){
+//     return 0;
+//   }
+//   else {
+//     return 1;
+//   }
+
+// }
+
+
+Future<int> voiceAuthentication(int count, String username, String id, String tag ,File file) async{
+
+  Uint8List bytes = file.readAsBytesSync();
 
   Map data = {
-    "username": username,
-    "file": bytes,
+    "username": "Martin Scorsese",
+    "user_id": "5eb4048961f2042d286fd175",
+    "count": count,
+    "tag": tag,
+    "user_data": bytes,
   };
 
   String body = json.encode(data);
 
-  final response = await http.post(url + "enroll", 
+  final response = await http.post(url + "voice", 
     body: body,
   );
 
   print("Status Code: ${response.statusCode}");
-  print("Body: ${response.body}");
+  print("Body verifyVoice: ${response.body}");
 
   if (response.statusCode == 200){
+    if (tag == "recognize"){
+      int result = await verifyVoice(username, id);
+      if (result == 2) return 2;
+    }
     return 0;
   }
   else {
@@ -151,23 +215,33 @@ Future<int> registerVoice(String username, String bytes) async{
 
 }
 
-Future<int> verifyVoice(String username, String bytes) async{
+Future<int> verifyVoice(String username, String id) async{
+
+  //Uint8List bytes = file.readAsBytesSync();
 
   Map data = {
-    "username": username,
-    "file": bytes,
+    "username": "Martin Scorsese",
+    "user_id": "5eb4048961f2042d286fd175",
   };
 
   String body = json.encode(data);
 
-  final response = await http.post(url, 
+  final response = await http.post(url + "verify",
     body: body,
   );
 
   print("Status Code: ${response.statusCode}");
-  print("Body: ${response.body}");
+  print("Body verifyVoice: ${response.body}");
+
+  var jsondecode = json.decode(response.body);
 
   if (response.statusCode == 200){
+
+    if (jsondecode["code"] == 1008){
+      return 2;
+    }
+
+
     return 0;
   }
   else {
@@ -310,7 +384,7 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
 
 //Activity with song database
 
-Future<List<Song>> getfavourite() async{
+Future<List<Song>> getfavourite() async {
 
   //return [];
 
@@ -472,15 +546,10 @@ createAlertDialog(String str, BuildContext context){
   return showDialog(context: context, builder: (context){
     return AlertDialog(
       title: Center(
-        child: Text(
-          str,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.red
-          ),
-        ),
+        child: TextLato(str, Colors.red, 20, FontWeight.w700),
       ),
     );
   });
 }
 
+//request /getSongList

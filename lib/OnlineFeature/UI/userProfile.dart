@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:MusicApp/Data/infoControllerBloC.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
@@ -27,6 +29,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
 
   UserModel userInfo;
+  InfoControllerBloC infoBloC;
   RecorderBloC recordBloC;
 
   @override
@@ -189,10 +192,14 @@ class _UserProfileState extends State<UserProfile> {
               );
             }),
             infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: () async{
-              int result = await prepareVoice(_userInfo.name, _userInfo.id);
-              if (result == 0)
-                createVoiceRegister(context, "Voice Register");
-              else createAlertDialog("Something's wrong", context);
+
+              int result = await prepareVoice(_userInfo.name, _userInfo.id); //Voice Request
+
+              //if (result == 0)
+              createVoiceRegister(context, "Voice Register");
+              // else if (result == 3) createAlertDialog("Already register voice recognition", context);
+              // else createAlertDialog("Something's wrong", context);
+
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
               final bool response = await logOut(_userInfo.name);
@@ -291,7 +298,7 @@ class _UserProfileState extends State<UserProfile> {
     return showDialog(
       context: context, 
       builder: (context){
-
+        int count = 1;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: StatefulBuilder(
@@ -327,14 +334,23 @@ class _UserProfileState extends State<UserProfile> {
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
                             onTap: () async{
-                              if (recordBloC.currentFile == null)
-                                Navigator.of(context).pop();
-                              else{
+                              if (recordBloC.currentFile != null){
                                 print("File Path: ${recordBloC.currentFile.path}");
                                 File file = recordBloC.currentFile;
-                                print("File bytes: ${file.readAsBytes()}");
-                                int result = await registerVoice(userInfo.name, "${file.readAsBytes()}");
-                                Navigator.of(context).pop();
+                                int result = 5;
+                                print("count: $count");
+                                if (count == 5)
+                                  result = await voiceAuthentication(count, userInfo.name, userInfo.id, "register", file);
+                                else {
+                                  await voiceAuthentication(count, userInfo.name, userInfo.id, "register", file);
+                                }
+                                
+                                setState(() {
+                                  count += 1;
+                                });
+
+                                if (result == 0) createAlertDialog("Success", context);
+                                else createAlertDialog("Again", context);
                               }
                               
                             },

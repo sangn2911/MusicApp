@@ -125,7 +125,7 @@ class RecorderBloC{
         //_currRecord = current2;
         _currRecord.add(current2);
         _t = t;
-        if (_currRecord.value.duration == Duration(seconds: 3)){
+        if (_currRecord.value.duration == Duration(seconds: 2)){
           // print("After 3s");
           stop();
         }
