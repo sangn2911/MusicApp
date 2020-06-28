@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black,
       centerTitle: true,
       leading: IconButton(
+        padding: EdgeInsets.zero,
         iconSize: 30,
         icon: Container(
           decoration: BoxDecoration(
@@ -85,11 +86,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         onPressed: () async{
-          
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => UserProfile(mp))
           );
+          
         }
       ),
       title: TextLato("Home", Colors.white , 25, FontWeight.w700),
@@ -411,14 +413,14 @@ class _HomePageState extends State<HomePage> {
             SizedBox(width: 50),
             buttonWidget(Icons.shopping_cart, "VIP",
               function: (){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Purchase(),
-                    );
-                  }
-                );
+                // showDialog(
+                //   context: context,
+                //   builder: (context) {
+                //     return Dialog(
+                //       child: Purchase(),
+                //     );
+                //   }
+                // );
               }
             ),
           ],

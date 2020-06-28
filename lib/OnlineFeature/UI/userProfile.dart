@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:MusicApp/Data/infoControllerBloC.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Data/mainControlBloC.dart';
@@ -27,6 +29,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
 
   UserModel userInfo;
+  InfoControllerBloC infoBloC;
   RecorderBloC recordBloC;
 
   @override
@@ -85,7 +88,6 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget profileContainer(bool isVIP){
-    //widget.userInfo.printAll();
     return Container(
       width: 500,
       height: 135,
@@ -119,7 +121,7 @@ class _UserProfileState extends State<UserProfile> {
                         context: context,
                         builder: (context) {
                           return Dialog(
-                            child: Purchase(),
+                            child: Purchase(userBloC: widget.mainBloC.infoBloC, type: "status",),
                           );
                         }
                       );
@@ -180,10 +182,24 @@ class _UserProfileState extends State<UserProfile> {
               });
             }),
             infoListTitle(Icons.attach_money,"${_userInfo.coin}", onPressed: (){
-
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: Purchase(userBloC: widget.mainBloC.infoBloC, type: "buycoin"),
+                  );
+                }
+              );
             }),
-            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: (){
+            infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: () async{
+
+              int result = await prepareVoice(_userInfo.name, _userInfo.id); //Voice Request
+
+              //if (result == 0)
               createVoiceRegister(context, "Voice Register");
+              // else if (result == 3) createAlertDialog("Already register voice recognition", context);
+              // else createAlertDialog("Something's wrong", context);
+
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
               final bool response = await logOut(_userInfo.name);
@@ -191,7 +207,7 @@ class _UserProfileState extends State<UserProfile> {
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               }
-              else{
+              else {
                 createAlertDialog("Fail to log out", context);
               }
             }),
@@ -266,7 +282,7 @@ class _UserProfileState extends State<UserProfile> {
                 elevation: 5.0,
                   child: TextLato("Cancel",Colors.white, 20, FontWeight.w700),
                 onPressed: (){
-                  Navigator.of(context).pop(customController.text.toString());
+                  Navigator.pop(context);
                 },
               )
             ],
@@ -282,7 +298,7 @@ class _UserProfileState extends State<UserProfile> {
     return showDialog(
       context: context, 
       builder: (context){
-
+        int count = 1;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: StatefulBuilder(
@@ -317,14 +333,24 @@ class _UserProfileState extends State<UserProfile> {
                           Expanded(child: Container(),),
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
-                            onTap: (){
-                              if (recordBloC.currentFile == null)
-                                Navigator.of(context).pop();
-                              else{
+                            onTap: () async{
+                              if (recordBloC.currentFile != null){
                                 print("File Path: ${recordBloC.currentFile.path}");
                                 File file = recordBloC.currentFile;
-                                print("File bytes: ${file.readAsBytes()}");
-                                Navigator.of(context).pop();
+                                int result = 5;
+                                print("count: $count");
+                                if (count == 5)
+                                  result = await voiceAuthentication(count, userInfo.name, userInfo.id, "register", file);
+                                else {
+                                  await voiceAuthentication(count, userInfo.name, userInfo.id, "register", file);
+                                }
+                                
+                                setState(() {
+                                  count += 1;
+                                });
+
+                                if (result == 0) createAlertDialog("Success", context);
+                                else createAlertDialog("Again", context);
                               }
                               
                             },
