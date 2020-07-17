@@ -1,6 +1,8 @@
 import 'dart:ui';
 
-import 'package:MusicApp/Data/mainControlBloC.dart';
+import 'package:MusicApp/BloC/globalBloC.dart';
+import 'package:MusicApp/BloC/musicplayerBloC.dart';
+import 'package:MusicApp/BloC/userBloC.dart';
 import 'package:MusicApp/Data/songModel.dart';
 
 import 'package:MusicApp/Data/userModel.dart';
@@ -16,9 +18,8 @@ import 'package:MusicApp/Custom/customText.dart';
 
 class Playlists extends StatefulWidget {
 
-  final MainControllerBloC mp;
-  final UserModel userInfo;
-  Playlists(this.mp, this.userInfo);
+  final GlobalBloC gBloC;
+  Playlists(this.gBloC);
 
   @override
   _PlaylistsState createState() => _PlaylistsState();
@@ -28,6 +29,17 @@ class Playlists extends StatefulWidget {
 class _PlaylistsState extends State<Playlists> {
 
   bool isUsed = false;
+  GlobalBloC globalBloC;
+  UserBloC userBloC;
+  MusicPlayerBloC mpBloC;
+
+  @override
+  void initState() {
+    super.initState();
+    globalBloC = widget.gBloC;
+    userBloC = globalBloC.userBloC;
+    mpBloC = globalBloC.mpBloC;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +65,7 @@ class _PlaylistsState extends State<Playlists> {
               bottom: 0,
               child: Column(
                 children: <Widget> [
-                  currentPlaying(widget.mp),
+                  currentPlaying(),
                 ]
               )
             ),            
@@ -64,11 +76,10 @@ class _PlaylistsState extends State<Playlists> {
   }
 
   Widget body(){
-    MainControllerBloC _mp = widget.mp;
     return Container(
       color: Colors.black,
       child: StreamBuilder(
-        stream: _mp.infoBloC.playlists,
+        stream: userBloC.playlists,
         builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
           if (!snapshot.hasData){
             return Center(
@@ -104,7 +115,7 @@ class _PlaylistsState extends State<Playlists> {
             ),
           );
         if (index == playlists.length + 1) 
-          return widget.mp.isUsed.value ? Container(height: 60) : Container();
+          return mpBloC.isUsed.value ? Container(height: 60) : Container();
         String playlist = playlists[index];
         return playListCard(playlist);
         },                                     
@@ -164,9 +175,9 @@ class _PlaylistsState extends State<Playlists> {
     );
   }
 
-  Widget currentPlaying(MainControllerBloC mp){
+  Widget currentPlaying(){
     return StreamBuilder<bool>(
-      stream: mp.isUsed,
+      stream: mpBloC.isUsed,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot){
         if (!snapshot.hasData){
           return Container();
@@ -178,11 +189,11 @@ class _PlaylistsState extends State<Playlists> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MusicPlayer(mp),
+                  builder: (context) => MusicPlayer(globalBloC),
                 )
               );
             },
-            child: CurrentPlayBar(mp)
+            child: CurrentPlayBar(globalBloC)
           );
       },
     );
@@ -191,6 +202,7 @@ class _PlaylistsState extends State<Playlists> {
   final TextEditingController customController = TextEditingController(text: "");
 
   Future<String> createPlaylistPopUp(BuildContext context){
+    
     return showDialog(
       context: context, 
       builder: (context){
@@ -226,8 +238,8 @@ class _PlaylistsState extends State<Playlists> {
                 elevation: 5.0,
                 child: TextLato("Confirm",Colors.white, 20, FontWeight.w700),
                 onPressed: () async{
-                  List<String> playlists = await createPlaylist(customController.text, widget.userInfo.name);
-                  widget.mp.infoBloC.playlists.add(playlists);
+                  List<String> playlists = await createPlaylist(customController.text, userBloC.userInfo.value.name);
+                  userBloC.playlists.add(playlists);
                   Navigator.pop(context);
                 },
               ),
@@ -283,7 +295,7 @@ class _PlaylistsState extends State<Playlists> {
 //Function for Upload and Add to playlist
       onSelected: (val){
         if (val == 1)
-          songList(context, widget.mp, playlist);
+          songList(context, playlist);
         else print("Delete this playlist");
       },
 //-----------------------------------------------------------
@@ -357,7 +369,7 @@ class _PlaylistsState extends State<Playlists> {
     );
   }
 
-  Future<String> songList(BuildContext context, MainControllerBloC mp, String playlist){
+  Future<String> songList(BuildContext context, String playlist){
     return showDialog(
       context: context, 
       builder: (context){
@@ -379,7 +391,7 @@ class _PlaylistsState extends State<Playlists> {
                 SizedBox(height: 10),
                 Expanded(
                   child: StreamBuilder(
-                    stream: widget.mp.infoBloC.currentPlaylist,
+                    stream: userBloC.currentPlaylist,
                     builder: (BuildContext context, AsyncSnapshot<List<SongItem>> snapshot){
                       if (!snapshot.hasData){
                         return Center(
