@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:MusicApp/Custom/customText.dart';
-import 'package:MusicApp/Data/recoderBloC.dart';
+import 'package:MusicApp/BloC/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/myMusic.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:marquee/marquee.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -31,7 +30,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchRecentlyUser();
   }
@@ -189,12 +187,12 @@ class _LoginState extends State<Login> {
           }
 
 
-          final username = usernameInput.text.trimRight();
-          final password = passwordInput.text.trimRight();
+          // final username = usernameInput.text.trimRight();
+          // final password = passwordInput.text.trimRight();
 
           final UserModel userInfo = UserModel(
-            id: "12",
-            name: "sangR", 
+            id: "5eb4048961f2042d286fd175",
+            name: "Martin Scorsese", 
             email: "Sangn@gmail.com", 
             phone: "12345", 
             coin: 10000, 
@@ -211,7 +209,6 @@ class _LoginState extends State<Login> {
             };
             var data = json.encode(user);
             List<String> localSave = _prefs.getStringList("username") ?? [];
-            
 
             if (!isContain(userInfo.name, userInfo.id)) {
               if (localSave.length >= 3) localSave.removeAt(0);
@@ -436,15 +433,26 @@ class _LoginState extends State<Login> {
                           Expanded(child: Container(),),
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
-                            onTap: () async{
+                            onTap: () async {
+
                               print("File Path: ${recordBloC.currentFile.path}");
                               File file = recordBloC.currentFile;
 
                               //print("File bytes: ${file.readAsBytes()}");
-                              int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
-
+                              //int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
+                              int result = await voiceAuthentication(0,"Martin Scorsese","5eb4048961f2042d286fd175","recognize",file);
                               if (result == 0){
-                                print("Successful");
+                                print("Successfully");
+                                UserModel userInfo = await getUserInfo("Martin Scorsese");
+                                createAlertDialog("Sign In Successfully",context)
+                                  .then((value) =>
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GoOnline(userInfo),
+                                      )
+                                    )
+                                  );
                               }
                               if (result == 2){
                                 print("Fail to recognize");

@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-//import 'package:MusicApp/Data/playlistModel.dart';
 import 'package:MusicApp/Custom/customText.dart';
-import 'package:MusicApp/Data/infoControllerBloC.dart';
-import 'package:MusicApp/Data/songModel.dart';
+import 'package:MusicApp/BloC/userBloC.dart';
+
 import 'package:MusicApp/Data/userModel.dart';
-import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
+
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+
 
 
 const CODE_DONE = 1000;
@@ -108,6 +107,31 @@ Future<bool> logOut(String name) async{
 
 }
 
+Future<UserModel> getUserInfo(String name) async{
+
+  Map data = {
+    "username": name,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "getUserInfo",
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Response body In Verify User: ${response.body}");
+
+  if (response.statusCode == 200){
+    UserModel userInfo = userModelFromJson(response.body);
+    return userInfo;
+  }
+  else {
+    return null;
+  }
+  
+}
+
 // Voice Authentication
 
 Future<int> prepareVoice(String username, String id) async{
@@ -128,7 +152,7 @@ Future<int> prepareVoice(String username, String id) async{
   var jsondecode = json.decode(response.body);
 
   if (response.statusCode == 200){
-    if(jsondecode["code"] == 1006) return 3;
+    if (jsondecode["code"] == 1006) return 3;
     return 0;
   }
   else {
@@ -136,50 +160,6 @@ Future<int> prepareVoice(String username, String id) async{
   }
 
 }
-
-// Future<int> registerVoice(String username, File file) async{
-
-//   Uint8List bytes = file.readAsBytesSync(); //[00,02,03,82]
-
-//   final response = await http.post(url + "voice", 
-//     body: bytes,
-//   );
-
-//   print("Status Code: ${response.statusCode}");
-//   print("Body registerVoice: ${response.body}");
-
-//   if (response.statusCode == 200){
-//     return 0;
-//   }
-//   else {
-//     return 1;
-//   }
-
-// }
-
-// Future<int> prepareVerify(String username, String id) async{
-
-//   Map data = {
-//     "username": "Martin Scorsese",
-//     "user_id": "5eb4048961f2042d286fd175",
-//   };
-
-//   String body = json.encode(data);
-
-//   final response = await http.get(url + "biometrics?user_id=5eb4048961f2042d286fd175&username=Martin%20Scorsese");
-
-//   print("Status Code: ${response.statusCode}");
-//   print("Body verifyVoice: ${response.body}");
-
-//   if (response.statusCode == 200){
-//     return 0;
-//   }
-//   else {
-//     return 1;
-//   }
-
-// }
-
 
 Future<int> voiceAuthentication(int count, String username, String id, String tag ,File file) async{
 
@@ -240,8 +220,6 @@ Future<int> verifyVoice(String username, String id) async{
     if (jsondecode["code"] == 1008){
       return 2;
     }
-
-
     return 0;
   }
   else {
@@ -251,10 +229,9 @@ Future<int> verifyVoice(String username, String id) async{
 }
 
 
-
 // Purchase
 
-Future<int> buyVipAndSong(InfoControllerBloC userBloC, String password ,String type, int coin, {String songID = ""}) async{
+Future<int> buyVipAndSong(UserBloC userBloC, String password ,String type, int coin, {String songID = ""}) async{
 
   Map data;
   if(type == "status"){
@@ -304,7 +281,7 @@ Future<int> buyVipAndSong(InfoControllerBloC userBloC, String password ,String t
 
 }
 
-Future<int> transactionForCoin(InfoControllerBloC userBloC, int coin) async{
+Future<int> transactionForCoin(UserBloC userBloC, int coin) async{
 
   Map data = {
     "username": userBloC.userInfo.value.name,
@@ -332,7 +309,7 @@ Future<int> transactionForCoin(InfoControllerBloC userBloC, int coin) async{
 
 }
 
-Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, String username, String service) async{
+Future<int> updateInfo(UserBloC _infoBloC, String value, String username, String service) async{
   
   Map data = {};
   UserModel initUser;
@@ -361,7 +338,7 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
   print("Status Code: ${response.statusCode}");
   print("Update Body: ${response.body}");
 
-  UserModel userInfo = _userInfo.value;
+  UserModel userInfo = _infoBloC.userInfo.value;
   if (response.statusCode == 200){
     
     if (service == "updateEmail"){
@@ -373,7 +350,7 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
       initUser = UserModel(name: userInfo.name, email: userInfo.email, phone: value, coin: userInfo.coin, isVip: userInfo.isVip);
     }
 
-    _userInfo.add(initUser);
+    _infoBloC.saveUserInfo(initUser);
     return 1;
   }
   else {
@@ -384,8 +361,22 @@ Future<int> updateInfo(BehaviorSubject<UserModel> _userInfo, String value, Strin
 
 //Activity with song database
 
-Future<List<Song>> getfavourite() async {
+Future<List<Song>> getSongDB() async {
 
+  final response = await http.get(url + "/getSongList");
+
+  print("Status Code: ${response.statusCode}");
+  print("Body Code: ${response.body}");
+
+  if (response.statusCode == 200) {
+    var jsondecode = json.decode(response.body);
+    List<Song> songs = List<Song>.from(jsondecode["data"].map((x) => Song.fromJson(x)));
+    return songs;
+  }
+  else return [];
+}
+
+Future<List<Song>> getfavourite() async {
   //return [];
 
   Map data = {
