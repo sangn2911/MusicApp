@@ -41,29 +41,32 @@ class _LibraryState extends State<Library> {
           leading: Container(),
           title: TextLato("Library", Colors.white, 25, FontWeight.w700),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(left: 35, top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget> [
-              listTile(Icons.playlist_add,"Create playlist",(){
-                createPlayList(context, globalBloC);
-              }),
-              listTile(Icons.star,"Favourite Songs",(){}),
-              listTile(IconCustom.album_1,"My Playlist",() async{
-                UserModel userInfo =  userBloC.userInfo.value;
-                //String username = userInfo.name;
-                //List<String> playlists = await fetchPlaylist(userInfo.name);
-                userBloC.fetchPlaylists(userInfo.name);
-                Navigator.push(context, 
-                  MaterialPageRoute(
-                    builder: (context) => Playlists(globalBloC),
-                  )
-                );
-              }),
-            ]
+        body: userBloC.userInfo.value.isVip == 1 ?
+          Padding(
+            padding: EdgeInsets.only(left: 35, top: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget> [
+                listTile(Icons.playlist_add,"Create playlist",(){
+                  createPlayList(context, globalBloC);
+                }),
+                listTile(IconCustom.album_1,"My Playlist",() async{
+                  UserModel userInfo =  userBloC.userInfo.value;
+                  userBloC.fetchPlaylists(userInfo.name);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (context) => Playlists(globalBloC),
+                    )
+                  );
+                }),
+              ]
+            ),
+          ) : Container(
+            height: 100,
+            child: Center(
+              child: TextLato("This service is for VIP user", ColorCustom.orange, 25, FontWeight.w700),
+            )
           ),
-        ),
       ),
     );
   }
@@ -112,9 +115,10 @@ class _LibraryState extends State<Library> {
               onPressed: () async{
                 UserModel user = globalBloC.userBloC.userInfo.value;
                 List<String> playlists = await createPlaylist(customController.text, user.name);
-                if ( playlists == null ) {
+                if ( playlists[0] == "" ) {
                   createAlertDialog("Playlist's name exist", context);
                 }
+                else if ( playlists == null) createAlertDialog("Server Error", context);
                 else{
                   globalBloC.userBloC.playlists.add(playlists);
                   Navigator.pop(context);

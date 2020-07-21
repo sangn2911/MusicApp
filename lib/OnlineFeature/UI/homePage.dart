@@ -1,5 +1,6 @@
 import 'package:MusicApp/BloC/globalBloC.dart';
 import 'package:MusicApp/BloC/musicplayerBloC.dart';
+import 'package:MusicApp/Custom/customMarquee.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
 import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
@@ -251,12 +252,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             onPressed: () async {
-
               mpBloC.isUsed.add(true);
               mpBloC.updatePlaylist(songlist);
               mpBloC.stop();
               mpBloC.handleSong(_song);
-
             },
           ),
           SizedBox(height: 5),
@@ -268,6 +267,8 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
+                    // CustomMarquee(_song.title, Colors.white, 20,FontWeight.w700),
+                    // CustomMarquee(_song.title, Colors.white, 20,FontWeight.w700),
                     TextLato(_song.title, Colors.white, 20, FontWeight.w700),
                     TextLato(_song.artist, ColorCustom.grey1, 14, FontWeight.w400),
                   ]
@@ -307,34 +308,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget songDecoration(Song song){
     return Container(
-        color: ColorCustom.orange,
-        child: Icon(
-          Icons.music_note,
-          color: Colors.black,
-        ),
-      ); 
-    // return song.albumArt == null
-    //   ? Container(
-    //     color: ColorCustom.orange,
-    //     child: Icon(
-    //       Icons.music_note,
-    //       color: Colors.black,
-    //     ),
-    //   ) 
-    //   : Container(
-    //     child: FadeInImage(
-    //       placeholder: NetworkImage(url), 
-    //       image: null
-    //     ),
-    //   );
-      // : Container(
-      //     child: Image(
-      //       fit: BoxFit.fill,
-      //       image: AssetImage(
-      //         song.albumArt,
-      //       )
-      //     ),
-      //   );
+      color: ColorCustom.orange,
+      child: Icon(
+        Icons.music_note,
+        color: Colors.black,
+      ),
+    );
   }
 
 

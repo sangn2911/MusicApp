@@ -77,7 +77,7 @@ class _UserProfileState extends State<UserProfile> {
           Navigator.pop(context);
         }
       ),
-      title: text("Profile"),
+      title: TextLato("Profile", Colors.white, 20, FontWeight.w400),
       actions: <Widget>[
         IconButton(
             onPressed: (){},
@@ -107,17 +107,19 @@ class _UserProfileState extends State<UserProfile> {
           SizedBox(width: 70),
           Column(
             children: <Widget>[
-              text("${userInfo.name}"),
-              SizedBox(height: 15,),
+              SizedBox(height: 10),
+              TextLato("${userInfo.name}", Colors.white, 20, FontWeight.w600),
+              SizedBox(height: 10,),
               Container(
-                width: 100,
-                height: 50,
                 decoration: BoxDecoration(
-                  border: Border.all(color: ColorCustom.orange),
+                  border: Border.all(color: ColorCustom.orange, width: 5),
                 ),
-                child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   child: InkWell(
-                    child: text("VIP",color: userInfo.isVip == 1 ? Colors.amber : Colors.white, size: userInfo.isVip == 1 ? 40 : 20, fontWeight: userInfo.isVip == 1 ? FontWeight.w900 : FontWeight.w400),
+                    child: userInfo.isVip == 1
+                      ? TextLato("VIP", Colors.amber, 40, FontWeight.w900)
+                      : TextLato("VIP", Colors.white, 20, FontWeight.w400),
                     onTap: (){
                       showDialog(
                         context: context,
@@ -226,7 +228,7 @@ class _UserProfileState extends State<UserProfile> {
         size: 50,
         color: Colors.amber,
       ),
-      title: text(str, size: 25),
+      title: TextLato(str, Colors.white , 20, FontWeight.w400),
       trailing: IconButton(
           onPressed: onPressed,
           icon: Icon(
@@ -440,18 +442,6 @@ class _UserProfileState extends State<UserProfile> {
           ],
         );
     }
-  }
-
-  Widget text(String str, {Color color = Colors.white, double size = 20.0, FontWeight fontWeight = FontWeight.w400}){
-    return Text(
-      str,
-      style: TextStyle(
-        color: color,
-        fontSize: 20.0,
-        fontFamily: 'Lato',
-        fontWeight: fontWeight,
-      ),
-    );
   }
 
 }

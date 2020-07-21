@@ -37,9 +37,9 @@ class GoOnline extends StatelessWidget {
     return Provider<GlobalBloC>(
       create: (BuildContext context){
         gBloC.mpBloC.fetchSongs();
-        gBloC.mpBloC.fetchAllSongDB();
+        //gBloC.mpBloC.fetchAllSongDB();
         gBloC.mpBloC.fetchRecently();
-        //gBloC.mpBloC.fetchFavourite();
+        gBloC.mpBloC.fetchFavourite();
         gBloC.userBloC.saveUserInfo(userInfo);
         
         return gBloC;

@@ -178,14 +178,6 @@ class MusicPlayerBloC{
   }
 
   void updatePlaylist(List<Song> normalPlaylist) {
-    // int count = 0;
-    // List<String> _print = [];
-    // while (count < 6){
-    //   _print = _print + [normalPlaylist[count].title];
-    //   count++;
-    // }
-    // print("Songs : $_print");
-
     List<Song> _shufflePlaylist = []..addAll(normalPlaylist);
     _shufflePlaylist.shuffle();
     _currPlaylist.add(MapEntry(normalPlaylist, _shufflePlaylist));
