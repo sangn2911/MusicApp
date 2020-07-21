@@ -55,37 +55,40 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
     SizeConfig().init(context);
     final GlobalBloC globalBloC = Provider.of<GlobalBloC>(context);
     final MusicPlayerBloC mp = globalBloC.mpBloC;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 850),
-            transitionBuilder: (Widget child, Animation<double> animation){ 
-              return SlideTransition(
-                  position: Tween<Offset>(begin: Offset(1,0), end: Offset(0, 0)).animate(animation),
-                  child: child,
-                );
-              },
-            child: _children[_currentIndex],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Column(
-              children: <Widget> [
-                currentPlaying(),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    canvasColor: ColorCustom.grey,
+    return WillPopScope(
+      onWillPop: () { return; },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: <Widget>[
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 850),
+              transitionBuilder: (Widget child, Animation<double> animation){ 
+                return SlideTransition(
+                    position: Tween<Offset>(begin: Offset(1,0), end: Offset(0, 0)).animate(animation),
+                    child: child,
+                  );
+                },
+              child: _children[_currentIndex],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Column(
+                children: <Widget> [
+                  currentPlaying(),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      canvasColor: ColorCustom.grey,
+                    ),
+                    child: bottomNavigator()
                   ),
-                  child: bottomNavigator()
-                ),
-              ]
-            )
-          ),
-        ],
+                ]
+              )
+            ),
+          ],
+        ),
       ),
     );
   }

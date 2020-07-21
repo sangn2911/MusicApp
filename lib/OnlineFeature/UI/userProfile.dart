@@ -1,12 +1,9 @@
 import 'dart:io';
-// import 'dart:typed_data';
 import 'dart:ui';
 import 'package:MusicApp/BloC/globalBloC.dart';
 import 'package:MusicApp/BloC/userBloC.dart';
-// import 'package:flutter/services.dart' show rootBundle;
 import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/Custom/sizeConfig.dart';
-import 'package:MusicApp/BloC/musicplayerBloC.dart';
 import 'package:MusicApp/BloC/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/OnlineFeature/UI/purchase.dart';
@@ -16,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+
+import '../httpService.dart';
 
 class UserProfile extends StatefulWidget {
 
@@ -205,8 +204,18 @@ class _UserProfileState extends State<UserProfile> {
 
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
+              if (_userInfo.name == "_") {
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              }
+
               final bool response = await logOut(_userInfo.name);
-              if (response){
+              if (response == null) {
+                createAlertDialog("Server Not Respond", context);
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);               
+              }
+              else if (response){
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               }

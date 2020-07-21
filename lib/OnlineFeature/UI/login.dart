@@ -20,12 +20,17 @@ import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Data/userModel.dart';
+import '../httpService.dart';
+import '../httpService.dart';
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+
   final TextEditingController usernameInput = TextEditingController();
   final TextEditingController passwordInput = TextEditingController();
   RecorderBloC recordBloC = RecorderBloC();
@@ -42,7 +47,6 @@ class _LoginState extends State<Login> {
     List<String> localSave = _prefs.getStringList("username") ?? [];
     for (var user in localSave){
       _userList.add(json.decode(user));
-
     }
   }
 
@@ -218,24 +222,33 @@ class _LoginState extends State<Login> {
           final password = passwordInput.text.trimRight();
 
           UserModel userInfo;
-          if (username == "1@1")
+          int code;
+          if (username == "_")
             userInfo = UserModel(
               id: "5eb4048961f2042d286fd175",
-              name: "Sang",
-              email: "Sangn@gmail.com",
-              phone: "12345", 
-              coin: 10000,
+              name: "_",
+              email: "example@gmail.com",
+              phone: "00000", 
+              coin: 100000,
               isVip: 0
             );
+          else if (username == "" || password == ""){
+            createAlertDialog("Do not leave username \nor password empty",context);
+            return;
+          }
           else {
-            userInfo = await verifyUser(username, password);
+            var response = await verifyUser(username, password);
+            userInfo = response.key;
+            code = response.value;
           }
 
-          if (userInfo == null)
+          if (code == USER_NOT_EXIST)
             createAlertDialog("Check your info",context);
+          else if (code == CODE_TIMEOUT){
+            createAlertDialog("Time out",context);
+          }
           else {
             saveLocal(userInfo);
-
             createAlertDialog("Sign In Successfully",context)
               .then((value) =>
                 Navigator.push(
@@ -245,7 +258,7 @@ class _LoginState extends State<Login> {
                   )
                 )
               );
-          }
+            }
         }),
         
         shape: RoundedRectangleBorder(
@@ -395,14 +408,10 @@ class _LoginState extends State<Login> {
                           InkWell(
                             child: TextLato("Finish", ColorCustom.orange, 25, FontWeight.w700),
                             onTap: () async {
-
                               print("File Path: ${recordBloC.currentFile.path}");
                               File file = recordBloC.currentFile;
                               int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
 
-                              //int result = await voiceAuthentication(0,"Martin Scorsese","5eb4048961f2042d286fd175","recognize",file);
-
-                              // int result = 2;
                               if (result == 0){
                                 print("Successfully");
                                 UserModel userInfo = await getUserInfo(_userList[index]["name"]);
@@ -423,7 +432,6 @@ class _LoginState extends State<Login> {
                             },
                           ),
                           SizedBox(height: 15),
-  
                         ],
                       ),
                     );
@@ -486,8 +494,7 @@ class _LoginState extends State<Login> {
             SizedBox(height: 25),
             TextLato("Ready", Colors.white, 25, FontWeight.w700)
           ],
-        );         
-
+        );
       default:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -513,4 +520,6 @@ class _LoginState extends State<Login> {
         );
     }
   }
+
+
 }

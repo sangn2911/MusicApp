@@ -57,8 +57,6 @@ class _SearchPageState extends State<SearchPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 10,),
-        //allTagColumn(),
-        //emptySearch(),
         searchList(),
         StreamBuilder<bool>(
           stream: mpBloC.isUsed,
@@ -268,6 +266,28 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Widget errorScreen(){
+    return Expanded(
+      child: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.error,
+                size: 75,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 10),
+              TextLato("Server Error", Colors.grey, 20, FontWeight.w700,),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget searchList(){
     final GlobalBloC globalBloC = Provider.of<GlobalBloC>(context);
     final MusicPlayerBloC mpBloC = globalBloC.mpBloC;
@@ -279,7 +299,7 @@ class _SearchPageState extends State<SearchPage> {
             return initScreen();
           }
           else if (snapshot.data == []){
-            return initScreen();
+            return errorScreen();
           }
           else if (_searchKey == ""){
             return initScreen();

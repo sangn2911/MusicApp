@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -17,6 +18,11 @@ const CODE_DONE = 1000;
 const CODE_FAIL = 1008;
 const CODE_RECORD_SUCCESS = 1020;
 const CODE_REGSITER_VOICE_SUCCESS = 1021;
+
+const CODE_WORKING = 2000;
+const CODE_TIMEOUT = 2001;
+
+const USER_NOT_EXIST = 3003;
 
 String url1 = 'http://25.19.229.40:5000/'; //localhost
 
@@ -57,54 +63,65 @@ Future<int> createUser(String email, String name, String password) async{
 }
 
 
-Future<UserModel> verifyUser(String name, String password) async{
-
-  Map data = {
-    "service": "login",
-    "username": name,
-    "password": password
-  };
-
-  String body = json.encode(data);
-
-  final response = await http.post(url, 
-    body: body,
-  );
-
-  print("Status Code: ${response.statusCode}");
-  print("Response body In Verify User: ${response.body}");
-
-  if (response.statusCode == 200){
-    UserModel userInfo = userModelFromJson(response.body);
-    return userInfo;
-  }
-  else {
-    return null;
-  }
+Future<MapEntry<UserModel,int>> verifyUser(String name, String password) async{
   
+  try {
+    Map data = {
+      "service": "login",
+      "username": name,
+      "password": password
+    };
+
+    String body = json.encode(data);
+
+    final response = await http.post(url, 
+      body: body,
+    ).timeout(Duration(seconds: 5));
+
+    print("Status Code: ${response.statusCode}");
+    print("Response body In Verify User: ${response.body}");
+
+    if (response.statusCode == 200){
+      UserModel userInfo = userModelFromJson(response.body);
+      return MapEntry<UserModel,int>(userInfo,CODE_WORKING);
+    }
+    else {
+      return MapEntry<UserModel,int>(null,USER_NOT_EXIST);
+    }
+  } on TimeoutException catch (_){
+    return MapEntry<UserModel,int>(null,CODE_TIMEOUT);
+  } on SocketException catch (_){
+    return MapEntry<UserModel,int>(null,CODE_TIMEOUT);
+  }
 }
 
 Future<bool> logOut(String name) async{
 
-  Map data = {
-    "service": "logout",
-    "username": name,
-  };
+  try {  
+    Map data = {
+      "service": "logout",
+      "username": name,
+    };
 
-  String body = json.encode(data);
+    String body = json.encode(data);
 
-  final response = await http.post(url, 
-    body: body,
-  );
+    final response = await http.post(url, 
+      body: body,
+    ).timeout(Duration(seconds: 5));
 
-  print("Status Code: ${response.statusCode}");
-  print("Response body In Log Out: ${response.body}");
+    print("Status Code: ${response.statusCode}");
+    print("Response body In Log Out: ${response.body}");
 
-  if (response.statusCode == 200){
-    return true;
-  }
-  else {
-    return false;
+    if (response.statusCode == 200){
+      return true;
+    }
+    else {
+      return false;
+    }
+  } on TimeoutException catch (_){
+    return null;
+  } on SocketException catch (_) {
+    return null;
   }
 
 }
@@ -365,17 +382,23 @@ Future<int> updateInfo(UserBloC _infoBloC, String value, String username, String
 
 Future<List<Song>> getSongDB() async {
 
-  final response = await http.get(url + "getSongList");
+  try {    
+    final response = await http.get(url + "getSongList").timeout(const Duration(seconds: 5));
 
-  print("Status Code: ${response.statusCode}");
-  print("Body Code: ${response.body}");
+    print("Status Code: ${response.statusCode}");
+    print("Body Code: ${response.body}");
 
-  if (response.statusCode == 200) {
-    var jsondecode = json.decode(response.body);
-    List<Song> songs = List<Song>.from(jsondecode["data"].map((x) => Song.fromJson(x)));
-    return songs;
+    if (response.statusCode == 200) {
+      var jsondecode = json.decode(response.body);
+      List<Song> songs = List<Song>.from(jsondecode["data"].map((x) => Song.fromJson(x)));
+      return songs;
+    }
+    else return [];
+  
+  } on TimeoutException catch (_) {
+    return null;
   }
-  else return [];
+
 }
 
 Future<List<Song>> getfavourite() async {
@@ -387,21 +410,26 @@ Future<List<Song>> getfavourite() async {
 
   String body = json.encode(data);
 
-  final response = await http.post(url + "song",
-    body: body,
-  );
+  try {  
 
-  // print("Status Code: ${response.statusCode}");
-  // print("Body Code: ${response.body}");
-  
-  if (response.statusCode == 200){
-    var jsondecode = json.decode(response.body);
-    List<Song> songs = List<Song>.from(jsondecode["favourite"].map((x) => Song.fromJson(x)));
-    print("Song List: $songs");
-    return songs;
-  }
-  else {
-    return [];
+    final response = await http.post(url + "song",
+      body: body,
+    ).timeout(const Duration(seconds: 5));
+
+    // print("Status Code: ${response.statusCode}");
+    // print("Body Code: ${response.body}");
+    
+    if (response.statusCode == 200){
+      var jsondecode = json.decode(response.body);
+      List<Song> songs = List<Song>.from(jsondecode["favourite"].map((x) => Song.fromJson(x)));
+      print("Song List: $songs");
+      return songs;
+    }
+    else {
+      return [];
+    }
+  } on TimeoutException catch (_){
+    return null;
   }
 
 }

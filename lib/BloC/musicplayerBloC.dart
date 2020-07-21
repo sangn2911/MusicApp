@@ -147,14 +147,15 @@ class MusicPlayerBloC{
 
   Future<void> fetchFavourite() async {
     List<Song> _favourite = await getfavourite();
-    print("Favourite: $_favourite");
-    favourite.add(_favourite);
+    if (_favourite != null)
+      favourite.add(_favourite);
     //favourite = _offlineSongs;
   }
 
   Future<void> fetchAllSongDB() async {
     List<Song> songDBlist = await getSongDB();
-    onlineSongs.add(songDBlist);
+    if (songDBlist != null)
+      onlineSongs.add(songDBlist);
     //onlineSongs = _offlineSongs;
   }
 
