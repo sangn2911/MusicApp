@@ -282,7 +282,6 @@ class MusicPlayerState extends State<MusicPlayer> {
           if (!snapshot.hasData){
             return Container();
           }
-
           final Song currentSong = snapshot.data.value;
           final PlayerState playerState = snapshot.data.key.key;
           final PlayerMode playerMode = snapshot.data.key.value;
@@ -443,10 +442,14 @@ class MusicPlayerState extends State<MusicPlayer> {
       title: TextLato(playlist, Colors.white, 22, FontWeight.w700),
       onTap: () async{
 
-        int result = await playlistAdd(playlist,"Tri", mpBloC.currentSong.value.title);
+        int result = await playlistAdd(playlist,"Tri", mpBloC.currentSong.value.iD);
         if (result == 1){
           createAlertDialog("Add to $playlist successfully", context);
-        } else
+        } 
+        else if (result == 2){
+          createAlertDialog("Duplicate Name", context);
+        }
+        else
           createAlertDialog("Failed to add to $playlist", context);
         //print("Add to $playlist");
       },

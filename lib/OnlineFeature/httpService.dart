@@ -20,7 +20,9 @@ const CODE_REGSITER_VOICE_SUCCESS = 1021;
 
 String url1 = 'http://25.19.229.40:5000/'; //localhost
 
-String url = 'http://25.39.35.22:5000/';
+String url2 = 'http://25.39.35.22:5000/';
+
+String url = 'http://25.11.142.123:5000/';
 
 //User Information
 
@@ -363,7 +365,7 @@ Future<int> updateInfo(UserBloC _infoBloC, String value, String username, String
 
 Future<List<Song>> getSongDB() async {
 
-  final response = await http.get(url + "/getSongList");
+  final response = await http.get(url + "getSongList");
 
   print("Status Code: ${response.statusCode}");
   print("Body Code: ${response.body}");
@@ -481,6 +483,7 @@ Future<List<String>> createPlaylist(String name, String username) async{
     "username": username,
   };
 
+
   String body = json.encode(data);
 
   final response = await http.post(url + "song",
@@ -488,12 +491,15 @@ Future<List<String>> createPlaylist(String name, String username) async{
   );
 
   print("Status Code: ${response.statusCode}");
-  
+  print("Body Playlist: ${response.body}");
 
   if (response.statusCode == 200) {
-    print("Body Playlist: ${response.body}");
-    var jsondecode = json.decode(response.body);
+    
 
+    if (response.body == "Duplicated") return [""];
+
+    var jsondecode = json.decode(response.body);
+    print("Body Playlist: $jsondecode");
 
     List<dynamic> playlists = jsondecode;
     List<String> result = playlists.cast<String>().toList();
@@ -505,13 +511,70 @@ Future<List<String>> createPlaylist(String name, String username) async{
 
 }
 
+Future<int> deletePlaylist(String playlistname, String username) async{
+
+  Map data = {
+    "service": "deletePlaylist",
+    "playlistName": playlistname,
+    "username": username,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "song",
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");  
+
+  if (response.statusCode == 200) {
+    print("Body Playlist: ${response.body}");
+    // var jsondecode = json.decode(response.body);
+    int result = 1;
+    return result;
+  }
+  else {
+    return null;
+  }
+
+}
+
+
 Future<int> playlistAdd(String playlistName, String username, String id) async{
 
   Map data = {
     "service": "addSong",
-    "playlistname": playlistName,
+    "playlistName": playlistName,
     "username": username,
-    "title": id,
+    "_id": id,
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "song",
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    if (response.body == "Duplicated") return 2; 
+    return 1;
+  }
+  else {
+    return 0;
+  }
+
+}
+
+Future<int> playlistDelete(String playlist, String username, String id) async{
+
+  Map data = {
+    "service": "delSong",
+    "playlistName": playlist,
+    "username": username,
+    "_id": id,
   };
 
   String body = json.encode(data);
@@ -532,6 +595,37 @@ Future<int> playlistAdd(String playlistName, String username, String id) async{
   }
 
 }
+
+
+Future<List<Song>> getPlaylist(String username, String playlistname) async{
+
+  Map data = {
+    "service": "fetchPlaylist",
+    "username": username,
+    "playlistName": playlistname
+  };
+
+  String body = json.encode(data);
+
+  final response = await http.post(url + "song",
+    body: body,
+  );
+
+  print("Status Code: ${response.statusCode}");
+  print("Body: ${response.body}");
+
+  if (response.statusCode == 200){
+    var jsondecode = json.decode(response.body);
+    List<Song> songs = List<Song>.from(jsondecode.map((x) => Song.fromJson(x)));
+    //print("playlist: $songs");
+    return songs;
+  }
+  else {
+    return [];
+  }
+
+}
+
 
 createAlertDialog(String str, BuildContext context){
   return showDialog(context: context, builder: (context){

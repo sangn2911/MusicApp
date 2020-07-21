@@ -1,3 +1,5 @@
+import 'package:MusicApp/Custom/customMarquee.dart';
+import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'dart:io';
@@ -7,7 +9,7 @@ import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/BloC/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/myMusic.dart';
-import 'package:flutter/material.dart';
+
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
@@ -15,6 +17,7 @@ import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -164,7 +167,7 @@ class _LoginState extends State<Login> {
         onPressed: () {
           // int result = await  prepareVerify("username", "id");
           // print("$result");
-          createVoiceRegister(context);
+          createVoiceVerify(context);
         },
         iconSize: 35,
         icon: Icon(
@@ -173,6 +176,30 @@ class _LoginState extends State<Login> {
         ),
       );
   }
+
+  void saveLocal(UserModel userInfo) async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    Map<String,String> user = {
+      "id": userInfo.id,
+      "name": userInfo.name,
+    };
+    var data = json.encode(user);
+    List<String> localSave = _prefs.getStringList("username") ?? [];
+
+    if (!isContain(userInfo.name, userInfo.id)) {
+      if (localSave.length >= 3) localSave.removeAt(0);
+      localSave.add(data);
+    }
+
+    setState(() {
+      _userList.add(user);
+    });
+
+    print("Local save: $localSave");
+    _prefs.setStringList("username", localSave);
+
+  }
+
 
   Widget signInButton(BuildContext context){
     return ButtonTheme(
@@ -187,40 +214,27 @@ class _LoginState extends State<Login> {
           }
 
 
-          // final username = usernameInput.text.trimRight();
-          // final password = passwordInput.text.trimRight();
+          final username = usernameInput.text.trimRight();
+          final password = passwordInput.text.trimRight();
 
-          final UserModel userInfo = UserModel(
-            id: "5eb4048961f2042d286fd175",
-            name: "Martin Scorsese", 
-            email: "Sangn@gmail.com", 
-            phone: "12345", 
-            coin: 10000, 
-            isVip: 1);
-          //final UserModel userInfo = await verifyUser(username, password);
+          UserModel userInfo;
+          if (username == "1@1")
+            userInfo = UserModel(
+              id: "5eb4048961f2042d286fd175",
+              name: "Sang",
+              email: "Sangn@gmail.com",
+              phone: "12345", 
+              coin: 10000,
+              isVip: 0
+            );
+          else {
+            userInfo = await verifyUser(username, password);
+          }
 
           if (userInfo == null)
             createAlertDialog("Check your info",context);
           else {
-            SharedPreferences _prefs = await SharedPreferences.getInstance();
-            Map<String,String> user = {
-              "id": userInfo.id,
-              "name": userInfo.name,
-            };
-            var data = json.encode(user);
-            List<String> localSave = _prefs.getStringList("username") ?? [];
-
-            if (!isContain(userInfo.name, userInfo.id)) {
-              if (localSave.length >= 3) localSave.removeAt(0);
-              localSave.add(data);
-            }
-
-            setState(() {
-              _userList.add(user);
-            });
-
-            print("Local save: $localSave");
-            _prefs.setStringList("username", localSave);
+            saveLocal(userInfo);
 
             createAlertDialog("Sign In Successfully",context)
               .then((value) =>
@@ -238,12 +252,7 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: textLato(
-          "Sign In",
-          color: Colors.black, 
-          size: 18.0, 
-          fontweight: FontWeight.w400
-        ),
+        child: TextLato("Sign In", Colors.black, 18.0, FontWeight.w400),
       ),
     );
   }
@@ -252,12 +261,7 @@ class _LoginState extends State<Login> {
     return Row(
       children: <Widget>[
         SizedBox(width: 82),
-        textLato(
-          "Don't Have An Account? ",
-          color: Colors.white, 
-          size: 18.0, 
-          fontweight: FontWeight.w400
-        ),
+        TextLato("Don't Have An Account? ", Colors.white, 18.0, FontWeight.w400),
         SizedBox(width: 5),
         GestureDetector(
           onTap: () async{
@@ -273,12 +277,7 @@ class _LoginState extends State<Login> {
               createAlertDialog("No Internet Connection",context);
             }
           },
-          child: textLato(
-            "Sign Up", 
-            color: ColorCustom.orange, 
-            size: 18.0, 
-            fontweight: FontWeight.w400
-          ),
+          child: TextLato("Sign Up", ColorCustom.orange, 18.0, FontWeight.w400),
         ),
       ],
     );
@@ -303,28 +302,14 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black)
         ),
-        child: textLato("Offline", color: Colors.black, size: 18.0, fontweight: FontWeight.w400 ),
+        child: TextLato("Offline", Colors.black, 18.0, FontWeight.w400),
       ),
     );
   }
-
-  Widget textLato(String str, {Color color = Colors.white, double size = 20.0, FontWeight fontweight = FontWeight.normal}){
-    return Text(
-      str,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: color,
-        fontSize: size,
-        fontFamily: 'Lato',
-        fontWeight: fontweight,
-      ),
-    );
-  }
-
 
   bool isRecorderDispose = false;
 
-  Future<void> createVoiceRegister(BuildContext context){
+  Future<void> createVoiceVerify(BuildContext context){
     return showDialog(
       context: context, 
       builder: (context){
@@ -359,6 +344,7 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               IconButton(
                                 iconSize: 20,
@@ -376,40 +362,15 @@ class _LoginState extends State<Login> {
                                   });
                                 },
                               ),
+                              SizedBox(width: 15),
                               Container(
                                 height: 50,
-                                width: 180,
-                                child: 
-                                // _userList[index].length > 10
-                                // ? Center(
-                                //     child: Marquee(
-                                //         text: "${_userList[index]}",
-                                //         scrollAxis: Axis.horizontal,
-                                //         crossAxisAlignment: CrossAxisAlignment.start,
-                                //         //blankSpace: 20.0,
-                                //         velocity: 100.0,
-                                //         pauseAfterRound: Duration(seconds: 1),
-                                //         showFadingOnlyWhenScrolling: true,
-                                //         fadingEdgeStartFraction: 0.1,
-                                //         fadingEdgeEndFraction: 0.1,
-                                //         numberOfRounds: 3,
-                                //         //startPadding: 10.0,
-                                //         accelerationDuration: Duration(seconds: 1),
-                                //         accelerationCurve: Curves.linear,
-                                //         decelerationDuration: Duration(milliseconds: 500),
-                                //         decelerationCurve: Curves.easeOut,
-                                //         style: TextStyle(
-                                //           wordSpacing: 1.15,
-                                //           color: ColorCustom.orange,
-                                //           fontSize: 20,
-                                //           fontFamily: 'Lato',
-                                //           fontWeight: FontWeight.w700,
-                                //         ),
-                                //       ),
-                                // )
-                                // : 
-                                Center(child: TextLato("${_userList[index]["name"]}", ColorCustom.orange, 25, FontWeight.w700))
+                                width: 150,
+                                child: Center(
+                                  child: CustomMarquee( _userList[index]["name"], ColorCustom.orange, 25, FontWeight.w700)
+                                )
                               ),
+                              SizedBox(width: 15),
                               IconButton(
                                 iconSize: 20,
                                 padding: EdgeInsets.zero,
@@ -437,13 +398,14 @@ class _LoginState extends State<Login> {
 
                               print("File Path: ${recordBloC.currentFile.path}");
                               File file = recordBloC.currentFile;
+                              int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
 
-                              //print("File bytes: ${file.readAsBytes()}");
-                              //int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
-                              int result = await voiceAuthentication(0,"Martin Scorsese","5eb4048961f2042d286fd175","recognize",file);
+                              //int result = await voiceAuthentication(0,"Martin Scorsese","5eb4048961f2042d286fd175","recognize",file);
+
+                              // int result = 2;
                               if (result == 0){
                                 print("Successfully");
-                                UserModel userInfo = await getUserInfo("Martin Scorsese");
+                                UserModel userInfo = await getUserInfo(_userList[index]["name"]);
                                 createAlertDialog("Sign In Successfully",context)
                                   .then((value) =>
                                     Navigator.push(
@@ -456,8 +418,8 @@ class _LoginState extends State<Login> {
                               }
                               if (result == 2){
                                 print("Fail to recognize");
+                                createAlertDialog("Fail to recognize",context);
                               }
-                              Navigator.of(context).pop();
                             },
                           ),
                           SizedBox(height: 15),
