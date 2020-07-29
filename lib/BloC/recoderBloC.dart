@@ -65,13 +65,10 @@ class RecorderBloC{
   void dispose(){
     try{
       isDispose = true;
-      // print("Status: ${_currRecord.value.status}");
       if (_currRecord.value.status == RecordingStatus.Recording){    
         _recorder.stop();
       }
-      //position.close();
       _currRecord.close();
-      // _currentStatus.close();
     } catch(e){
       print("Fail to dispose");
     }
