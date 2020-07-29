@@ -41,6 +41,12 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    recordBloC.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
@@ -115,20 +121,27 @@ class _UserProfileState extends State<UserProfile> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  child: InkWell(
-                    child: userInfo.isVip == 1
-                      ? TextLato("VIP", Colors.amber, 40, FontWeight.w900)
-                      : TextLato("VIP", Colors.white, 20, FontWeight.w400),
-                    onTap: (){
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: Purchase(userBloC: userBloC, type: "status",),
+                  child: StreamBuilder<Object>(
+                    stream: userBloC.userInfo,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return Container();
+                      final UserModel _userInfo = snapshot.data;
+                      return InkWell(
+                        child: _userInfo.isVip == 1
+                          ? TextLato("VIP", Colors.yellow, 20, FontWeight.w900)
+                          : TextLato("VIP", Colors.white, 20, FontWeight.w400),
+                        onTap: (){
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                child: Purchase(userBloC: userBloC, type: "status", parentContext: context,),
+                              );
+                            }
                           );
-                        }
+                        },
                       );
-                    },
+                    }
                   ),
                 )
               )
@@ -188,34 +201,30 @@ class _UserProfileState extends State<UserProfile> {
                 context: context,
                 builder: (context) {
                   return Dialog(
-                    child: Purchase(userBloC: userBloC, type: "buycoin"),
+                    child: Purchase(userBloC: userBloC, type: "buycoin", parentContext: context,),
                   );
                 }
               );
             }),
             infoListTitle(Icons.keyboard_voice,"Voice Authentication", onPressed: () async{
-
+              // ignore: unused_local_variable
               int result = await prepareVoice(_userInfo.name, _userInfo.id); //Voice Request
 
-              if (result == 0)
+              //if (result == 0)
                 createVoiceRegister(context, "Voice Register");
-              else if (result == 3) createAlertDialog("Already register voice recognition", context);
-              else createAlertDialog("Something's wrong", context);
+              //else if (result == 3) createAlertDialog("Already register \nvoice recognition", context);
+              //else createAlertDialog("Something's wrong", context);
 
             }),
             infoListTitle(Icons.exit_to_app,"Log Out", onPressed: () async {
               if (_userInfo.name == "_") {
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
+                return;
               }
 
               final bool response = await logOut(_userInfo.name);
-              if (response == null) {
-                createAlertDialog("Server Not Respond", context);
-                int count = 0;
-                Navigator.of(context).popUntil((_) => count++ >= 2);               
-              }
-              else if (response){
+              if (response){
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               }
@@ -257,8 +266,8 @@ class _UserProfileState extends State<UserProfile> {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
-            backgroundColor: Colors.black,
-            title: TextLato(title,Colors.white, 20, FontWeight.w700),
+            backgroundColor: ColorCustom.grey,
+            title: TextLato(title, Colors.amber, 20, FontWeight.w700),
             content: TextField(
               obscureText: false,
               controller: customController,
@@ -266,12 +275,12 @@ class _UserProfileState extends State<UserProfile> {
                 fontSize: 20.0,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.w400,
-                color: Colors.white,
+                color: Colors.amber,
               ),
-              cursorColor: Colors.white,
+              cursorColor: Colors.amber,
               decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)
+                  borderSide: BorderSide(color: Colors.black)
                 ),
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.white)
@@ -284,7 +293,7 @@ class _UserProfileState extends State<UserProfile> {
             actions: <Widget>[
               MaterialButton(
                 elevation: 5.0,
-                child: TextLato("Confirm",Colors.white, 20, FontWeight.w700),
+                child: TextLato("Confirm",Colors.amber, 20, FontWeight.w700),
                 onPressed: () async{
                   function();
                   Navigator.pop(context);
@@ -292,7 +301,7 @@ class _UserProfileState extends State<UserProfile> {
               ),
               MaterialButton(
                 elevation: 5.0,
-                  child: TextLato("Cancel",Colors.white, 20, FontWeight.w700),
+                  child: TextLato("Cancel",Colors.amber, 20, FontWeight.w700),
                 onPressed: (){
                   Navigator.pop(context);
                 },

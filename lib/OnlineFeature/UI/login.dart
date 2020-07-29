@@ -9,7 +9,6 @@ import 'package:MusicApp/Custom/customText.dart';
 import 'package:MusicApp/BloC/recoderBloC.dart';
 import 'package:MusicApp/Data/userModel.dart';
 import 'package:MusicApp/myMusic.dart';
-
 import 'package:MusicApp/Custom/sizeConfig.dart';
 import 'package:MusicApp/Custom/color.dart';
 import 'package:MusicApp/Custom/customIcons.dart';
@@ -17,12 +16,8 @@ import 'package:MusicApp/OnlineFeature/UI/signUp.dart';
 import 'package:MusicApp/OnlineFeature/httpService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
-import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Data/userModel.dart';
-import '../httpService.dart';
-import '../httpService.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -166,12 +161,17 @@ class _LoginState extends State<Login> {
     );
   }
 
+  int count = 0;
+
+
   Widget signInWithVoiceButton(BuildContext context){
     return IconButton(
         onPressed: () {
           // int result = await  prepareVerify("username", "id");
           // print("$result");
-          createVoiceVerify(context);
+          if (count < 3)
+            createVoiceVerify(context);
+          else createAlertDialog("Please login with password", context);
         },
         iconSize: 35,
         icon: Icon(
@@ -228,9 +228,9 @@ class _LoginState extends State<Login> {
               id: "5eb4048961f2042d286fd175",
               name: "_",
               email: "example@gmail.com",
-              phone: "00000", 
+              phone: "00000",
               coin: 100000,
-              isVip: 0
+              isVip: 1
             );
           else if (username == "" || password == ""){
             createAlertDialog("Do not leave username \nor password empty",context);
@@ -248,6 +248,9 @@ class _LoginState extends State<Login> {
             createAlertDialog("Time out",context);
           }
           else {
+            setState(() {
+              count = 0;
+            });
             saveLocal(userInfo);
             createAlertDialog("Sign In Successfully",context)
               .then((value) =>
@@ -411,9 +414,13 @@ class _LoginState extends State<Login> {
                               print("File Path: ${recordBloC.currentFile.path}");
                               File file = recordBloC.currentFile;
                               int result = await voiceAuthentication(0,_userList[index]["name"],_userList[index]["id"],"recognize",file);
-
+                              setState(() {
+                                count += 1;
+                              });
                               if (result == 0){
-                                print("Successfully");
+                                setState(() {
+                                  count = 0;
+                                });
                                 UserModel userInfo = await getUserInfo(_userList[index]["name"]);
                                 createAlertDialog("Sign In Successfully",context)
                                   .then((value) =>
@@ -426,7 +433,7 @@ class _LoginState extends State<Login> {
                                   );
                               }
                               if (result == 2){
-                                print("Fail to recognize");
+                                if (count == 3) Navigator.pop(context);
                                 createAlertDialog("Fail to recognize",context);
                               }
                             },

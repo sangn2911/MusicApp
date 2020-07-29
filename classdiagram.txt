@@ -1,0 +1,589 @@
+@startuml
+set namespaceSeparator ::
+
+class "MusicApp::BloC::globalBloC.dart::GlobalBloC" {
+  +UserBloC userBloC
+  +MusicPlayerBloC mpBloC
+  +void dispose()
+}
+
+"MusicApp::BloC::globalBloC.dart::GlobalBloC" o-- "MusicApp::BloC::userBloC.dart::UserBloC"
+"MusicApp::BloC::globalBloC.dart::GlobalBloC" o-- "MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC"
+
+class "MusicApp::BloC::musicplayerBloC.dart::PlayerState" {
+  +int index
+  {static} +List<PlayerState> values
+  {static} +PlayerState stopped
+  {static} +PlayerState playing
+  {static} +PlayerState paused
+}
+
+"MusicApp::BloC::musicplayerBloC.dart::PlayerState" o-- "MusicApp::BloC::musicplayerBloC.dart::PlayerState"
+
+class "MusicApp::BloC::musicplayerBloC.dart::PlayerMode" {
+  +int index
+  {static} +List<PlayerMode> values
+  {static} +PlayerMode shuffle
+  {static} +PlayerMode repeat
+  {static} +PlayerMode normal
+}
+
+"MusicApp::BloC::musicplayerBloC.dart::PlayerMode" o-- "MusicApp::BloC::musicplayerBloC.dart::PlayerMode"
+
+class "MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" {
+  +BehaviorSubject<List<Song>> onlineSongs
+  +BehaviorSubject<List<Song>> recently
+  +BehaviorSubject<List<Song>> favourite
+  -BehaviorSubject<List<Song>> _offlineSongs
+  +BehaviorSubject<bool> isUsed
+  +BehaviorSubject<bool> fromDB
+  +bool isDispose
+  -MusicFinder _audioPlayer
+  -Duration _duration
+  -BehaviorSubject<Duration> _position
+  -BehaviorSubject<PlayerState> _playerState
+  -BehaviorSubject<PlayerMode> _playerMode
+  -BehaviorSubject<Song> _currentSong
+  -BehaviorSubject<MapEntry<List<Song>, List<Song>>> _currPlaylist
+  +BehaviorSubject<List<Song>> songList
+  +BehaviorSubject<MapEntry<List<Song>, List<Song>>> currentPlaying
+  +BehaviorSubject<Song> currentSong
+  +bool isPlaying
+  +bool isPaused
+  +bool isShuffle
+  +bool isRepeat
+  +Duration duration
+  +BehaviorSubject<Duration> position
+  +BehaviorSubject<PlayerState> playerState
+  +BehaviorSubject<PlayerMode> playerMode
+  +void dispose()
+  -void _initStreams()
+  -void _initCurrentSong()
+  -void _initAudioPlayer()
+  +Future fetchFavourite()
+  +Future fetchAllSongDB()
+  +Future fetchSongs()
+  +Future fetchRecently()
+  +void updatePlaylist()
+  +void playMode()
+  +void updatePosition()
+  +void audioSeek()
+  +void updateRecent()
+  -String _encodeSongToJson()
+  -Song _decodeSongFromJson()
+  +Song songFromJson()
+  +Map songToMap()
+  +void handleSong()
+  +void play()
+  +void pause()
+  +void stop()
+  +void next()
+  +void prev()
+  +void playRandomSong()
+  +void onComplete()
+}
+
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<List<Song>>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<bool>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "flute_music_player::flute_music_player.dart::MusicFinder"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<Duration>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<PlayerState>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<PlayerMode>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<Song>"
+"MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<MapEntry<List<Song>, List<Song>>>"
+
+class "MusicApp::BloC::recoderBloC.dart::RecorderBloC" {
+  +LocalFileSystem localFileSystem
+  +bool isDispose
+  -FlutterAudioRecorder _recorder
+  -BehaviorSubject<Recording> _currRecord
+  +File currentFile
+  -Timer _t
+  +bool wasUsed
+  +int count
+  +BehaviorSubject<Recording> currentRecord
+  +void initStream()
+  +void initRecoder()
+  +void dispose()
+  +void checkExistFile()
+  +void start()
+  +void stop()
+}
+
+"MusicApp::BloC::recoderBloC.dart::RecorderBloC" o-- "file::src::backends::local::local_file_system.dart::LocalFileSystem"
+"MusicApp::BloC::recoderBloC.dart::RecorderBloC" o-- "flutter_audio_recorder::flutter_audio_recorder.dart::FlutterAudioRecorder"
+"MusicApp::BloC::recoderBloC.dart::RecorderBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<Recording>"
+"MusicApp::BloC::recoderBloC.dart::RecorderBloC" o-- "file::src::interface::file.dart::File"
+"MusicApp::BloC::recoderBloC.dart::RecorderBloC" o-- "dart::async::Timer"
+
+class "MusicApp::BloC::userBloC.dart::UserBloC" {
+  -BehaviorSubject<UserModel> _userInfo
+  +BehaviorSubject<List<String>> playlists
+  +BehaviorSubject<List<Song>> currentPlaylist
+  +BehaviorSubject<UserModel> userInfo
+  -void _initStreams()
+  +void dispose()
+  +Future fetchPlaylists()
+  +void saveUserInfo()
+  +void changeUserName()
+}
+
+"MusicApp::BloC::userBloC.dart::UserBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<UserModel>"
+"MusicApp::BloC::userBloC.dart::UserBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<List<String>>"
+"MusicApp::BloC::userBloC.dart::UserBloC" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<List<Song>>"
+
+class "MusicApp::Custom::color.dart::ColorCustom" {
+  {static} +Color orange
+  {static} +Color deepOrange
+  {static} +Color grey
+  {static} +Color grey1
+  {static} +Color brown
+  {static} +Color lightBlue
+  {static} +Color mediumYellow
+  {static} +Color deepRed
+  {static} +Color lightPink
+  {static} +Color lightBrown
+  {static} +Color moreDeepRed
+  {static} +Color lightGreen
+  {static} +Color lightOrange
+  {static} +Color purple
+}
+
+"MusicApp::Custom::color.dart::ColorCustom" o-- "dart::ui::Color"
+
+class "MusicApp::Custom::customIcons.dart::IconCustom" {
+  {static} -String _kFontFam
+  {static} -dynamic _kFontPkg
+  {static} +IconData settings_1
+  {static} +IconData album_1
+  {static} +IconData playlist
+  {static} +IconData repeat
+  {static} +IconData shuffle
+  {static} +IconData mymusic
+}
+
+"MusicApp::Custom::customIcons.dart::IconCustom" o-- "flutter::src::widgets::icon_data.dart::IconData"
+
+class "MusicApp::Custom::customMarquee.dart::CustomMarquee" {
+  +String str
+  +double size
+  +FontWeight fontWeight
+  +Color color
+  +Widget build()
+}
+
+"MusicApp::Custom::customMarquee.dart::CustomMarquee" o-- "dart::ui::FontWeight"
+"MusicApp::Custom::customMarquee.dart::CustomMarquee" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::Custom::customMarquee.dart::CustomMarquee"
+
+class "MusicApp::Custom::customText.dart::TextLato" {
+  +String str
+  +Color color
+  +double size
+  +FontWeight fontWeight
+  +Widget build()
+}
+
+"MusicApp::Custom::customText.dart::TextLato" o-- "dart::ui::Color"
+"MusicApp::Custom::customText.dart::TextLato" o-- "dart::ui::FontWeight"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::Custom::customText.dart::TextLato"
+
+class "MusicApp::Custom::sizeConfig.dart::SizeConfig" {
+  {static} -MediaQueryData _mediaQueryData
+  {static} +double screenWidth
+  {static} +double screenHeight
+  {static} +double blockSizeHorizontal
+  {static} +double blockSizeVertical
+  {static} -double _safeAreaHorizontal
+  {static} -double _safeAreaVertical
+  {static} +double safeBlockHorizontal
+  {static} +double safeBlockVertical
+  +void init()
+  +void printAllDetail()
+}
+
+"MusicApp::Custom::sizeConfig.dart::SizeConfig" o-- "flutter::src::widgets::media_query.dart::MediaQueryData"
+
+class "MusicApp::Data::userModel.dart::UserModel" {
+  +String id
+  +String name
+  +String email
+  +String phone
+  +int coin
+  +int isVip
+  +Map toJson()
+  +void printAll()
+}
+
+class "MusicApp::Feature::currentPlaying.dart::CurrentPlayBar" {
+  -GlobalBloC _gBloC
+  +CurrentPlayBarState createState()
+}
+
+"MusicApp::Feature::currentPlaying.dart::CurrentPlayBar" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::Feature::currentPlaying.dart::CurrentPlayBar"
+
+class "MusicApp::Feature::currentPlaying.dart::CurrentPlayBarState" {
+  +Widget build()
+  +Widget playIconButton()
+  +Widget text()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::Feature::currentPlaying.dart::CurrentPlayBarState"
+
+class "MusicApp::Feature::downloadlist.dart::Downloadlist" {
+  -bool _isOnline
+  +_DownloadlistState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::Feature::downloadlist.dart::Downloadlist"
+
+class "MusicApp::Feature::downloadlist.dart::_DownloadlistState" {
+  -List _filterList
+  -List _songList
+  -String _filterkey
+  +bool isUsed
+  +void initState()
+  +Widget build()
+  +Widget onlineHandle()
+  +Widget offlineHandle()
+  +Widget userButton()
+  +Widget appBar()
+  +Widget shuffleButton()
+  +Widget searchBar()
+  +Widget empTylist()
+  +Widget musicList()
+  +Widget musicIcon()
+  +Widget musicArt()
+  +Widget songTile()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::Feature::downloadlist.dart::_DownloadlistState"
+
+class "MusicApp::Feature::musicPlayer.dart::MusicPlayer" {
+  +GlobalBloC globalBloC
+  +MusicPlayerState createState()
+}
+
+"MusicApp::Feature::musicPlayer.dart::MusicPlayer" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::Feature::musicPlayer.dart::MusicPlayer"
+
+class "MusicApp::Feature::musicPlayer.dart::MusicPlayerState" {
+  +UserBloC userBloC
+  +MusicPlayerBloC mpBloC
+  +Icon iconPlay
+  +Icon iconPause
+  +Widget dropDownButton()
+  +void initState()
+  +void dispose()
+  +Widget build()
+  +Widget body()
+  +Widget imageDecoration()
+  +Widget albumArtCover()
+  +Widget songInfo()
+  +Widget favoritePlayListButton()
+  +Widget musicControl()
+  +Widget musicSlider()
+  +Widget controlButton()
+  +Widget text()
+  +Future addPlayList()
+  +Widget listPlaylist()
+  +Widget playListCard()
+  +Widget noPlaylist()
+  +Future currentPlaylist()
+  +Widget songList()
+  +Widget songTile()
+}
+
+"MusicApp::Feature::musicPlayer.dart::MusicPlayerState" o-- "MusicApp::BloC::userBloC.dart::UserBloC"
+"MusicApp::Feature::musicPlayer.dart::MusicPlayerState" o-- "MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC"
+"MusicApp::Feature::musicPlayer.dart::MusicPlayerState" o-- "flutter::src::widgets::icon.dart::Icon"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::Feature::musicPlayer.dart::MusicPlayerState"
+
+class "MusicApp::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::main.dart::MyApp"
+
+class "MusicApp::myMusic.dart::GoOffline" {
+  +GlobalBloC gBloC
+  +Widget build()
+}
+
+"MusicApp::myMusic.dart::GoOffline" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::myMusic.dart::GoOffline"
+
+class "MusicApp::myMusic.dart::GoOnline" {
+  +UserModel userInfo
+  +GlobalBloC gBloC
+  +Widget build()
+}
+
+"MusicApp::myMusic.dart::GoOnline" o-- "MusicApp::Data::userModel.dart::UserModel"
+"MusicApp::myMusic.dart::GoOnline" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::myMusic.dart::GoOnline"
+
+class "MusicApp::OnlineFeature::httpTest.dart::Album" {
+  +String username
+  +String password
+}
+
+class "MusicApp::OnlineFeature::httpTest.dart::MyAppTest" {
+  +_MyAppTestState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::httpTest.dart::MyAppTest"
+
+class "MusicApp::OnlineFeature::httpTest.dart::_MyAppTestState" {
+  -Future<Album> _futureAlbum
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::httpTest.dart::_MyAppTestState"
+
+class "MusicApp::OnlineFeature::query.dart::AccessJson" {
+  +_AccessJsonState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::query.dart::AccessJson"
+
+class "MusicApp::OnlineFeature::query.dart::_AccessJsonState" {
+  +List<Map<String, String>> musicLst
+  +void initState()
+  +Future getMusicList()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::query.dart::_AccessJsonState"
+
+class "MusicApp::OnlineFeature::UI::homePage.dart::HomePage" {
+  +_HomePageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::homePage.dart::HomePage"
+
+class "MusicApp::OnlineFeature::UI::homePage.dart::_HomePageState" {
+  +bool isTimeout
+  +Timer t
+  +Widget build()
+  +Widget appBar()
+  +Widget recentlyList()
+  +Widget favouriteList()
+  +Widget offlineList()
+  +Widget songTile()
+  +Widget songDecoration()
+  +Widget buttonWidget()
+  +Widget circleLoading()
+  +Widget retryLoading()
+}
+
+"MusicApp::OnlineFeature::UI::homePage.dart::_HomePageState" o-- "dart::async::Timer"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::homePage.dart::_HomePageState"
+
+class "MusicApp::OnlineFeature::UI::library.dart::Library" {
+  +_LibraryState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::library.dart::Library"
+
+class "MusicApp::OnlineFeature::UI::library.dart::_LibraryState" {
+  +TextEditingController customController
+  +void initState()
+  +Widget build()
+  +Widget listTile()
+  +Future createPlayList()
+}
+
+"MusicApp::OnlineFeature::UI::library.dart::_LibraryState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::library.dart::_LibraryState"
+
+class "MusicApp::OnlineFeature::UI::login.dart::Login" {
+  +_LoginState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::login.dart::Login"
+
+class "MusicApp::OnlineFeature::UI::login.dart::_LoginState" {
+  +TextEditingController usernameInput
+  +TextEditingController passwordInput
+  +RecorderBloC recordBloC
+  -List<Map> _userList
+  +bool isRecorderDispose
+  +void initState()
+  +void fetchRecentlyUser()
+  +bool isContain()
+  +Widget build()
+  +Widget logoWidget()
+  +Widget textInput()
+  +Widget text()
+  +Widget textField()
+  +Widget signInWithVoiceButton()
+  +void saveLocal()
+  +Widget signInButton()
+  +Widget signUp()
+  +Widget offlineButton()
+  +Future createVoiceVerify()
+  +Widget switchIcon()
+}
+
+"MusicApp::OnlineFeature::UI::login.dart::_LoginState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"MusicApp::OnlineFeature::UI::login.dart::_LoginState" o-- "MusicApp::BloC::recoderBloC.dart::RecorderBloC"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::login.dart::_LoginState"
+
+class "MusicApp::OnlineFeature::UI::playlist.dart::Playlists" {
+  +GlobalBloC gBloC
+  +_PlaylistsState createState()
+}
+
+"MusicApp::OnlineFeature::UI::playlist.dart::Playlists" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::playlist.dart::Playlists"
+
+class "MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState" {
+  +bool isUsed
+  +GlobalBloC globalBloC
+  +UserBloC userBloC
+  +MusicPlayerBloC mpBloC
+  +TextEditingController customController
+  +void initState()
+  +Widget build()
+  +Widget body()
+  +Widget listPlaylist()
+  +Widget playListCard()
+  +Widget moreSetting()
+  +Widget noPlaylist()
+  +Widget createPlaylistButton()
+  +Widget currentPlaying()
+  +Future createPlaylistPopUp()
+  +Widget songPopUpMenu()
+  +Widget musicIcon()
+  +Future songList()
+  +Widget listSongs()
+  +Widget songTile()
+  +Widget noSong()
+}
+
+"MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState" o-- "MusicApp::BloC::userBloC.dart::UserBloC"
+"MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState" o-- "MusicApp::BloC::musicplayerBloC.dart::MusicPlayerBloC"
+"MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::playlist.dart::_PlaylistsState"
+
+class "MusicApp::OnlineFeature::UI::purchase.dart::Purchase" {
+  +UserBloC userBloC
+  +String type
+  +BuildContext parentContext
+  +TextEditingController customController
+  +TextEditingController coinController
+  +Widget build()
+  +Widget text()
+  +Widget paymentMethod()
+  +Widget bankInfo()
+  +Future createAlert()
+  +Future popUpCoin()
+}
+
+"MusicApp::OnlineFeature::UI::purchase.dart::Purchase" o-- "MusicApp::BloC::userBloC.dart::UserBloC"
+"MusicApp::OnlineFeature::UI::purchase.dart::Purchase" o-- "flutter::src::widgets::framework.dart::BuildContext"
+"MusicApp::OnlineFeature::UI::purchase.dart::Purchase" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::OnlineFeature::UI::purchase.dart::Purchase"
+
+class "MusicApp::OnlineFeature::UI::searchPage.dart::SearchPage" {
+  +_SearchPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::searchPage.dart::SearchPage"
+
+class "MusicApp::OnlineFeature::UI::searchPage.dart::_SearchPageState" {
+  +FocusNode focusNode
+  +String hintText
+  -String _searchKey
+  +void initState()
+  +Widget build()
+  +Widget body()
+  +Widget searchBar()
+  +Widget allTagColumn()
+  +Widget tagMusic()
+  +Widget emptySearch()
+  +Widget initScreen()
+  +Widget errorScreen()
+  +Widget searchList()
+  +Widget musicIcon()
+  +Widget songTile()
+}
+
+"MusicApp::OnlineFeature::UI::searchPage.dart::_SearchPageState" o-- "flutter::src::widgets::focus_manager.dart::FocusNode"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::searchPage.dart::_SearchPageState"
+
+class "MusicApp::OnlineFeature::UI::signUp.dart::SignUp" {
+  +TextEditingController emailInput
+  +TextEditingController usernameInput
+  +TextEditingController passwordInput
+  +TextEditingController passwordInput2
+  +Widget build()
+  +Widget logoWidget()
+  +Widget textInput()
+  +Widget text()
+  +Widget textField()
+  +Widget signUpButton()
+  +Widget signIn()
+}
+
+"MusicApp::OnlineFeature::UI::signUp.dart::SignUp" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "MusicApp::OnlineFeature::UI::signUp.dart::SignUp"
+
+class "MusicApp::OnlineFeature::UI::userProfile.dart::UserProfile" {
+  +GlobalBloC globalBloC
+  +_UserProfileState createState()
+}
+
+"MusicApp::OnlineFeature::UI::userProfile.dart::UserProfile" o-- "MusicApp::BloC::globalBloC.dart::GlobalBloC"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::OnlineFeature::UI::userProfile.dart::UserProfile"
+
+class "MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState" {
+  +UserModel userInfo
+  +UserBloC userBloC
+  +RecorderBloC recordBloC
+  +TextEditingController customController
+  +bool isRecorderDispose
+  +void initState()
+  +Widget build()
+  +Widget appBar()
+  +Widget profileContainer()
+  +Widget avatar()
+  +Widget childList()
+  +Widget infoListTitle()
+  +Future createPopUp()
+  +Future createVoiceRegister()
+  +Widget switchIcon()
+}
+
+"MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState" o-- "MusicApp::Data::userModel.dart::UserModel"
+"MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState" o-- "MusicApp::BloC::userBloC.dart::UserBloC"
+"MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState" o-- "MusicApp::BloC::recoderBloC.dart::RecorderBloC"
+"MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::OnlineFeature::UI::userProfile.dart::_UserProfileState"
+
+class "MusicApp::root.dart::RootWidget" {
+  +_RootWidgetState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "MusicApp::root.dart::RootWidget"
+
+class "MusicApp::root.dart::_RootWidgetState" {
+  -int _currentIndex
+  -List<Widget> _children
+  +void initState()
+  +void onNavigationBar()
+  +Widget build()
+  +Widget currentPlaying()
+  +Widget bottomNavigator()
+  +Widget buttonWidget()
+  +Widget textLato()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "MusicApp::root.dart::_RootWidgetState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin<T>" <|-- "MusicApp::root.dart::_RootWidgetState"
+
+
+@enduml

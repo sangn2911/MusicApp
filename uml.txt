@@ -1,0 +1,606 @@
+[GlobalBloC
+  |
+  +userBloC: UserBloC;
+  +mpBloC: MusicPlayerBloC
+  |
+  +void dispose()
+]
+
+[GlobalBloC]o-[UserBloC]
+[GlobalBloC]o-[MusicPlayerBloC]
+
+[PlayerState
+  |
+  +index: int;
+  <static>+values: List<PlayerState>;
+  <static>+stopped: PlayerState;
+  <static>+playing: PlayerState;
+  <static>+paused: PlayerState
+]
+
+[PlayerState]o-[PlayerState]
+
+[PlayerMode
+  |
+  +index: int;
+  <static>+values: List<PlayerMode>;
+  <static>+shuffle: PlayerMode;
+  <static>+repeat: PlayerMode;
+  <static>+normal: PlayerMode
+]
+
+[PlayerMode]o-[PlayerMode]
+
+[MusicPlayerBloC
+  |
+  +onlineSongs: BehaviorSubject<List<Song>>;
+  +recently: BehaviorSubject<List<Song>>;
+  +favourite: BehaviorSubject<List<Song>>;
+  -_offlineSongs: BehaviorSubject<List<Song>>;
+  +isUsed: BehaviorSubject<bool>;
+  +fromDB: BehaviorSubject<bool>;
+  +isDispose: bool;
+  -_audioPlayer: MusicFinder;
+  -_duration: Duration;
+  -_position: BehaviorSubject<Duration>;
+  -_playerState: BehaviorSubject<PlayerState>;
+  -_playerMode: BehaviorSubject<PlayerMode>;
+  -_currentSong: BehaviorSubject<Song>;
+  -_currPlaylist: BehaviorSubject<MapEntry<List<Song>, List<Song>>>;
+  +songList: BehaviorSubject<List<Song>>;
+  +currentPlaying: BehaviorSubject<MapEntry<List<Song>, List<Song>>>;
+  +currentSong: BehaviorSubject<Song>;
+  +isPlaying: bool;
+  +isPaused: bool;
+  +isShuffle: bool;
+  +isRepeat: bool;
+  +duration: Duration;
+  +position: BehaviorSubject<Duration>;
+  +playerState: BehaviorSubject<PlayerState>;
+  +playerMode: BehaviorSubject<PlayerMode>
+  |
+  +void dispose();
+  -void _initStreams();
+  -void _initCurrentSong();
+  -void _initAudioPlayer();
+  +Future fetchFromDB();
+  +Future fetchFavourite();
+  +Future fetchAllSongDB();
+  +Future fetchSongs();
+  +Future fetchRecently();
+  +void updatePlaylist();
+  +void playMode();
+  +void updatePosition();
+  +void audioSeek();
+  +void updateRecent();
+  -String _encodeSongToJson();
+  -Song _decodeSongFromJson();
+  +Song songFromJson();
+  +Map songToMap();
+  +void handleSong();
+  +void play();
+  +void pause();
+  +void stop();
+  +void next();
+  +void prev();
+  +void playRandomSong();
+  +void onComplete()
+]
+
+[MusicPlayerBloC]o-[BehaviorSubject<T>]
+[MusicPlayerBloC]o-[MusicFinder]
+
+[RecorderBloC
+  |
+  +localFileSystem: LocalFileSystem;
+  +isDispose: bool;
+  -_recorder: FlutterAudioRecorder;
+  -_currRecord: BehaviorSubject<Recording>;
+  +currentFile: File;
+  -_t: Timer;
+  +wasUsed: bool;
+  +count: int;
+  +currentRecord: BehaviorSubject<Recording>
+  |
+  +void initStream();
+  +void initRecoder();
+  +void dispose();
+  +void checkExistFile();
+  +void start();
+  +void stop()
+]
+
+[RecorderBloC]o-[LocalFileSystem]
+[RecorderBloC]o-[FlutterAudioRecorder]
+[RecorderBloC]o-[BehaviorSubject<T>]
+[RecorderBloC]o-[<abstract>File]
+[RecorderBloC]o-[<abstract>Timer]
+
+[UserBloC
+  |
+  -_userInfo: BehaviorSubject<UserModel>;
+  +playlists: BehaviorSubject<List<String>>;
+  +currentPlaylist: BehaviorSubject<List<Song>>;
+  +userInfo: BehaviorSubject<UserModel>
+  |
+  -void _initStreams();
+  +void dispose();
+  +Future fetchPlaylists();
+  +void saveUserInfo()
+]
+
+[UserBloC]o-[BehaviorSubject<T>]
+
+[ColorCustom
+  |
+  <static>+orange: Color;
+  <static>+deepOrange: Color;
+  <static>+grey: Color;
+  <static>+grey1: Color;
+  <static>+brown: Color;
+  <static>+lightBlue: Color;
+  <static>+mediumYellow: Color;
+  <static>+deepRed: Color;
+  <static>+lightPink: Color;
+  <static>+lightBrown: Color;
+  <static>+moreDeepRed: Color;
+  <static>+lightGreen: Color;
+  <static>+lightOrange: Color;
+  <static>+purple: Color
+]
+
+[ColorCustom]o-[Color]
+
+[IconCustom
+  |
+  <static>-_kFontFam: String;
+  <static>-_kFontPkg: dynamic;
+  <static>+settings_1: IconData;
+  <static>+album_1: IconData;
+  <static>+playlist: IconData;
+  <static>+repeat: IconData;
+  <static>+shuffle: IconData;
+  <static>+mymusic: IconData
+]
+
+[IconCustom]o-[IconData]
+
+[CustomMarquee
+  |
+  +str: String;
+  +size: double;
+  +fontWeight: FontWeight;
+  +color: Color
+  |
+  +Widget build()
+]
+
+[CustomMarquee]o-[FontWeight]
+[CustomMarquee]o-[Color]
+[<abstract>StatelessWidget]<:-[CustomMarquee]
+
+[TextLato
+  |
+  +str: String;
+  +color: Color;
+  +size: double;
+  +fontWeight: FontWeight
+  |
+  +Widget build()
+]
+
+[TextLato]o-[Color]
+[TextLato]o-[FontWeight]
+[<abstract>StatelessWidget]<:-[TextLato]
+
+[SizeConfig
+  |
+  <static>-_mediaQueryData: MediaQueryData;
+  <static>+screenWidth: double;
+  <static>+screenHeight: double;
+  <static>+blockSizeHorizontal: double;
+  <static>+blockSizeVertical: double;
+  <static>-_safeAreaHorizontal: double;
+  <static>-_safeAreaVertical: double;
+  <static>+safeBlockHorizontal: double;
+  <static>+safeBlockVertical: double
+  |
+  +void init();
+  +void printAllDetail()
+]
+
+[SizeConfig]o-[MediaQueryData]
+
+[UserModel
+  |
+  +id: String;
+  +name: String;
+  +email: String;
+  +phone: String;
+  +coin: int;
+  +isVip: int
+  |
+  +Map toJson();
+  +void printAll()
+]
+
+[CurrentPlayBar
+  |
+  -_gBloC: GlobalBloC
+  |
+  +CurrentPlayBarState createState()
+]
+
+[CurrentPlayBar]o-[GlobalBloC]
+[<abstract>StatefulWidget]<:-[CurrentPlayBar]
+
+[CurrentPlayBarState
+  |
+  +Widget build();
+  +Widget playIconButton()
+]
+
+[<abstract>State<T>]<:-[CurrentPlayBarState]
+
+[Downloadlist
+  |
+  -_isOnline: bool
+  |
+  +DownloadlistState createState()
+]
+
+[<abstract>StatefulWidget]<:-[Downloadlist]
+
+[DownloadlistState
+  |
+  -_filterList: List;
+  -_songList: List;
+  -_filterkey: String;
+  +isUsed: bool
+  |
+  +void initState();
+  +Widget build();
+  +Widget onlineHandle();
+  +Widget offlineHandle();
+  +Widget userButton();
+  +Widget appBar();
+  +Widget shuffleButton();
+  +Widget searchBar();
+  +Widget empTylist();
+  +Widget musicList();
+  +Widget musicIcon();
+  +Widget musicArt();
+  +Widget songTile()
+]
+
+[<abstract>State<T>]<:-[DownloadlistState]
+
+[MusicPlayer
+  |
+  +globalBloC: GlobalBloC
+  |
+  +MusicPlayerState createState()
+]
+
+[MusicPlayer]o-[GlobalBloC]
+[<abstract>StatefulWidget]<:-[MusicPlayer]
+
+[MusicPlayerState
+  |
+  +userBloC: UserBloC;
+  +mpBloC: MusicPlayerBloC;
+  +iconPlay: Icon;
+  +iconPause: Icon
+  |
+  +Widget dropDownButton();
+  +void initState();
+  +void dispose();
+  +Widget build();
+  +Widget body();
+  +Widget imageDecoration();
+  +Widget albumArtCover();
+  +Widget songInfo();
+  +Widget favoritePlayListButton();
+  +Widget musicControl();
+  +Widget musicSlider();
+  +Widget controlButton();
+  +Widget text();
+  +Future addPlayList();
+  +Widget listPlaylist();
+  +Widget playListCard();
+  +Widget noPlaylist();
+  +Future currentPlaylist();
+  +Widget songList();
+  +Widget songTile()
+]
+
+[MusicPlayerState]o-[UserBloC]
+[MusicPlayerState]o-[MusicPlayerBloC]
+[MusicPlayerState]o-[Icon]
+[<abstract>State<T>]<:-[MusicPlayerState]
+
+[MyApp
+  |
+  +Widget build()
+]
+
+[<abstract>StatelessWidget]<:-[MyApp]
+
+[GoOffline
+  |
+  +gBloC: GlobalBloC
+  |
+  +Widget build()
+]
+
+[GoOffline]o-[GlobalBloC]
+[<abstract>StatelessWidget]<:-[GoOffline]
+
+[GoOnline
+  |
+  +userInfo: UserModel;
+  +gBloC: GlobalBloC
+  |
+  +Widget build()
+]
+
+[GoOnline]o-[UserModel]
+[GoOnline]o-[GlobalBloC]
+[<abstract>StatelessWidget]<:-[GoOnline]
+
+[HomePage
+  |
+  +_HomePageState createState()
+]
+
+[<abstract>StatefulWidget]<:-[HomePage]
+
+[_HomePageState
+  |
+  +isTimeout: bool;
+  +t: Timer
+  |
+  +Widget build();
+  +Widget appBar();
+  +Widget recentlyList();
+  +Widget favouriteList();
+  +Widget offlineList();
+  +Widget songTile();
+  +Widget songDecoration();
+  +Widget buttonWidget();
+  +Widget circleLoading();
+  +Widget retryLoading()
+]
+
+[_HomePageState]o-[<abstract>Timer]
+[<abstract>State<T>]<:-[_HomePageState]
+
+[Library
+  |
+  +_LibraryState createState()
+]
+
+[<abstract>StatefulWidget]<:-[Library]
+
+[_LibraryState
+  |
+  +customController: TextEditingController
+  |
+  +void initState();
+  +Widget build();
+  +Widget listTile();
+  +Future createPlayList()
+]
+
+[_LibraryState]o-[TextEditingController]
+[<abstract>State<T>]<:-[_LibraryState]
+
+[Login
+  |
+  +_LoginState createState()
+]
+
+[<abstract>StatefulWidget]<:-[Login]
+
+[_LoginState
+  |
+  +usernameInput: TextEditingController;
+  +passwordInput: TextEditingController;
+  +recordBloC: RecorderBloC;
+  -_userList: List<Map>;
+  +count: int;
+  +isRecorderDispose: bool
+  |
+  +void initState();
+  +void fetchRecentlyUser();
+  +bool isContain();
+  +Widget build();
+  +Widget logoWidget();
+  +Widget textInput();
+  +Widget text();
+  +Widget textField();
+  +Widget signInWithVoiceButton();
+  +void saveLocal();
+  +Widget signInButton();
+  +Widget signUp();
+  +Widget offlineButton();
+  +Future createVoiceVerify();
+  +Widget switchIcon()
+]
+
+[_LoginState]o-[TextEditingController]
+[_LoginState]o-[RecorderBloC]
+[<abstract>State<T>]<:-[_LoginState]
+
+[Playlists
+  |
+  +gBloC: GlobalBloC
+  |
+  +_PlaylistsState createState()
+]
+
+[Playlists]o-[GlobalBloC]
+[<abstract>StatefulWidget]<:-[Playlists]
+
+[_PlaylistsState
+  |
+  +isUsed: bool;
+  +globalBloC: GlobalBloC;
+  +userBloC: UserBloC;
+  +mpBloC: MusicPlayerBloC;
+  +customController: TextEditingController
+  |
+  +void initState();
+  +Widget build();
+  +Widget body();
+  +Widget listPlaylist();
+  +Widget playListCard();
+  +Widget moreSetting();
+  +Widget noPlaylist();
+  +Widget createPlaylistButton();
+  +Widget currentPlaying();
+  +Future createPlaylistPopUp();
+  +Widget songPopUpMenu();
+  +Widget musicIcon();
+  +Future songList();
+  +Widget listSongs();
+  +Widget songTile();
+  +Widget noSong()
+]
+
+[_PlaylistsState]o-[GlobalBloC]
+[_PlaylistsState]o-[UserBloC]
+[_PlaylistsState]o-[MusicPlayerBloC]
+[_PlaylistsState]o-[TextEditingController]
+[<abstract>State<T>]<:-[_PlaylistsState]
+
+[Purchase
+  |
+  +userBloC: UserBloC;
+  +type: String;
+  +parentContext: BuildContext;
+  +customController: TextEditingController;
+  +coinController: TextEditingController
+  |
+  +Widget build();
+  +Widget text();
+  +Widget paymentMethod();
+  +Widget bankInfo();
+  +Future createBankDialog();
+  +Future popUpCoin()
+]
+
+[Purchase]o-[UserBloC]
+[Purchase]o-[<abstract>BuildContext]
+[Purchase]o-[TextEditingController]
+[<abstract>StatelessWidget]<:-[Purchase]
+
+[SearchPage
+  |
+  +_SearchPageState createState()
+]
+
+[<abstract>StatefulWidget]<:-[SearchPage]
+
+[_SearchPageState
+  |
+  +focusNode: FocusNode;
+  +hintText: String;
+  -_searchKey: String
+  |
+  +void initState();
+  +Widget build();
+  +Widget body();
+  +Widget searchBar();
+  +Widget allTagColumn();
+  +Widget tagMusic();
+  +Widget emptySearch();
+  +Widget initScreen();
+  +Widget errorScreen();
+  +Widget searchList();
+  +Widget musicIcon();
+  +Widget songTile()
+]
+
+[_SearchPageState]o-[FocusNode]
+[<abstract>State<T>]<:-[_SearchPageState]
+
+[SignUp
+  |
+  +emailInput: TextEditingController;
+  +usernameInput: TextEditingController;
+  +passwordInput: TextEditingController;
+  +passwordInput2: TextEditingController
+  |
+  +Widget build();
+  +Widget logoWidget();
+  +Widget textInput();
+  +Widget text();
+  +Widget textField();
+  +Widget signUpButton();
+  +Widget signIn()
+]
+
+[SignUp]o-[TextEditingController]
+[<abstract>StatelessWidget]<:-[SignUp]
+
+[UserProfile
+  |
+  +globalBloC: GlobalBloC
+  |
+  +_UserProfileState createState()
+]
+
+[UserProfile]o-[GlobalBloC]
+[<abstract>StatefulWidget]<:-[UserProfile]
+
+[_UserProfileState
+  |
+  +userInfo: UserModel;
+  +userBloC: UserBloC;
+  +recordBloC: RecorderBloC;
+  +customController: TextEditingController;
+  +isRecorderDispose: bool
+  |
+  +void initState();
+  +void dispose();
+  +Widget build();
+  +Widget appBar();
+  +Widget profileContainer();
+  +Widget avatar();
+  +Widget childList();
+  +Widget infoListTitle();
+  +Future createPopUp();
+  +Future createVoiceRegister();
+  +Widget switchIcon()
+]
+
+[_UserProfileState]o-[UserModel]
+[_UserProfileState]o-[UserBloC]
+[_UserProfileState]o-[RecorderBloC]
+[_UserProfileState]o-[TextEditingController]
+[<abstract>State<T>]<:-[_UserProfileState]
+
+[RootWidget
+  |
+  +_RootWidgetState createState()
+]
+
+[<abstract>StatefulWidget]<:-[RootWidget]
+
+[_RootWidgetState
+  |
+  -_currentIndex: int;
+  -_children: List<Widget>
+  |
+  +void initState();
+  +void onNavigationBar();
+  +Widget build();
+  +Widget currentPlaying();
+  +Widget bottomNavigator();
+  +Widget buttonWidget();
+  +Widget textLato()
+]
+
+[<abstract>State<T>]<:-[_RootWidgetState]
+[<abstract>SingleTickerProviderStateMixin<T>]<:-[_RootWidgetState]

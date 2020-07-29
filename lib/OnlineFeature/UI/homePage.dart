@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:MusicApp/BloC/globalBloC.dart';
 import 'package:MusicApp/BloC/musicplayerBloC.dart';
 import 'package:MusicApp/OnlineFeature/UI/userProfile.dart';
@@ -18,13 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   t.cancel();
-  //   isTimeout = false;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,43 +114,39 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          //padding: EdgeInsets.only(left: 31/360 * SizeConfig.screenWidth),
           child: TextLato("Recently Play", Colors.white, 20, FontWeight.w700),
         ),
         SizedBox(height: 10/640 * SizeConfig.screenHeight),
-        StreamBuilder<List<Song>>(
-          stream: mpBloC.recently,
-          builder: (context, snapshot) {
-            if (mpBloC.isDispose) return Container();
+        Container(
+          height: 170/640 * SizeConfig.screenHeight,
+          color: Colors.black,
+          child: StreamBuilder<List<Song>>(
+            stream: mpBloC.recently,
+            builder: (context, snapshot) {
+              if (mpBloC.isDispose) return Container();
 
-            if (!snapshot.hasData) {
-                return circleLoading("Loading");
+              if (!snapshot.hasData) {
+                  return circleLoading("Loading");
+                }
+
+              List<Song> _songList = snapshot.data;
+              if (_songList.length == 0) {
+                return Container();
               }
 
-            List<Song> _songList = snapshot.data;
-            if (_songList.length == 0) {
-              return Container();
-            }
-
-            return Container(
-              height: 170/640 * SizeConfig.screenHeight,
-              color: Colors.black,
-              child: ListView.builder(
+              return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: _songList.length,
                 itemBuilder: (BuildContext context, int index){
                   return songTile(IconCustom.album_1, _songList[index], _songList);
                 },
-              )
-            );
-          }
+              );
+            }
+          ),
         ),
       ],
     );
   }
-
-  bool isTimeout = false;
-  Timer t;
 
   Widget favouriteList(){
     final GlobalBloC globalBloC = Provider.of<GlobalBloC>(context);
@@ -171,48 +158,36 @@ class _HomePageState extends State<HomePage> {
           child: TextLato("Favorite albums and songs", Colors.white, 20, FontWeight.w700),
         ),
         SizedBox(height: 10/640 * SizeConfig.screenHeight),
-        StreamBuilder(
-          stream: mpBloC.favourite,
-          builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
-            if (mpBloC.isDispose) return Container();
+        Container(
+          height: 170/640 * SizeConfig.screenHeight,
+          color: Colors.black,
+          child: StreamBuilder(
+            stream: mpBloC.favourite,
+            builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot){
+              if (mpBloC.isDispose) return Container();
 
-            if (!snapshot.hasData) {
-              try {              
-                if (!isTimeout) {
-                  t = Timer(Duration(seconds: 5), () {
-                    setState(() {
-                      isTimeout = true;
-                    });
-                  });
-                  return circleLoading("Waiting for server");
-                }
-                else {
-                  t.cancel();
-                  return retryLoading();
-                }
-              } on Exception catch (_){
-                print("Ignore This");
+              if (!snapshot.hasData) {
+                return circleLoading("Waiting for server");
               }
-            }
+              List<Song> _songList = snapshot.data;
 
-            List<Song> _songList = snapshot.data;
+              if (_songList[0] == null){
+                return retryLoading();
+              }
 
-            if (_songList.length == 0) {
-              return Container();
-            }
+              if (_songList.length == 0) {
+                return Container();
+              }
 
-            return Container(
-              height: 170/640 * SizeConfig.screenHeight,
-              color: Colors.black,
-              child: ListView.builder(
+              return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: _songList.length,
                 itemBuilder: (BuildContext context, int index){
                   return songTile(IconCustom.album_1, _songList[index], _songList);
                 },
-              )
-            );
-          }
+              );
+            }
+          ),
         ),
       ],
     );
@@ -297,23 +272,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget purchaseButton(String title){
-  //   return SizedBox(
-  //     height: 25/640 * SizeConfig.screenHeight,
-  //     width: 25/640 * SizeConfig.screenHeight,
-  //     child: IconButton(
-  //     padding: EdgeInsets.all(0),
-  //     icon: Icon(
-  //       Icons.shopping_cart,
-  //       color: Colors.white,
-  //       size: 25/360 * SizeConfig.screenWidth,
-  //       ), 
-  //     onPressed: (){
-  //       print("Buy $title");
-  //     }),
-  //   );
-  // }
-
   Widget songDecoration(Song song){
     return Container(
       color: ColorCustom.orange,
@@ -342,8 +300,6 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
-  // await(Future<ConnectivityResult> checkConnectivity) {}
 
   Widget circleLoading(String str){
     return Container(
@@ -382,9 +338,7 @@ class _HomePageState extends State<HomePage> {
               color: ColorCustom.orange,
               child: TextLato("Retry", Colors.black, 20, FontWeight.w700),
               onPressed: (){
-                setState(() {
-                  isTimeout = false;
-                });
+                mpBloC.favourite.add(null);
                 mpBloC.fetchFavourite();
               }
             ),
@@ -393,7 +347,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
 }
 

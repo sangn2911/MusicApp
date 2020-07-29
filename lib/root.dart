@@ -16,17 +16,12 @@ import 'Custom/sizeConfig.dart';
 
 class RootWidget extends StatefulWidget {
 
-  // final UserModel userInfo;
-  // RootWidget(this.userInfo);
-
   @override
   _RootWidgetState createState() => _RootWidgetState();
 }
 
 class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateMixin{
 
-  // AnimationController _controller;
-  // Animation<double> _animation;
   int _currentIndex = 0;
 
   List<Widget> _children;
@@ -43,8 +38,10 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
     ];
   }
 
-
   void onNavigationBar(int index){
+    // final GlobalBloC globalBloC = Provider.of<GlobalBloC>(context);
+    // final MusicPlayerBloC mp = globalBloC.mpBloC;
+    // if (index == 1) mp.fetchAllSongDB();
     setState(() {
       _currentIndex = index;
     });
@@ -53,8 +50,6 @@ class _RootWidgetState extends State<RootWidget> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final GlobalBloC globalBloC = Provider.of<GlobalBloC>(context);
-    final MusicPlayerBloC mp = globalBloC.mpBloC;
     return WillPopScope(
       onWillPop: () { return; },
       child: Scaffold(

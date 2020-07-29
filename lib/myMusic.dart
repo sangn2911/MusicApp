@@ -13,7 +13,6 @@ class GoOffline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<GlobalBloC>(
       create: (BuildContext context){
-        gBloC.mpBloC.fetchSongs();
         return gBloC;
       },
       dispose: (BuildContext context, GlobalBloC gBloC) => gBloC.dispose(),
@@ -33,18 +32,13 @@ class GoOnline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<GlobalBloC>(
-      create: (BuildContext context){
-        gBloC.mpBloC.fetchSongs();
-        gBloC.mpBloC.fetchAllSongDB();
-        gBloC.mpBloC.fetchRecently();
-        gBloC.mpBloC.fetchFavourite();
+      create: (BuildContext context) { 
         gBloC.userBloC.saveUserInfo(userInfo);
-        
+        gBloC.mpBloC.fetchFromDB();
         return gBloC;
       },
       dispose: (BuildContext context, GlobalBloC gBloC) => gBloC.dispose(),
       child: RootWidget(),
     );
-    //return HomePage();
   }
 }
